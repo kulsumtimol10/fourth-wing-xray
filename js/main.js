@@ -1,5 +1,7 @@
 // ============================================================================
-// FOURTH WING: CODEX OCULUS — Main 3D Engine & Clean UI Controller (v2)
+// FOURTH WING: THE EMPYREAN ARCHIVE — Main Experience Controller (v3)
+// Orchestrates the Hero Second-Sight Sanctum, 3D WebGL Artifact Reliquary,
+// Atmospheric Embers/Rain/Lightning FX, Wielder of the Storm Game, & Quiz.
 // ============================================================================
 
 import * as THREE from 'three';
@@ -8,626 +10,551 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-import { SCAN_MODES, QUIZ_QUESTIONS, DRAGON_RESULTS } from './loreData.js';
+import { REALMS, ARTIFACTS_3D, QUIZ_QUESTIONS, DRAGON_RESULTS } from './loreData.js';
 import { ArcaneAudioEngine } from './audioEngine.js';
-import { sharedUniforms } from './xrayShader.js';
-import {
-  buildDragonModel,
-  buildRiderModel,
-  buildBasgiathModel
-} from './models3D.js';
-import { ParapetMiniGame } from './parapetGame.js';
+import { buildArtifact3D } from './models3D.js';
+import { StormDefenseGame } from './parapetGame.js';
 
-class FourthWingOculusApp {
+class EmpyreanArchiveApp {
   constructor() {
-    this.canvasContainer = document.getElementById('viewport-container');
-    this.reticleEl = document.getElementById('xray-reticle');
-    this.hotspotsContainer = document.getElementById('hotspots-layer');
-    this.loreDrawer = document.getElementById('lore-drawer');
-
     this.audio = new ArcaneAudioEngine();
 
-    this.currentModeId = 'dragon';
-    this.currentSpecimenId = 'tairn';
-    this.currentModel = null;
-    this.customQuizColors = null;
-
-    this.targetLensUV = new THREE.Vector2(0.5, 0.5);
-    this.currentLensUV = new THREE.Vector2(0.5, 0.5);
-    this.mousePx = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 };
+    // Hero Second-Sight Stage state
+    this.currentRealmId = 'dragon';
+    this.visionMode = 'lens'; // 'lens' | 'real' | 'xray'
+    this.lensRadiusPx = 145;
     this.isLensPinned = false;
 
-    this.isFlythroughActive = false;
-    this.flythroughTime = 0;
-    this.cameraLerpTargetPos = null;
-    this.cameraLerpLookAt = null;
+    this.targetLensPct = { x: 53.5, y: 47.0 };
+    this.currentLensPct = { x: 53.5, y: 47.0 };
 
+    this.stageFrame = document.getElementById('stage-frame');
+    this.parallaxInner = document.getElementById('parallax-scene-inner');
+    this.imgReal = document.getElementById('scene-img-real');
+    this.imgXray = document.getElementById('scene-img-xray');
+    this.lensRing = document.getElementById('arcane-lens-ring');
+    this.hotspotsLayer = document.getElementById('stage-hotspots');
+    this.fxCanvas = document.getElementById('stage-fx-canvas');
+    this.fxCtx = this.fxCanvas.getContext('2d');
+
+    // Stage FX (Embers, Rain, Lightning Flash)
+    this.embers = [];
+    this.rainDrops = [];
+    this.lightningFlashAlpha = 0;
+    this.lightningBolts = [];
+
+    // 3D Reliquary state
+    this.currentArtifactId = 'wardstone';
+    this.artifactModel = null;
+
+    // Quiz state
     this.quizStep = 0;
-    this.quizScores = { tairn: 0, andarna: 0, blue: 0, green: 0, red: 0, brown: 0, orange: 0 };
+    this.quizScores = { tairn: 0, andarna: 0, blue: 0, green: 0, red: 0 };
 
     this.clock = new THREE.Clock();
-    this._initThree();
-    this._initAtmosphere();
-    this.parapetGame = new ParapetMiniGame(
-      this.scene,
-      this.camera,
-      this.controls,
-      this.audio,
-      () => this.exitParapetGame()
-    );
 
-    this._loadSpecimen('dragon', 'tairn');
-    this._bindUIEvents();
+    this._initStageFX();
+    this._loadRealm('dragon');
+    this._init3DReliquary();
+    this._initStormGame();
+    this._initQuiz();
+    this._bindEvents();
     this._animate();
   }
 
-  _initThree() {
-    this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color('#05070c');
-    this.scene.fog = new THREE.FogExp2('#060911', 0.055);
+  // ==========================================================================
+  // 1. HERO SECOND-SIGHT SANCTUM & ATMOSPHERIC FX
+  // ==========================================================================
+  _initStageFX() {
+    const resizeFX = () => {
+      if (!this.stageFrame) return;
+      const r = this.stageFrame.getBoundingClientRect();
+      this.fxCanvas.width = Math.max(400, r.width);
+      this.fxCanvas.height = Math.max(250, r.height);
+    };
+    resizeFX();
+    window.addEventListener('resize', resizeFX);
 
-    this.camera = new THREE.PerspectiveCamera(
-      44,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      120
-    );
-    this.camera.position.set(2.6, 1.45, 5.2);
-
-    this.renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      powerPreference: 'high-performance'
-    });
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.15;
-    this.canvasContainer.appendChild(this.renderer.domElement);
-
-    this.composer = new EffectComposer(this.renderer);
-    const renderPass = new RenderPass(this.scene, this.camera);
-    this.composer.addPass(renderPass);
-
-    this.bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
-      0.68,
-      0.42,
-      0.24
-    );
-    this.composer.addPass(this.bloomPass);
-
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.enableDamping = true;
-    this.controls.dampingFactor = 0.06;
-    this.controls.maxDistance = 13;
-    this.controls.minDistance = 1.6;
-    this.controls.target.set(0, 0.35, 0);
-
-    const ambient = new THREE.AmbientLight('#1d2a44', 1.6);
-    this.scene.add(ambient);
-
-    this.keyLight = new THREE.DirectionalLight('#7ce8ff', 2.8);
-    this.keyLight.position.set(5, 8, 6);
-    this.scene.add(this.keyLight);
-
-    this.rimLight = new THREE.DirectionalLight('#f4c55c', 1.9);
-    this.rimLight.position.set(-6, -3, -5);
-    this.scene.add(this.rimLight);
-
-    this.modelContainer = new THREE.Group();
-    this.scene.add(this.modelContainer);
-  }
-
-  _initAtmosphere() {
-    const count = 480;
-    const positions = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
-    this.particleSpeeds = new Float32Array(count);
-
-    const cGold = new THREE.Color('#f4c55c');
-    const cCyan = new THREE.Color('#38b6ff');
-    const cCrimson = new THREE.Color('#ff3b5c');
-
-    for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 22;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 14;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 18;
-      this.particleSpeeds[i] = 0.22 + Math.random() * 0.65;
-
-      const pick = Math.random();
-      const col = pick < 0.55 ? cGold : pick < 0.9 ? cCyan : cCrimson;
-      colors[i * 3] = col.r;
-      colors[i * 3 + 1] = col.g;
-      colors[i * 3 + 2] = col.b;
+    for (let i = 0; i < 48; i++) {
+      this.embers.push({
+        x: Math.random() * 1200,
+        y: Math.random() * 700,
+        vx: (Math.random() - 0.5) * 18,
+        vy: -18 - Math.random() * 32,
+        size: 1.2 + Math.random() * 2.4,
+        alpha: 0.35 + Math.random() * 0.6,
+        color: Math.random() < 0.7 ? '#ffe08a' : '#5ecbff'
+      });
     }
 
-    const pGeo = new THREE.BufferGeometry();
-    pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    pGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-    const pMat = new THREE.PointsMaterial({
-      size: 0.05,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.68,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false
-    });
-
-    this.emberParticles = new THREE.Points(pGeo, pMat);
-    this.scene.add(this.emberParticles);
-
-    const gridHelper = new THREE.PolarGridHelper(4.8, 16, 8, 64, '#1b2b44', '#0f1828');
-    gridHelper.position.y = -1.65;
-    this.scene.add(gridHelper);
-    this.floorGrid = gridHelper;
-
-    this.lightningGroup = new THREE.Group();
-    this.scene.add(this.lightningGroup);
+    for (let i = 0; i < 65; i++) {
+      this.rainDrops.push({
+        x: Math.random() * 1200,
+        y: Math.random() * 700,
+        len: 12 + Math.random() * 16,
+        speed: 380 + Math.random() * 220
+      });
+    }
   }
 
-  triggerStormLightning(playSound = true) {
-    sharedUniforms.uLightningFlash.value = 1.25;
-    if (playSound) {
+  triggerLightningStrike(playAudio = true) {
+    this.lightningFlashAlpha = 0.55;
+    if (playAudio) {
       this.audio.playThunderAndLightning();
     }
 
-    while (this.lightningGroup.children.length > 0) {
-      this.lightningGroup.remove(this.lightningGroup.children[0]);
-    }
-
-    const boltPts = [];
-    let curr = new THREE.Vector3((Math.random() - 0.5) * 8, 6.5, -4 - Math.random() * 4);
-    boltPts.push(curr.clone());
+    const W = this.fxCanvas.width;
+    const H = this.fxCanvas.height;
+    let cx = W * (0.2 + Math.random() * 0.6);
+    let cy = 0;
+    const segs = [];
     for (let i = 0; i < 10; i++) {
-      curr = curr.clone().add(
-        new THREE.Vector3((Math.random() - 0.5) * 1.4, -1.05, (Math.random() - 0.5) * 0.8)
-      );
-      boltPts.push(curr);
+      const nx = cx + (Math.random() - 0.5) * 55;
+      const ny = cy + H / 10;
+      segs.push({ x1: cx, y1: cy, x2: nx, y2: ny });
+      cx = nx;
+      cy = ny;
     }
-    const curve = new THREE.CatmullRomCurve3(boltPts);
-    const geo = new THREE.TubeGeometry(curve, 24, 0.04, 6, false);
-    const mat = new THREE.MeshBasicMaterial({ color: '#c4f5ff', transparent: true, opacity: 0.95 });
-    this.lightningGroup.add(new THREE.Mesh(geo, mat));
+    this.lightningBolts.push({ segs, alpha: 1.0 });
   }
 
-  _loadSpecimen(modeId, specimenId = null, customQuizColors = null) {
-    this.currentModeId = modeId;
-    const modeData = SCAN_MODES[modeId];
-    const specList = modeData.specimens;
-    const chosenSpec = specimenId
-      ? specList.find((s) => s.id === specimenId) || specList[0]
-      : specList[0];
+  _loadRealm(realmId) {
+    this.currentRealmId = realmId;
+    const realm = REALMS[realmId];
 
-    this.currentSpecimenId = chosenSpec.id;
-    this.customQuizColors = customQuizColors;
+    document.getElementById('realm-kicker').textContent = realm.chapterKicker;
+    document.getElementById('realm-headline').textContent = realm.headline;
+    document.getElementById('realm-sublead').textContent = realm.sublead;
 
-    sharedUniforms.uThemeColor.value.set(customQuizColors?.colorHex || chosenSpec.themeColor);
-    sharedUniforms.uSecondaryColor.value.set(customQuizColors?.secondaryHex || chosenSpec.secondaryColor);
+    this.imgReal.src = realm.realImage;
+    this.imgXray.src = realm.xrayImage;
 
-    while (this.modelContainer.children.length > 0) {
-      this.modelContainer.remove(this.modelContainer.children[0]);
-    }
-
-    if (modeId === 'dragon') {
-      this.currentModel = buildDragonModel(chosenSpec.id, customQuizColors);
-      this.cameraLerpTargetPos = new THREE.Vector3(2.6, 1.4, 5.2);
-      this.cameraLerpLookAt = new THREE.Vector3(0.1, 0.45, 0);
-    } else if (modeId === 'rider') {
-      this.currentModel = buildRiderModel(chosenSpec.id);
-      this.cameraLerpTargetPos = new THREE.Vector3(0.0, 0.8, 4.1);
-      this.cameraLerpLookAt = new THREE.Vector3(0.0, 0.45, 0);
-    } else if (modeId === 'basgiath') {
-      this.currentModel = buildBasgiathModel();
-      this.cameraLerpTargetPos = new THREE.Vector3(0.0, 1.85, 6.0);
-      this.cameraLerpLookAt = new THREE.Vector3(0.0, -0.2, 0);
-    }
-
-    this.modelContainer.add(this.currentModel);
-    this._renderSpecimenUI(modeData, chosenSpec);
-    this._buildHotspots(chosenSpec);
-  }
-
-  _renderSpecimenUI(modeData, spec) {
-    const titleEl = document.getElementById('hud-mode-title');
-    if (titleEl) titleEl.textContent = modeData.title;
-    document.getElementById('specimen-name').textContent = spec.name;
-    document.getElementById('specimen-class').textContent = spec.classification;
-    document.getElementById('specimen-summary').textContent = spec.summary;
-
-    const statsGrid = document.getElementById('telemetry-stats');
-    if (this.currentModeId === 'rider') {
-      statsGrid.innerHTML = `
-        <div class="stat-box"><span class="stat-label">SIGNET</span><span class="stat-val">${spec.signet}</span></div>
-        <div class="stat-box"><span class="stat-label">CARDIAC</span><span class="stat-val">${spec.heartRate}</span></div>
-      `;
-    } else {
-      statsGrid.innerHTML = `
-        <div class="stat-box"><span class="stat-label">SPAN / SCALE</span><span class="stat-val">${spec.wingspan}</span></div>
-        <div class="stat-box"><span class="stat-label">CORE THERMAL</span><span class="stat-val">${spec.coreTemp}</span></div>
-      `;
-    }
-
-    const subTabs = document.getElementById('specimen-tabs');
-    subTabs.innerHTML = '';
-    modeData.specimens.forEach((s) => {
-      const btn = document.createElement('button');
-      btn.className = `specimen-pill ${s.id === spec.id ? 'active' : ''}`;
-      btn.textContent = s.name;
-      btn.addEventListener('click', () => {
-        this.audio.playPulseChime(1.2);
-        this._loadSpecimen(this.currentModeId, s.id);
-      });
-      subTabs.appendChild(btn);
+    // Update realm tab buttons
+    document.querySelectorAll('.realm-tab').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.realm === realmId);
     });
 
-    if (spec.hotspots && spec.hotspots.length > 0) {
-      this._showHotspotCard(spec.hotspots[0], false);
-    }
-  }
+    // Build numbered hotspot pins on the stage & quick-chips in the sidebar
+    this.hotspotsLayer.innerHTML = '';
+    const chipsContainer = document.getElementById('hotspot-chips');
+    chipsContainer.innerHTML = '';
 
-  _buildHotspots(spec) {
-    this.hotspotsContainer.innerHTML = '';
-    this.activeHotspots = [];
-
-    (spec.hotspots || []).forEach((h, idx) => {
+    realm.hotspots.forEach((h, idx) => {
+      // Pin on the 16:9 Stage
       const pin = document.createElement('button');
-      pin.className = 'hotspot-pin';
+      pin.className = `stage-pin ${idx === 0 ? 'active' : ''}`;
+      pin.style.left = `${h.x}%`;
+      pin.style.top = `${h.y}%`;
+      pin.dataset.id = h.id;
       pin.innerHTML = `
-        <span class="hotspot-index">${idx + 1}</span>
-        <span class="hotspot-label">${h.title}</span>
+        <span>${h.num}</span>
+        <span class="pin-tooltip">${h.title}</span>
       `;
       pin.addEventListener('click', (e) => {
         e.stopPropagation();
-        this.audio.playPulseChime(1.35);
-        this._focusOnHotspot(h, pin);
+        this.audio.playPulseChime(1.25);
+        this._selectHotspot(h);
       });
-      this.hotspotsContainer.appendChild(pin);
-      this.activeHotspots.push({
-        data: h,
-        el: pin,
-        worldPos: new THREE.Vector3(...h.coords)
+      this.hotspotsLayer.appendChild(pin);
+
+      // Chip in the Right Sidebar
+      const chip = document.createElement('button');
+      chip.className = `hotspot-chip ${idx === 0 ? 'active' : ''}`;
+      chip.dataset.id = h.id;
+      chip.textContent = `${h.num} • ${h.title.split(' ')[0]} ${h.title.split(' ')[1] || ''}`;
+      chip.addEventListener('click', () => {
+        this.audio.playPulseChime(1.25);
+        this._selectHotspot(h);
       });
+      chipsContainer.appendChild(chip);
+    });
+
+    if (realm.hotspots.length > 0) {
+      this._selectHotspot(realm.hotspots[0], false);
+    }
+  }
+
+  _selectHotspot(h, moveLens = true) {
+    document.querySelectorAll('.stage-pin').forEach((p) => {
+      p.classList.toggle('active', p.dataset.id === h.id);
+    });
+    document.querySelectorAll('.hotspot-chip').forEach((c) => {
+      c.classList.toggle('active', c.dataset.id === h.id);
+    });
+
+    document.getElementById('codex-tag').textContent = `${h.num} • ${h.tag}`;
+    document.getElementById('codex-title').textContent = h.title;
+    document.getElementById('codex-telemetry').textContent = h.telemetry;
+    document.getElementById('codex-desc').textContent = h.description;
+    document.getElementById('codex-secret').textContent = h.secret;
+
+    if (moveLens) {
+      this.targetLensPct.x = h.x;
+      this.targetLensPct.y = h.y;
+      if (this.visionMode === 'real') {
+        this._setVisionMode('lens');
+      }
+    }
+  }
+
+  _setVisionMode(mode) {
+    this.visionMode = mode;
+    document.querySelectorAll('.vision-pill').forEach((p) => {
+      p.classList.toggle('active', p.dataset.vision === mode);
+    });
+
+    if (mode === 'real') {
+      this.imgXray.style.clipPath = 'circle(0px at 50% 50%)';
+      this.lensRing.style.opacity = '0';
+    } else if (mode === 'xray') {
+      this.imgXray.style.clipPath = 'circle(150% at 50% 50%)';
+      this.lensRing.style.opacity = '0';
+    } else {
+      this.lensRing.style.opacity = '1';
+      this._updateLensDOM();
+    }
+  }
+
+  _updateLensDOM() {
+    if (this.visionMode !== 'lens') return;
+    const xPct = this.currentLensPct.x;
+    const yPct = this.currentLensPct.y;
+
+    this.imgXray.style.clipPath = `circle(${this.lensRadiusPx}px at ${xPct}% ${yPct}%)`;
+    this.lensRing.style.left = `${xPct}%`;
+    this.lensRing.style.top = `${yPct}%`;
+    const d = this.lensRadiusPx * 2;
+    this.lensRing.style.width = `${d}px`;
+    this.lensRing.style.height = `${d}px`;
+    this.lensRing.style.marginLeft = `${-this.lensRadiusPx}px`;
+    this.lensRing.style.marginTop = `${-this.lensRadiusPx}px`;
+  }
+
+  // ==========================================================================
+  // 2. SECTION II: 3D WEBGL ARTIFACT RELIQUARY
+  // ==========================================================================
+  _init3DReliquary() {
+    this.reliquaryBox = document.getElementById('artifact-3d-container');
+    const rect = this.reliquaryBox.getBoundingClientRect();
+    const w = Math.max(360, rect.width);
+    const h = Math.max(320, rect.height);
+
+    this.scene3D = new THREE.Scene();
+    this.camera3D = new THREE.PerspectiveCamera(42, w / h, 0.1, 100);
+    this.camera3D.position.set(0, 1.35, 4.8);
+
+    this.renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    this.renderer3D.setSize(w, h);
+    this.renderer3D.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer3D.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer3D.toneMappingExposure = 1.2;
+    this.reliquaryBox.appendChild(this.renderer3D.domElement);
+
+    this.composer3D = new EffectComposer(this.renderer3D);
+    this.composer3D.addPass(new RenderPass(this.scene3D, this.camera3D));
+    this.composer3D.addPass(
+      new UnrealBloomPass(new THREE.Vector2(w, h), 0.75, 0.4, 0.22)
+    );
+
+    this.controls3D = new OrbitControls(this.camera3D, this.renderer3D.domElement);
+    this.controls3D.enableDamping = true;
+    this.controls3D.autoRotate = true;
+    this.controls3D.autoRotateSpeed = 1.4;
+    this.controls3D.maxDistance = 8;
+    this.controls3D.minDistance = 2.4;
+
+    this.scene3D.add(new THREE.AmbientLight('#263554', 1.8));
+    const key = new THREE.DirectionalLight('#ffe08a', 3.2);
+    key.position.set(4, 6, 5);
+    this.scene3D.add(key);
+
+    const rim = new THREE.DirectionalLight('#5ecbff', 2.4);
+    rim.position.set(-5, -3, -4);
+    this.scene3D.add(rim);
+
+    this.artifactHolder = new THREE.Group();
+    this.scene3D.add(this.artifactHolder);
+
+    // Populate Artifact Selector Cards
+    const stack = document.getElementById('artifact-cards-list');
+    ARTIFACTS_3D.forEach((art, idx) => {
+      const card = document.createElement('div');
+      card.className = `artifact-selector-card ${idx === 0 ? 'active' : ''}`;
+      card.dataset.id = art.id;
+      card.innerHTML = `
+        <div class="hero-kicker" style="margin-bottom:4px;">${art.subtitle}</div>
+        <h3>${art.title}</h3>
+        <p>${art.description}</p>
+      `;
+      card.addEventListener('click', () => {
+        this.audio.playPulseChime(1.2);
+        document.querySelectorAll('.artifact-selector-card').forEach((c) => {
+          c.classList.toggle('active', c.dataset.id === art.id);
+        });
+        this._loadArtifact3D(art.id);
+      });
+      stack.appendChild(card);
+    });
+
+    this._loadArtifact3D('wardstone');
+
+    window.addEventListener('resize', () => {
+      const r = this.reliquaryBox.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0) {
+        this.camera3D.aspect = r.width / r.height;
+        this.camera3D.updateProjectionMatrix();
+        this.renderer3D.setSize(r.width, r.height);
+        this.composer3D.setSize(r.width, r.height);
+      }
     });
   }
 
-  _focusOnHotspot(hotspot, pinEl) {
-    document.querySelectorAll('.hotspot-pin').forEach((p) => p.classList.remove('selected'));
-    if (pinEl) pinEl.classList.add('selected');
-
-    const target = new THREE.Vector3(...hotspot.coords);
-    this.cameraLerpLookAt = target.clone();
-    const offset = new THREE.Vector3(0.75, 0.5, 2.7);
-    this.cameraLerpTargetPos = target.clone().add(offset);
-
-    if (sharedUniforms.uXrayDepth.value < 0.65) {
-      sharedUniforms.uXrayDepth.value = 0.88;
-      const slider = document.getElementById('xray-depth-slider');
-      if (slider) slider.value = 88;
-      document.getElementById('xray-depth-val').textContent = '88%';
+  _loadArtifact3D(artifactId) {
+    while (this.artifactHolder.children.length > 0) {
+      this.artifactHolder.remove(this.artifactHolder.children[0]);
     }
+    this.artifactModel = buildArtifact3D(artifactId);
+    this.artifactHolder.add(this.artifactModel);
+  }
 
-    this._showHotspotCard(hotspot, true);
-    if (this.loreDrawer) {
-      this.loreDrawer.classList.remove('hidden');
+  // ==========================================================================
+  // 3. SECTION III: WIELDER OF THE STORM GAME & THRESHING QUIZ
+  // ==========================================================================
+  _initStormGame() {
+    const canvas = document.getElementById('storm-game-canvas');
+    if (canvas) {
+      this.stormGame = new StormDefenseGame(canvas, this.audio);
+    }
+    const resetBtn = document.getElementById('btn-reset-storm-game');
+    if (resetBtn && this.stormGame) {
+      resetBtn.addEventListener('click', () => {
+        this.audio.playPulseChime(1.1);
+        this.stormGame.reset();
+      });
     }
   }
 
-  _showHotspotCard(hotspot) {
-    document.getElementById('codex-layer-tag').textContent = hotspot.layer;
-    document.getElementById('codex-title').textContent = hotspot.title;
-    document.getElementById('codex-telemetry').textContent = hotspot.telemetry;
-    document.getElementById('codex-desc').textContent = hotspot.description;
-    document.getElementById('codex-xray-insight').textContent = hotspot.xrayInsight;
-  }
-
-  startCinematicFlythrough() {
-    this.audio.resume();
-    this.triggerStormLightning(true);
-    this.isFlythroughActive = !this.isFlythroughActive;
-    this.flythroughTime = 0;
-
-    const btn = document.getElementById('btn-flythrough');
-    btn.classList.toggle('active', this.isFlythroughActive);
-    btn.textContent = this.isFlythroughActive ? '⏹ Stop Orbit' : '🎬 Orbit';
-  }
-
-  openDragonQuiz() {
-    this.audio.playPulseChime(1.1);
+  _initQuiz() {
     this.quizStep = 0;
-    this.quizScores = { tairn: 0, andarna: 0, blue: 0, green: 0, red: 0, brown: 0, orange: 0 };
-    document.getElementById('quiz-modal').classList.remove('hidden');
-    this._renderQuizStep();
+    this.quizScores = { tairn: 0, andarna: 0, blue: 0, green: 0, red: 0 };
+    this._renderQuiz();
   }
 
-  _renderQuizStep() {
-    const body = document.getElementById('quiz-body');
+  _renderQuiz() {
+    const container = document.getElementById('quiz-container');
+    if (!container) return;
+
     if (this.quizStep < QUIZ_QUESTIONS.length) {
       const q = QUIZ_QUESTIONS[this.quizStep];
-      body.innerHTML = `
-        <div class="quiz-progress">THRESHING RESONANCE • QUESTION ${this.quizStep + 1} OF ${QUIZ_QUESTIONS.length}</div>
-        <h3 class="quiz-question">${q.question}</h3>
-        <div class="quiz-options">
+      container.innerHTML = `
+        <div style="font-size:11px;color:var(--cyan-signet);margin-top:8px;letter-spacing:0.12em;">
+          QUESTION ${this.quizStep + 1} OF ${QUIZ_QUESTIONS.length}
+        </div>
+        <div class="quiz-question-text">${q.question}</div>
+        <div class="quiz-choices">
           ${q.options
             .map(
-              (opt, idx) => `
-            <button class="quiz-option-btn" data-idx="${idx}">
-              <span class="opt-bullet">◆</span>
-              <span>${opt.text}</span>
+              (o, idx) => `
+            <button class="quiz-choice-btn" data-idx="${idx}">
+              <strong style="color:var(--gold-primary);margin-right:8px;">0${idx + 1}</strong> ${o.text}
             </button>
           `
             )
             .join('')}
         </div>
       `;
-      body.querySelectorAll('.quiz-option-btn').forEach((btn) => {
+      container.querySelectorAll('.quiz-choice-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
           const opt = q.options[Number(btn.dataset.idx)];
           Object.entries(opt.weights).forEach(([k, w]) => {
             this.quizScores[k] = (this.quizScores[k] || 0) + w;
           });
-          this.audio.playPulseChime(1.25 + this.quizStep * 0.1);
+          this.audio.playPulseChime(1.2 + this.quizStep * 0.12);
           this.quizStep++;
-          this._renderQuizStep();
+          this._renderQuiz();
         });
       });
     } else {
-      const validKeys = Object.keys(DRAGON_RESULTS);
       let bestKey = 'tairn';
-      let bestScore = -1;
-      validKeys.forEach((k) => {
-        if ((this.quizScores[k] || 0) > bestScore) {
-          bestScore = this.quizScores[k];
+      let bestVal = -1;
+      Object.keys(DRAGON_RESULTS).forEach((k) => {
+        if ((this.quizScores[k] || 0) > bestVal) {
+          bestVal = this.quizScores[k];
           bestKey = k;
         }
       });
-
       const res = DRAGON_RESULTS[bestKey];
-      this.triggerStormLightning(true);
+      this.triggerLightningStrike(true);
 
-      body.innerHTML = `
-        <div class="quiz-progress" style="color:${res.colorHex}">BOND TETHER LOCKED • THRESHING COMPLETE</div>
-        <h2 class="quiz-result-title" style="color:${res.colorHex}">${res.breed}</h2>
-        <div class="quiz-rarity">${res.rarity}</div>
-        <blockquote class="quiz-quote">${res.quote}</blockquote>
-        <p class="quiz-desc">${res.description}</p>
-        <div class="quiz-signet-box">
-          <span>MANIFESTED SIGNET CONDUIT:</span>
-          <strong style="color:${res.secondaryHex}">${res.signet}</strong>
-        </div>
-        <div class="quiz-actions">
-          <button id="btn-apply-quiz-dragon" class="cta-primary">VIEW YOUR DRAGON IN 3D X-RAY</button>
-          <button id="btn-retry-quiz" class="cta-secondary">RETAKE</button>
+      container.innerHTML = `
+        <div style="margin-top:14px;padding:18px;border-radius:14px;background:rgba(229,184,92,0.08);border:1px solid ${res.colorHex};">
+          <div style="font-size:10.5px;letter-spacing:0.16em;color:${res.colorHex};font-weight:700;">
+            ${res.rarity}
+          </div>
+          <h4 style="font-family:var(--font-display);font-size:22px;color:#fff;margin:6px 0;">
+            ${res.breed}
+          </h4>
+          <p style="font-family:var(--font-editorial);font-style:italic;font-size:18px;color:var(--gold-bright);margin-bottom:10px;">
+            ${res.quote}
+          </p>
+          <p style="font-size:13.5px;line-height:1.55;color:var(--text-secondary);margin-bottom:12px;">
+            ${res.description}
+          </p>
+          <div style="font-size:12.5px;color:var(--text-ivory);margin-bottom:16px;">
+            <strong>Awakened Signet:</strong> <span style="color:${res.colorHex}">${res.signet}</span>
+          </div>
+          <button id="btn-retake-quiz" class="btn-gold">↻ Retake Threshing Trial</button>
         </div>
       `;
-
-      document.getElementById('btn-apply-quiz-dragon').addEventListener('click', () => {
-        document.getElementById('quiz-modal').classList.add('hidden');
-        this._setModeTabUI('dragon');
-        this._loadSpecimen('dragon', res.specimenId, {
-          colorHex: res.colorHex,
-          secondaryHex: res.secondaryHex
-        });
-      });
-      document.getElementById('btn-retry-quiz').addEventListener('click', () => {
-        this.openDragonQuiz();
+      document.getElementById('btn-retake-quiz').addEventListener('click', () => {
+        this._initQuiz();
       });
     }
   }
 
-  launchParapetGame() {
-    this.audio.resume();
-    this.triggerStormLightning(true);
-    this.isFlythroughActive = false;
-    this.modelContainer.visible = false;
-    this.floorGrid.visible = false;
-    this.hotspotsContainer.classList.add('hidden');
-    document.getElementById('main-inspector-ui').classList.add('hidden');
-    document.getElementById('parapet-game-ui').classList.remove('hidden');
-    this.parapetGame.start();
-  }
-
-  exitParapetGame() {
-    this.parapetGame.stop();
-    sharedUniforms.uFullXray.value = 0.0;
-    this.modelContainer.visible = true;
-    this.floorGrid.visible = true;
-    this.hotspotsContainer.classList.remove('hidden');
-    document.getElementById('parapet-game-ui').classList.add('hidden');
-    document.getElementById('main-inspector-ui').classList.remove('hidden');
-    this._loadSpecimen(this.currentModeId, this.currentSpecimenId, this.customQuizColors);
-  }
-
-  _setModeTabUI(modeId) {
-    document.querySelectorAll('.mode-tab').forEach((t) => {
-      t.classList.toggle('active', t.dataset.mode === modeId);
-    });
-  }
-
-  _bindUIEvents() {
-    const enterBtn = document.getElementById('btn-enter-archive');
-    if (enterBtn) {
-      enterBtn.addEventListener('click', () => {
-        this.audio.init();
-        this.audio.playThunderAndLightning();
-        document.getElementById('intro-overlay').classList.add('fade-out');
-        setTimeout(() => {
-          document.getElementById('intro-overlay').classList.add('hidden');
-        }, 500);
-        this.triggerStormLightning(false);
-      });
-    }
-
-    document.querySelectorAll('.mode-tab').forEach((tab) => {
+  // ==========================================================================
+  // 4. EVENT BINDINGS & MAIN ANIMATION LOOP
+  // ==========================================================================
+  _bindEvents() {
+    // Realm Switcher Tabs
+    document.querySelectorAll('.realm-tab').forEach((tab) => {
       tab.addEventListener('click', () => {
-        const mode = tab.dataset.mode;
-        if (this.parapetGame.isActive) {
-          this.exitParapetGame();
-        }
-        this.audio.playPulseChime(1.0);
-        this._setModeTabUI(mode);
-        this._loadSpecimen(mode);
+        this.audio.playPulseChime(1.1);
+        this.triggerLightningStrike(false);
+        this._loadRealm(tab.dataset.realm);
       });
     });
 
-    window.addEventListener('pointermove', (e) => {
-      if (this.isLensPinned) return;
-      const prevX = this.mousePx.x;
-      const prevY = this.mousePx.y;
-      this.mousePx.x = e.clientX;
-      this.mousePx.y = e.clientY;
-
-      this.targetLensUV.set(
-        e.clientX / window.innerWidth,
-        1.0 - e.clientY / window.innerHeight
-      );
-
-      if (this.reticleEl) {
-        this.reticleEl.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-      }
-
-      const speed = Math.hypot(e.clientX - prevX, e.clientY - prevY) / 45.0;
-      this.audio.updateScannerHum(Math.min(1.0, speed), sharedUniforms.uXrayDepth.value, true);
+    // Vision Mode Pills
+    document.querySelectorAll('.vision-pill').forEach((pill) => {
+      pill.addEventListener('click', () => {
+        this.audio.playPulseChime(1.2);
+        this._setVisionMode(pill.dataset.vision);
+      });
     });
 
-    this.renderer.domElement.addEventListener('dblclick', () => {
-      this.isLensPinned = !this.isLensPinned;
-      this.reticleEl.classList.toggle('pinned', this.isLensPinned);
-      this.audio.playPulseChime(this.isLensPinned ? 1.4 : 0.85);
-      const pinStatus = document.getElementById('reticle-status-text');
-      if (pinStatus) {
-        pinStatus.textContent = this.isLensPinned ? 'LOCKED LENS' : 'X-RAY LENS';
-      }
-    });
-
-    const depthSlider = document.getElementById('xray-depth-slider');
-    depthSlider.addEventListener('input', (e) => {
-      const val = Number(e.target.value) / 100;
-      sharedUniforms.uXrayDepth.value = val;
-      document.getElementById('xray-depth-val').textContent = `${Math.round(val * 100)}%`;
-    });
-
-    const radiusSlider = document.getElementById('xray-radius-slider');
-    radiusSlider.addEventListener('input', (e) => {
-      const val = Number(e.target.value) / 100;
-      sharedUniforms.uLensRadius.value = val;
-      const pxDiameter = Math.round(val * window.innerHeight * 2);
-      this.reticleEl.style.width = `${pxDiameter}px`;
-      this.reticleEl.style.height = `${pxDiameter}px`;
-      this.reticleEl.style.marginLeft = `${-pxDiameter / 2}px`;
-      this.reticleEl.style.marginTop = `${-pxDiameter / 2}px`;
-      document.getElementById('xray-radius-val').textContent = `${Math.round(val * 100)}%`;
-    });
-
-    const btnFullXray = document.getElementById('btn-full-xray');
-    btnFullXray.addEventListener('click', () => {
-      const next = sharedUniforms.uFullXray.value > 0.5 ? 0.0 : 1.0;
-      sharedUniforms.uFullXray.value = next;
-      btnFullXray.classList.toggle('active', next > 0.5);
-      btnFullXray.textContent = next > 0.5 ? '◉ Full X-Ray: ON' : '◎ Full X-Ray';
-      this.reticleEl.classList.toggle('hidden', next > 0.5);
-      this.audio.playPulseChime(1.3);
-    });
-
-    document.getElementById('btn-lightning-surge').addEventListener('click', () => {
-      this.triggerStormLightning(true);
-    });
-
-    document.getElementById('btn-flythrough').addEventListener('click', () => {
-      this.startCinematicFlythrough();
-    });
-
-    // Lore Drawer Toggle & Close
-    document.getElementById('btn-toggle-drawer').addEventListener('click', () => {
-      this.loreDrawer.classList.toggle('hidden');
-      this.audio.playPulseChime(1.1);
-    });
-    document.getElementById('btn-close-drawer').addEventListener('click', () => {
-      this.loreDrawer.classList.add('hidden');
-    });
-
-    // Quiz & Dedication Modals
-    document.getElementById('btn-open-quiz').addEventListener('click', () => {
-      this.openDragonQuiz();
-    });
-    document.getElementById('btn-close-quiz').addEventListener('click', () => {
-      document.getElementById('quiz-modal').classList.add('hidden');
-    });
-
-    document.getElementById('btn-open-dedication').addEventListener('click', () => {
-      this.audio.playPulseChime(1.15);
-      document.getElementById('dedication-modal').classList.remove('hidden');
-    });
-    document.getElementById('btn-close-dedication').addEventListener('click', () => {
-      document.getElementById('dedication-modal').classList.add('hidden');
-    });
-
-    // 3D Flight Game Controls
-    document.getElementById('btn-launch-parapet').addEventListener('click', () => {
-      this.launchParapetGame();
-    });
-    document.getElementById('btn-parapet-exit').addEventListener('click', () => {
-      this.exitParapetGame();
-    });
-    document.getElementById('btn-parapet-restart').addEventListener('click', () => {
-      this.parapetGame.start();
-    });
-    const fireBtn = document.getElementById('btn-parapet-fire');
-    if (fireBtn) {
-      fireBtn.addEventListener('click', () => {
-        this.parapetGame.fireLightningBolt();
+    // Lens Radius Slider
+    const radSlider = document.getElementById('lens-radius-slider');
+    if (radSlider) {
+      radSlider.addEventListener('input', (e) => {
+        this.lensRadiusPx = Number(e.target.value);
+        if (this.visionMode !== 'lens') {
+          this._setVisionMode('lens');
+        } else {
+          this._updateLensDOM();
+        }
       });
     }
 
-    const btnAudio = document.getElementById('btn-audio-toggle');
-    btnAudio.addEventListener('click', () => {
-      const muted = this.audio.toggleMute();
-      btnAudio.textContent = muted ? '🔇' : '🔊';
+    // Stage Cursor Tracking & 3D Parallax Tilt
+    this.stageFrame.addEventListener('pointermove', (e) => {
+      this.audio.resume();
+      const rect = this.stageFrame.getBoundingClientRect();
+      const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+      const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+
+      if (!this.isLensPinned) {
+        this.targetLensPct.x = Math.max(0, Math.min(100, xPct));
+        this.targetLensPct.y = Math.max(0, Math.min(100, yPct));
+      }
+
+      // Subtle 3D Parallax Shift on the Scene
+      const shiftX = ((xPct - 50) / 50) * -10;
+      const shiftY = ((yPct - 50) / 50) * -7;
+      this.parallaxInner.style.transform = `translate3d(${shiftX}px, ${shiftY}px, 0)`;
     });
 
-    this.controls.addEventListener('start', () => {
-      this.cameraLerpTargetPos = null;
-      this.cameraLerpLookAt = null;
-      if (this.isFlythroughActive) {
-        this.isFlythroughActive = false;
-        const btn = document.getElementById('btn-flythrough');
-        btn.classList.remove('active');
-        btn.textContent = '🎬 Orbit';
+    // Double-Click Stage to Pin/Unpin Lens
+    this.stageFrame.addEventListener('dblclick', () => {
+      this.isLensPinned = !this.isLensPinned;
+      this.audio.playPulseChime(this.isLensPinned ? 1.45 : 0.9);
+      const lbl = document.getElementById('lens-status-label');
+      if (lbl) {
+        lbl.textContent = this.isLensPinned
+          ? 'LENS PINNED • DBL-CLICK TO UNLOCK'
+          : 'SECOND-SIGHT LENS • DBL-CLICK TO PIN';
       }
     });
 
-    window.addEventListener('resize', () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      this.camera.aspect = w / h;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(w, h);
-      this.composer.setSize(w, h);
-      sharedUniforms.uAspect.value = w / h;
+    // Header Lightning & Audio Buttons
+    document.getElementById('btn-trigger-lightning').addEventListener('click', () => {
+      this.triggerLightningStrike(true);
+    });
+
+    const audioBtn = document.getElementById('btn-audio-toggle');
+    audioBtn.addEventListener('click', () => {
+      const muted = this.audio.toggleMute();
+      audioBtn.textContent = muted ? '🔇 Storm Audio: OFF' : '🔊 Storm Audio: ON';
     });
   }
 
-  _updateHotspotScreenPositions() {
-    if (!this.activeHotspots || this.parapetGame.isActive) return;
-    const halfW = window.innerWidth * 0.5;
-    const halfH = window.innerHeight * 0.5;
+  _renderStageFX(dt) {
+    const ctx = this.fxCtx;
+    const W = this.fxCanvas.width;
+    const H = this.fxCanvas.height;
 
-    this.activeHotspots.forEach((h) => {
-      const projected = h.worldPos.clone();
-      projected.project(this.camera);
+    ctx.clearRect(0, 0, W, H);
 
-      if (projected.z > 1.0) {
-        h.el.style.opacity = '0';
-        h.el.style.pointerEvents = 'none';
-        return;
+    // 1. Storm Rain Streaks
+    ctx.strokeStyle = 'rgba(185, 215, 255, 0.16)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    this.rainDrops.forEach((r) => {
+      r.y += r.speed * dt;
+      r.x -= r.speed * 0.15 * dt;
+      if (r.y > H) {
+        r.y = -20;
+        r.x = Math.random() * W;
       }
-
-      const x = projected.x * halfW + halfW;
-      const y = -(projected.y * halfH) + halfH;
-      h.el.style.opacity = '1';
-      h.el.style.pointerEvents = 'auto';
-      h.el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      if (r.x < 0) r.x = W;
+      ctx.moveTo(r.x, r.y);
+      ctx.lineTo(r.x - 3, r.y + r.len);
     });
+    ctx.stroke();
+
+    // 2. Floating Golden Embers & Signet Sparks
+    this.embers.forEach((em) => {
+      em.x += em.vx * dt;
+      em.y += em.vy * dt;
+      if (em.y < -10) {
+        em.y = H + 10;
+        em.x = Math.random() * W;
+      }
+      ctx.fillStyle = em.color;
+      ctx.globalAlpha = em.alpha;
+      ctx.beginPath();
+      ctx.arc(em.x, em.y, em.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1.0;
+
+    // 3. Lightning Flash & Bolts
+    if (this.lightningFlashAlpha > 0.01) {
+      ctx.fillStyle = `rgba(180, 230, 255, ${this.lightningFlashAlpha * 0.25})`;
+      ctx.fillRect(0, 0, W, H);
+      this.lightningFlashAlpha = Math.max(0, this.lightningFlashAlpha - dt * 1.8);
+    }
+
+    for (let i = this.lightningBolts.length - 1; i >= 0; i--) {
+      const b = this.lightningBolts[i];
+      b.alpha -= dt * 3.0;
+      if (b.alpha <= 0) {
+        this.lightningBolts.splice(i, 1);
+        continue;
+      }
+      ctx.save();
+      ctx.strokeStyle = `rgba(200, 242, 255, ${b.alpha})`;
+      ctx.shadowColor = '#5ecbff';
+      ctx.shadowBlur = 16;
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      b.segs.forEach((s) => {
+        ctx.moveTo(s.x1, s.y1);
+        ctx.lineTo(s.x2, s.y2);
+      });
+      ctx.stroke();
+      ctx.restore();
+    }
   }
 
   _animate() {
@@ -636,77 +563,30 @@ class FourthWingOculusApp {
     const dt = Math.min(this.clock.getDelta(), 0.1);
     const elapsed = this.clock.getElapsedTime();
 
-    sharedUniforms.uTime.value = elapsed;
+    // Smoothly interpolate Second-Sight Lens position
+    this.currentLensPct.x += (this.targetLensPct.x - this.currentLensPct.x) * 0.22;
+    this.currentLensPct.y += (this.targetLensPct.y - this.currentLensPct.y) * 0.22;
+    this._updateLensDOM();
 
-    this.currentLensUV.lerp(this.targetLensUV, 0.18);
-    sharedUniforms.uLensPos.value.copy(this.currentLensUV);
+    // Render Stage FX (Rain, Embers, Lightning)
+    this._renderStageFX(dt);
 
-    if (sharedUniforms.uLightningFlash.value > 0.001) {
-      sharedUniforms.uLightningFlash.value = Math.max(
-        0.0,
-        sharedUniforms.uLightningFlash.value - dt * 2.4
-      );
-      this.keyLight.intensity = 2.8 + sharedUniforms.uLightningFlash.value * 4.2;
-      if (sharedUniforms.uLightningFlash.value < 0.05 && this.lightningGroup.children.length > 0) {
-        while (this.lightningGroup.children.length > 0) {
-          this.lightningGroup.remove(this.lightningGroup.children[0]);
-        }
-      }
+    // Render 3D Artifact Reliquary
+    if (this.artifactModel && this.artifactModel.userData.updateAnimation) {
+      this.artifactModel.userData.updateAnimation(elapsed);
+    }
+    if (this.controls3D && this.composer3D) {
+      this.controls3D.update();
+      this.composer3D.render();
     }
 
-    if (Math.random() < 0.002) {
-      this.triggerStormLightning(false);
+    // Render Wielder of the Storm Mini-Game
+    if (this.stormGame) {
+      this.stormGame.updateAndRender(dt, elapsed);
     }
-
-    if (this.emberParticles) {
-      const posAttr = this.emberParticles.geometry.attributes.position;
-      for (let i = 0; i < posAttr.count; i++) {
-        let y = posAttr.getY(i) + this.particleSpeeds[i] * dt;
-        let x = posAttr.getX(i) + Math.sin(elapsed * 0.8 + i) * 0.005;
-        if (y > 7.0) y = -7.0;
-        posAttr.setXY(i, x, y);
-      }
-      posAttr.needsUpdate = true;
-    }
-
-    if (this.parapetGame.isActive) {
-      sharedUniforms.uFullXray.value = 1.0;
-      this.parapetGame.update(dt, elapsed);
-    } else {
-      if (this.currentModel && this.currentModel.userData.updateAnimation) {
-        this.currentModel.userData.updateAnimation(elapsed);
-      }
-
-      if (this.isFlythroughActive) {
-        this.flythroughTime += dt * 0.42;
-        const radius = 4.6 + Math.sin(this.flythroughTime * 1.3) * 1.1;
-        this.camera.position.x = Math.cos(this.flythroughTime) * radius;
-        this.camera.position.z = Math.sin(this.flythroughTime) * radius;
-        this.camera.position.y = 1.15 + Math.sin(this.flythroughTime * 0.85) * 0.95;
-        this.controls.target.set(Math.sin(this.flythroughTime * 0.5) * 0.4, 0.35, 0);
-        if (!this.isLensPinned) {
-          this.targetLensUV.set(
-            0.5 + Math.cos(this.flythroughTime * 2.1) * 0.14,
-            0.5 + Math.sin(this.flythroughTime * 1.7) * 0.12
-          );
-        }
-      } else if (this.cameraLerpTargetPos && this.cameraLerpLookAt) {
-        this.camera.position.lerp(this.cameraLerpTargetPos, 0.08);
-        this.controls.target.lerp(this.cameraLerpLookAt, 0.08);
-        if (this.camera.position.distanceTo(this.cameraLerpTargetPos) < 0.04) {
-          this.cameraLerpTargetPos = null;
-          this.cameraLerpLookAt = null;
-        }
-      }
-
-      this.controls.update();
-      this._updateHotspotScreenPositions();
-    }
-
-    this.composer.render();
   }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  window.fourthWingApp = new FourthWingOculusApp();
+  window.empyreanApp = new EmpyreanArchiveApp();
 });

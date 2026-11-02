@@ -57345,469 +57345,309 @@ const { OrbitControls, EffectComposer, RenderPass, UnrealBloomPass } = window.__
 
 // --- loreData.js ---
 // ============================================================================
-// FOURTH WING: CODEX OCULUS — Original Anatomical, Arcane & Structural Data
-// All summaries and telemetry are original analytical descriptions inspired by
-// the world of Fourth Wing by Rebecca Yarros.
+// FOURTH WING: THE EMPYREAN ARCHIVE — Calibrated Realm & Lore Data (v3)
+// Coordinates are exact [x%, y%] positions mapped onto the 16:9 artworks.
 // ============================================================================
-const SCAN_MODES = {
+const REALMS = {
   dragon: {
     id: 'dragon',
-    title: 'DRACONIC ANATOMY & SIGNET CORE',
-    subtitle: 'Sub-Dermal Osteology, Pyro-Glands & Bond Tethers',
-    specimens: [
+    tabLabel: 'I • Dragons of the Vale',
+    chapterKicker: 'CHAPTER I • DRACONIC OSTEOLOGY & THE VALE',
+    headline: 'Tairneanach & Andarnaurram',
+    sublead: 'Move your cursor across the storm-swept cliff to part Tairn’s battle-scarred obsidian scales—revealing his four-chambered magma heart, hollow wing struts, and the golden-azure telepathic bond tether.',
+    realImage: './assets/dragon_real.jpg',
+    xrayImage: './assets/dragon_xray.jpg',
+    hotspots: [
       {
-        id: 'tairn',
-        name: 'Tairneanach (Tairn)',
-        classification: 'Black Morningstartail • Elder Combat Mount',
-        wingspan: '148 ft (45.1 m)',
-        biteForce: '48,000 PSI',
-        coreTemp: '1,420 °C (Thoracic Chamber)',
-        signetOutput: 'Pure Atmospheric Lightning (Gigawatt Class)',
-        themeColor: '#38b6ff',
-        secondaryColor: '#f4c55c',
-        summary: 'One of the largest and fiercest dragons on the Continent. Beneath his impenetrable matte-black scales lies a vanadium-dense hollow skeletal lattice engineered for high-G aerial combat, a four-chambered magma-hot heart, and a dual-channel neural nexus tethered to both his rider Violet Sorrengail and his mate Sgaeyl.',
-        hotspots: [
-          {
-            id: 'tairn-heart',
-            title: 'Four-Chambered Magma Heart & Bond Core',
-            layer: 'Vascular / Arcane Core',
-            coords: [0.2, 0.35, 0.0],
-            telemetry: 'BPM: 28 (Resting) / 140 (Combat) • Output: 4.8 GW Arcane Flux',
-            description: 'Positioned deep within a reinforced sternal keel, Tairn’s heart pumps oxygen-dense, hyper-thermophilic blood while simultaneously acting as an arcane dynamo. X-ray tomography reveals the golden-azure Bond Tether anchored directly into the aortic plexus—explaining why the death of a dragon instantaneously severs a rider’s life force.',
-            xrayInsight: 'Notice the interwoven secondary gold filament: the mated bond to Sgaeyl, creating a four-way life-dependency circuit between Tairn, Sgaeyl, Violet, and Xaden.'
-          },
-          {
-            id: 'tairn-pyro',
-            title: 'Bifurcated Pyro-Chemical Ignition Sacs',
-            layer: 'Internal Organs (Mid-X-Ray)',
-            coords: [1.85, 0.65, 0.0],
-            telemetry: 'Ignition Temp: 1,850 °C • Compound: Binary Hypergolic Mist',
-            description: 'Dragons do not store open flame inside their chests. Instead, dual thoracic reservoirs secrete two separate volatile compounds along armored tracheal ducts. When expelled through specialized sub-lingual nozzles at the back of the jaw, the two streams collide with atmospheric oxygen and ignite into stone-melting dragonfire.',
-            xrayInsight: 'The interior of the cervical vertebrae and palate are lined with calcified silicate plates that reflect radiant heat away from the brain.'
-          },
-          {
-            id: 'tairn-wings',
-            title: '5-Ray Metacarpal Wing Struts',
-            layer: 'Deep Skeletal Lattice',
-            coords: [-0.2, 1.45, 2.6],
-            telemetry: 'Bone Density: Trabecular Honeycomb • Max Load: 14 G',
-            description: 'Despite his colossal mass, Tairn achieves supersonic dive recoveries through an ultra-lightweight trabecular bone architecture. Five elongated metacarpal "fingers" radiate from the carpal joint, tensioned by high-tensile elastin membranes laced with thermoregulatory blood vessels.',
-            xrayInsight: 'Micro-stress remodeling along the left third phalanx reveals healed battle trauma from past border engagements.'
-          },
-          {
-            id: 'tairn-tail',
-            title: 'Morningstartail Calcified Mace',
-            layer: 'Osteology & Dermal Armor',
-            coords: [-3.7, 0.25, 0.0],
-            telemetry: 'Terminal Impact Force: 920 kN • Spikes: 18 Detachable Ossicones',
-            description: 'The rarest and deadliest tail configuration among the six known breeds. The final seven caudal vertebrae fuse into a dense osseous club studded with razor-edged keratin-sheathed bone spikes, capable of shattering granite ramparts or crushing a wyvern’s ribcage in a single sweep.',
-            xrayInsight: 'A dedicated dorsal tendon cable runs from the pelvis to the tail tip, allowing whip-fast kinetic snaps without sacrificing flight trim.'
-          },
-          {
-            id: 'tairn-cranial',
-            title: 'Cranial Bond Nexus & Telepathic Cortex',
-            layer: 'Neuro-Arcane System',
-            coords: [2.95, 1.35, 0.0],
-            telemetry: 'Bandwidth: Dual-Rider / Mate Multiplex • Shielding: Obsidian Grade',
-            description: 'Behind the swept-back occipital horns sits an enlarged pineal-arcaneganglion. Through this structure, Tairn projects mental speech, sensory imagery, and raw signet power across miles into Violet’s mind—while also anchoring Andarna’s golden adolescent tether.',
-            xrayInsight: 'High-frequency azure arcs visible in X-ray mode show active atmospheric charge accumulation prior to a lightning strike.'
-          }
-        ]
+        id: 'tairn-heart',
+        num: '01',
+        x: 53.5,
+        y: 47.0,
+        tag: 'CARDIAC & ARCANE CORE',
+        title: 'Four-Chambered Magma Heart & Bond Dynamo',
+        telemetry: 'Output: 4.8 Gigawatts Arcane Flux • Bond: Quaternary Mated Circuit',
+        description: 'Caged within a reinforced sternal keel, Tairn’s heart pumps superheated blood while functioning as a living arcane generator. Under Second-Sight tomography, the golden-azure Bond Tether anchors directly into the aortic plexus—explaining why a dragon’s death instantaneously severs its rider’s life force.',
+        secret: 'Notice how the heart’s golden filaments branch downward toward Andarna and outward toward Sgaeyl—binding Tairn, Sgaeyl, Violet, and Xaden into a single shared life circuit.'
       },
       {
-        id: 'andarna',
-        name: 'Andarnaurram (Andarna)',
-        classification: 'Iridescent Feathertail • The Seventh Breed',
-        wingspan: '46 ft (Juvenile) → 92 ft (Adolescent)',
-        biteForce: '19,500 PSI',
-        coreTemp: '1,180 °C (Chromatic Core)',
-        signetOutput: 'Temporal Dilation (Feathertail Gift) & Seventh Flame',
-        themeColor: '#f4c55c',
-        secondaryColor: '#ff9e44',
-        summary: 'Waited six hundred years inside her shell for the mind of a scribe and the heart of a rider. What initially appeared to be a delicate golden feathertail is revealed under X-ray tomography to be the long-lost Seventh Breed—possessing adaptive chromatic prism scales and the missing resonant frequency required to ignite the Basgiath Wardstone.',
-        hotspots: [
-          {
-            id: 'andarna-pineal',
-            title: 'Chrono-Resonant Feathertail Gland',
-            layer: 'Neuro-Arcane Core',
-            coords: [2.3, 1.1, 0.0],
-            telemetry: 'Temporal Drift: Δt = 0.00 (Suspended) • Status: Absorbed during Dreamless Sleep',
-            description: 'Juvenile feathertails possess an ephemeral arcane organ at the base of the cranium that grants temporary gifts directly to their bonded human—in Andarna’s case, the ability to halt local time. During the transformative Dreamless Sleep, this gland reabsorbs into the skeletal marrow to fuel rapid adult growth.',
-            xrayInsight: 'Residual golden harmonic rings still echo around the cranial vault, explaining why feathertails are fiercely hidden from exploitation by the Empyrean.'
-          },
-          {
-            id: 'andarna-scales',
-            title: 'Chromatic Prism Dermal Matrix',
-            layer: 'Surface / Sub-Dermal',
-            coords: [0.1, 0.7, 0.85],
-            telemetry: 'Refractive Index: Variable (1.33–2.42) • Spectrum: Full Iridescent / Obsidian',
-            description: 'Unlike the fixed pigment of the six common breeds, Andarna’s scales contain microscopic crystalline guanine platelets coupled to her nervous system. By altering platelet spacing, her hide shifts from shimmering gold to deep violet-black, blending seamlessly into shadows or stone.',
-            xrayInsight: 'Sub-dermal X-ray reveals seven distinct harmonic nodes along her spine—the anatomical signature of the Seventh Breed.'
-          },
-          {
-            id: 'andarna-wings',
-            title: 'Developing Wing Joint & Harness Anchor',
-            layer: 'Skeletal & Biomechanical',
-            coords: [-0.15, 1.15, 1.9],
-            telemetry: 'Ossification: 78% Complete • Stabilization: Custom Saddle Assist',
-            description: 'Rapid growth during the Dreamless Sleep elongated Andarna’s wing phalanges faster than her pectoral tendons could fully calcify. X-ray analysis highlights the delicate scapular socket that inspired Violet to engineer a specialized prosthetic flight harness.',
-            xrayInsight: 'A mirror-parallel to Violet’s own hypermobile joints—two partners adapting biomechanics through intellect rather than brute conformity.'
-          },
-          {
-            id: 'andarna-tail',
-            title: 'Feathertail Plume Ossicles',
-            layer: 'Osteology',
-            coords: [-2.9, 0.2, 0.0],
-            telemetry: 'Aerodynamic Rudder Efficiency: 99.4% • Metamorphosis: Scorpion-Grade',
-            description: 'Flexible fan-like cartilaginous vanes at the tail tip provide unmatched aerial agility before hardening into a lethal adult weapon after maturation.',
-            xrayInsight: 'Calcification fronts are visible migrating down the caudal vertebrae.'
-          }
-        ]
+        id: 'tairn-skull',
+        num: '02',
+        x: 62.5,
+        y: 26.5,
+        tag: 'NEURO-ARCANE CORTEX',
+        title: 'Horned Cranium & Telepathic Bond Web',
+        telemetry: 'Bandwidth: Multi-Mile Mental Projection • Shielding: Obsidian Grade',
+        description: 'Behind Tairn’s swept-back occipital horns lies an enlarged pineal-arcane ganglion. Second-Sight reveals a shimmering web of golden-blue harmonic threads spanning between his skull and wings—the physical manifestation of the mental bond through which he speaks directly into Violet’s mind.',
+        secret: 'Before breathing fire, dual hypergolic compounds mix at the back of the palate—lined with silicate bone plates so a dragon never burns its own throat.'
       },
       {
-        id: 'wyvern',
-        name: 'Corrupted Wyvern Specimen',
-        classification: 'Venin Construct • Two-Legged Dark-Magic Chimera',
-        wingspan: '112 ft (34.1 m)',
-        biteForce: '34,000 PSI',
-        coreTemp: 'Ambient / Necrotic Runic Heat',
-        signetOutput: 'Blue/Green Desiccation Flame (Channeled from Earth)',
-        themeColor: '#ff2a4b',
-        secondaryColor: '#9e0b22',
-        summary: 'Officially dismissed as folklore by Navarrian command for centuries. X-ray tomography exposes the terrifying anatomical distinction between a true dragon of the Vale and a wyvern: only two hind legs (forelimbs fused into wings), zero organic bond nexus, and a carved granite Rune Stone suspended inside its ribcage in place of a living arcane heart.',
-        hotspots: [
-          {
-            id: 'wyvern-runestone',
-            title: 'Embedded Dark-Magic Rune Stone (The Core)',
-            layer: 'Deep Thoracic X-Ray',
-            coords: [0.25, 0.35, 0.0],
-            telemetry: 'Origin: Tyrrish-Derived Complex Runes • Power Source: Venin Tether',
-            description: 'Where a true dragon houses a four-chambered beating heart, the wyvern’s sternum cages a heavy granite boulder etched with interlocking tempering and animation runes. If a rider’s lightning or dragon’s jaws shatter this stone—or if the creating venin is slain—the entire creature collapses instantaneously.',
-            xrayInsight: 'CRITICAL DISCOVERY: The runes are layered in multi-tier matrices once thought lost after the Great War.'
-          },
-          {
-            id: 'wyvern-biped',
-            title: 'Bipedal Forelimb-Wing Fusion (No Front Legs)',
-            layer: 'Skeletal Comparison',
-            coords: [0.5, -0.35, 0.65],
-            telemetry: 'Limb Count: 2 Hind Legs + 2 Wing-Arms (Wyvern Classification)',
-            description: 'The definitive anatomical proof separating dragons (four legs plus two independent wings) from wyvern (two hind legs with forelimbs elongated into wings). Their pectoral girdle lacks the anterior leg sockets found in Tairn and Andarna.',
-            xrayInsight: 'Crimson necrotic filaments replace normal blood vessels, feeding stolen ground-magic directly from the rune stone to the wing muscles.'
-          },
-          {
-            id: 'wyvern-throat',
-            title: 'Corrupted Azure/Cobalt Flame Conduit',
-            layer: 'Internal Conduit',
-            coords: [2.1, 0.85, 0.0],
-            telemetry: 'Flame Spectrum: Cobalt / Emerald • Toxicity: High',
-            description: 'Instead of biological hypergolic glands, a hollow runic siphon channels raw magic directly from the chest stone up the esophagus, venting unnatural blue or green fire.',
-            xrayInsight: 'The bone around the jaw shows brittle necrotic fracturing from unshielded dark magic.'
-          }
-        ]
+        id: 'tairn-wings',
+        num: '03',
+        x: 31.0,
+        y: 30.0,
+        tag: 'AERODYNAMIC OSTEOLOGY',
+        title: '5-Ray Metacarpal Wing Bones & Lightning Veins',
+        telemetry: 'Bone Structure: Vanadium-Dense Honeycomb • Max Load: 14 G',
+        description: 'Despite being one of the largest dragons on the Continent, Tairn executes high-G combat dives thanks to hollow trabecular wing phalanges. Electric-blue signet arteries branch across the leathery membrane, discharging static into the surrounding storm clouds.',
+        secret: 'Unlike two-legged wyvern whose forelimbs are fused into wings, true dragons of the Vale possess four independent legs plus two separate wing limbs.'
+      },
+      {
+        id: 'andarna-core',
+        num: '04',
+        x: 59.0,
+        y: 62.5,
+        tag: 'THE SEVENTH BREED',
+        title: 'Andarnaurram: Iridescent Feathertail Core',
+        telemetry: 'Lineage: The Missing Seventh Breed • Gift: Temporal Resonance',
+        description: 'Waited six hundred years inside her shell for the mind of a scribe and the heart of a rider. Beneath her shimmering golden feather-scales pulses a unique seventh harmonic core—carrying the exact missing flame frequency required to ignite the Basgiath Wardstone.',
+        secret: 'Her juvenile feathertail gift of stopping local time reabsorbs into her skeletal marrow during the Dreamless Sleep to fuel rapid adolescent growth.'
+      },
+      {
+        id: 'tairn-tail',
+        num: '05',
+        x: 21.5,
+        y: 70.0,
+        tag: 'LETHAL OSTEOLOGY',
+        title: 'Morningstartail Spiked Ossicone Mace',
+        telemetry: 'Impact Force: 920 kN • Spikes: Detachable Calcified Ossicones',
+        description: 'The rarest and most devastating tail weapon among dragonkind. The terminal caudal vertebrae fuse into a heavy osseous club studded with runic-glowing bone spikes capable of shattering granite battlements or crushing a wyvern’s chest stone in a single sweep.',
+        secret: 'A dedicated dorsal tendon cable runs from the pelvis to the tail tip, allowing whip-fast kinetic strikes in mid-air.'
       }
     ]
   },
 
   rider: {
     id: 'rider',
-    title: 'THE RIDER’S CONDUIT & RELIC BIOMECHANICS',
-    subtitle: 'Neural Signet Pathways, Relic Inscriptions & Skeletal Adaptation',
-    specimens: [
+    tabLabel: 'II • The Bonded Riders',
+    chapterKicker: 'CHAPTER II • RIDER BIOMECHANICS, RELICS & SIGNET CONDUITS',
+    headline: 'Violet Sorrengail & Xaden Riorson',
+    sublead: 'Sweep the lens over the storm-lashed battlements to reveal how Violet’s dragon-scale armor braces her hypermobile joints while channeling pure lightning—alongside Xaden’s 107 rebellion relic and mated bond bridge.',
+    realImage: './assets/rider_real.jpg',
+    xrayImage: './assets/rider_xray.jpg',
+    hotspots: [
       {
-        id: 'violet',
-        name: 'Violet Sorrengail',
-        classification: 'Dual-Bonded Rider • Second Wing, Fourth Squad, Flame Section',
-        signet: 'Pure Power / Lightning Wielder (Tairn) + Second Signet Resonator (Andarna)',
-        heartRate: '118 BPM (Channeling)',
-        conduitVoltage: '1.2 Billion Volts (Peak Discharge)',
-        themeColor: '#7ce8ff',
-        secondaryColor: '#f4c55c',
-        summary: 'Trained for the Scribe Quadrant, forged in the Riders Quadrant. Under X-ray vision, Violet’s anatomy tells a remarkable story of resilience: hypermobile joints and fragile connective collagen braced externally by custom dragon-scale armor, while internally her nervous system serves as a living superconductor for the most destructive lightning signet seen in centuries.',
-        hotspots: [
-          {
-            id: 'violet-eds',
-            title: 'Hypermobile Joint Matrix & Dragon-Scale Armor Bracing',
-            layer: 'Skeletal & Connective Biomechanics',
-            coords: [-0.42, 0.72, 0.15],
-            telemetry: 'Collagen Elasticity: Hypermobile (EDS Profile) • Armor: Green Dragon-Scale Weave',
-            description: 'X-ray osteology highlights laxity in the glenohumeral (shoulder), costochondral (rib), and patellar articulations—causing frequent subluxations under heavy physical torque. Surrounding her torso is Mira’s masterwork: overlapping scale plates harvested from Teine that act as an external exoskeleton without restricting pulmonary expansion or throwing mobility.',
-            xrayInsight: 'Rather than "curing" her anatomy, magic flows alongside her adaptations—proving that accommodation, intellect, and custom engineering belong at the apex of dragon riding.'
-          },
-          {
-            id: 'violet-relic',
-            title: 'Dorsal Twin-Dragon Relic Transformer',
-            layer: 'Dermal & Sub-Dermal Arcane Layer',
-            coords: [0.0, 0.68, -0.26],
-            telemetry: 'Inscriptions: Black Morningstartail + Golden Feathertail • Flux: Dual-Channel',
-            description: 'Etched between her shoulder blades during Threshing, the metallic pigment of her dragon relics extends three millimeters into the dermis, interfacing directly with the dorsal root ganglia of her spinal cord. In X-ray view, the two relics form a biological step-up transformer that regulates Tairn’s massive power and Andarna’s golden resonance.',
-            xrayInsight: 'Without the relic’s dermal distribution lattice, channeling Tairn’s full wattage would instantly carbonize human tissue.'
-          },
-          {
-            id: 'violet-lightning',
-            title: 'Lichtenberg Neural-Vascular Signet Conduit',
-            layer: 'Arcane Nervous System',
-            coords: [0.58, 0.35, 0.22],
-            telemetry: 'Core Temp while Wielding: 40.8 °C • Insulation: Myelin-Arcane Sheath',
-            description: 'When Violet opens the mental gate to Tairn, raw power surges from the occipital bond anchor down the vagus and brachial nerves into her palms. Under X-ray, her arteries and nerves blaze with branching fractal lightning (Lichtenberg patterns), pushing her core body temperature to the brink of thermal burnout.',
-            xrayInsight: 'Notice how the discharge concentrates at the fingertips and couples inductively into the alloy-core daggers strapped to her ribs and thighs.'
-          },
-          {
-            id: 'violet-cranial',
-            title: 'The Archives Grounding Vault & Mental Shields',
-            layer: 'Cranial Cortex',
-            coords: [0.0, 1.52, 0.05],
-            telemetry: 'Shield Architecture: Stone Archives Vault • Tethers: 3 Active (Tairn, Andarna, Xaden)',
-            description: 'At the base of the skull, three distinct luminous pathways converge: Tairn’s roaring storm-blue channel, Andarna’s iridescent gold thread, and the smoky obsidian bridge linking her mind directly to Xaden Riorson.',
-            xrayInsight: 'When grounded, excess electrical potential vents harmlessly through her silver-tipped braid due to chronic high-energy exposure.'
-          }
-        ]
+        id: 'violet-relic-heart',
+        num: '01',
+        x: 41.0,
+        y: 48.0,
+        tag: 'DUAL-BOND TRANSFORMER',
+        title: 'Twin-Dragon Relic Core & Cardiac Conduit',
+        telemetry: 'Relics: Black Morningstartail + Golden Feathertail • Core Temp: 40.8 °C',
+        description: 'Under Second-Sight, Violet’s chest and upper spine blaze with two interlocking dragon silhouettes—one golden, one electric blue. These dermal relics interface directly with her spinal ganglia, acting as a biological transformer that allows a human body to channel Tairn’s gigawatt lightning without incinerating.',
+        secret: 'Prolonged high-voltage channeling permanently bleaches the pigment from the ends of her hair, turning her crown braid silver at the tips.'
       },
       {
-        id: 'xaden',
-        name: 'Xaden Riorson',
-        classification: 'Wingleader (Fourth Wing) • Bonded to Sgaeyl (Blue Daggertail)',
-        signet: 'Shadow Wielder + Classified Intinnsic (Intent Reader)',
-        heartRate: '64 BPM (Combat Calm)',
-        conduitVoltage: 'Abyssal Umbral Field / Dual-Signet Resonance',
-        themeColor: '#8a64ff',
-        secondaryColor: '#38b6ff',
-        summary: 'Son of Fen Riorson and bearer of 107 rebellion obligations etched into his flesh. X-ray tomography reveals how his rebellion relic—originally intended by Codagh’s fire to mark the children of treason—was secretly fortified by protective Tyrrish blood-runes, alongside the dual neural signature of a Shadow Wielder and a second, lethal Intinnsic signet.',
-        hotspots: [
-          {
-            id: 'xaden-relic',
-            title: 'The 107 Rebellion Relic & Protective Rune Matrix',
-            layer: 'Dermal & Osteo-Runic Layer',
-            coords: [-0.52, 0.45, 0.18],
-            telemetry: 'Inscribed Marks: 107 • Origin: Codagh’s Fire + Col. Mairi’s Protection Stone',
-            description: 'Swirling from his left wrist up his bicep and across his collarbone to his jaw, the rebellion relic carries 107 subtle crystalline nodes—one for every child of the separatist leaders whose loyalty Xaden vouched for with his own skin. Deep X-ray reveals micro-harmonic runic shielding woven into the scar tissue by Liam’s mother’s river-stone rune.',
-            xrayInsight: 'Because each marked child held a runed stone at the moment of Codagh’s breath, Melgren’s battle-foresight signet is completely blinded whenever three or more Marked Ones gather!'
-          },
-          {
-            id: 'xaden-shadows',
-            title: 'Brachial Umbral Conduit (Shadow Manipulation)',
-            layer: 'Arcane Vascular System',
-            coords: [0.55, 0.28, 0.2],
-            telemetry: 'Matter State: Tangible Compressed Darkness • Range: Battlefield-Wide',
-            description: 'Unlike illusionists, Xaden’s shadows possess physical mass and tensile strength. X-ray imaging shows dark-matter filaments coiling around his radius and ulna bones, drawing ambient absence-of-light into kinetic blades, barriers, and sensory extensions that can hear and feel across rooms.',
-            xrayInsight: 'The shadows instinctively angle toward Violet’s position even when Xaden is at rest.'
-          },
-          {
-            id: 'xaden-intinnsic',
-            title: 'Classified Prefrontal Node: The Second Signet',
-            layer: 'Deep Cranial X-Ray (Restricted)',
-            coords: [0.0, 1.56, 0.08],
-            telemetry: 'Classification: CAPITAL OFFENSE (Intinnsic — Intent Perception)',
-            description: 'Because Sgaeyl previously bonded Xaden’s grandfather (recorded as an uncle in forged rolls), the direct familial bond manifested a second signet. Deep cranial X-ray exposes a secondary violet halo in the prefrontal cortex that reads the immediate *intentions* of anyone whose mental shields are unguarded.',
-            xrayInsight: 'Triple-layered obsidian mental shields obscure this node from every mind-reader in Navarre.'
-          }
-        ]
+        id: 'violet-eds-joints',
+        num: '02',
+        x: 35.5,
+        y: 39.5,
+        tag: 'EDS BIOMECHANICS & ARMOR',
+        title: 'Hypermobile Joints & Dragon-Scale Corset Bracing',
+        telemetry: 'Condition: Hypermobile Collagen (EDS Profile) • Armor: Teine’s Green Scales',
+        description: 'X-ray tomography highlights luminous stabilization rings around Violet’s shoulder (glenohumeral), rib, and elbow joints—where fragile connective collagen makes her prone to subluxations and dislocations. Externally, Mira’s masterwork corset woven from Teine’s dragon scales acts as a flexible exoskeleton.',
+        secret: 'Dragon magic never "erases" her chronic condition—instead, her custom saddle, scale armor, and tactical intellect prove that adaptation belongs at the apex of the Riders Quadrant.'
+      },
+      {
+        id: 'violet-lightning-hands',
+        num: '03',
+        x: 29.0,
+        y: 68.5,
+        tag: 'OFFENSIVE SIGNET',
+        title: 'Lichtenberg Neural-Vascular Lightning Arcs',
+        telemetry: 'Peak Potential: 1.2 Billion Volts • Inductance: Alloy-Core Daggers',
+        description: 'Raw atmospheric power surges from Tairn down Violet’s brachial nerves and radial arteries into her fists, forming branching fractal Lichtenberg figures. The charge couples inductively into the talladium-alloy daggers strapped across her ribs and thighs.',
+        secret: 'While raw power is her primary manifestation from Tairn, her second signet channeled through Andarna resonates on a deeper, subtler plane.'
+      },
+      {
+        id: 'mated-bond-bridge',
+        num: '04',
+        x: 52.0,
+        y: 20.5,
+        tag: 'QUATERNARY MATED TETHER',
+        title: 'Intertwined Mind-to-Mind & Heart-to-Heart Tether',
+        telemetry: 'Nodes: Violet ⇄ Xaden ⇄ Tairn ⇄ Sgaeyl • Encryption: Obsidian Shields',
+        description: 'Spanning the storm between Violet’s and Xaden’s temples and hearts is a braided helix of gold and violet light—the telepathic bridge forged by Tairn and Sgaeyl’s mating bond. Through this conduit, they share thoughts, sensory grounding, and life-or-death awareness across battlefields.',
+        secret: 'Notice Xaden’s secondary violet halo in the prefrontal cortex: his classified second signet as an Intinnsic capable of reading immediate intentions.'
+      },
+      {
+        id: 'xaden-rebellion-relic',
+        num: '05',
+        x: 64.5,
+        y: 42.0,
+        tag: 'RUNIC PROTECTION MATRIX',
+        title: 'The 107 Rebellion Relic & Umbral Shadow Conduit',
+        telemetry: 'Marks: 107 Separatist Children • Shielding: Col. Mairi’s River-Stone Rune',
+        description: 'Spiraling up Xaden’s left arm and neck is the rebellion relic breathed by Codagh—carrying 107 tiny scar nodes for every Tyrrish child whose life Xaden vouched for. Coiling around his ribcage and forearms are tangible tendrils of compressed abyssal shadow.',
+        secret: 'Because each marked child clenched a complex runed stone crafted by Liam’s mother at the moment of Codagh’s fire, General Melgren’s battle-foresight signet is completely blinded whenever three or more Marked Ones gather!'
       }
     ]
   },
 
   basgiath: {
     id: 'basgiath',
-    title: 'BASGIATH WAR COLLEGE & THE WARDSTONE',
-    subtitle: 'Architectural Cutaway, Subterranean Ley-Lines & Venin Corruption',
-    specimens: [
+    tabLabel: 'III • Basgiath & The Wards',
+    chapterKicker: 'CHAPTER III • ARCHITECTURAL CUTAWAY & SUBTERRANEAN LEY-LINES',
+    headline: 'Basgiath War College & The Wardstone',
+    sublead: 'Pierce through the rain-lashed granite peaks of Basgiath to uncover the subterranean Black-Iron Wardstone Cauldron, the Seven Pillars of Dragon Fire, secret Archive vaults, and creeping Venin corruption.',
+    realImage: './assets/basgiath_real.jpg',
+    xrayImage: './assets/basgiath_xray.jpg',
+    hotspots: [
       {
-        id: 'citadel',
-        name: 'Basgiath Citadel & The Subterranean Wardstone',
-        classification: 'Fortress Astride the Rift • Navarre’s Central Arcane Anchor',
-        wingspan: 'Span: 1.4 Miles Across the Canyon',
-        biteForce: 'Ward Radius: ~400 Miles (Failing at Borders)',
-        coreTemp: 'Wardstone Core: Dormant / Active',
-        signetOutput: 'Seven-Breed Geodesic Ward Lattice',
-        themeColor: '#f4c55c',
-        secondaryColor: '#ff2a4b',
-        summary: 'Carved directly into two jagged mountain peaks straddling a wind-scoured abyss. On the surface, Basgiath appears to be an impregnable granite military academy divided into four quadrants. Under X-ray stratigraphy, the mountain reveals its buried truths: the ancient iron Wardstone Chamber deep inside the bedrock, secret weapons-smuggling tunnels, and crimson venin desiccation creeping toward the fractures.',
-        hotspots: [
-          {
-            id: 'basgiath-wardstone',
-            title: 'The Subterranean Wardstone Chamber',
-            layer: 'Deep Bedrock X-Ray (-850 ft)',
-            coords: [0.0, -1.15, 0.0],
-            telemetry: 'Composition: Black Runed Iron • Required Ignition: 7 Dragon Breeds',
-            description: 'Hidden hundreds of feet beneath the Riders Quadrant lies a cavernous vault housing the massive black-iron Wardstone. Etched with ancient Unification runes, it acts as the central projector for Navarre’s protective dome—blocking all non-dragon magic (including venin and gryphon flyers) within its perimeter.',
-            xrayInsight: 'X-ray spectral analysis shows SIX active rune channels and ONE dormant seventh harmonic—proving the First Six journals mistranslated "six and the one" when it truly meant seven breeds!'
-          },
-          {
-            id: 'basgiath-parapet',
-            title: 'The Parapet (Riders Quadrant Entrance)',
-            layer: 'Structural Engineering & Wind Shear',
-            coords: [0.0, 0.55, 1.55],
-            telemetry: 'Length: 220 ft • Width: 18 inches • Drop: 200+ ft into the Rift',
-            description: 'A narrow, unrailed stone span bridging the chasm between the Turrets and the Riders Citadel. X-ray structural scan reveals internal hairline frost-fractures in the central keystone blocks and visualizes the lethal vortex crosswinds funneled upward by the canyon walls.',
-            xrayInsight: 'Click "LAUNCH PARAPET TRIAL" in the top bar to experience crossing the Parapet in first-person 3D with X-ray Second-Sight!'
-          },
-          {
-            id: 'basgiath-archives',
-            title: 'The Archives & Classified Sub-Vaults',
-            layer: 'Subterranean Levels 1–5',
-            coords: [-1.85, 0.35, -0.6],
-            telemetry: 'Security: Hermetic Stone Doors • Contents: Pre-Unification Journals',
-            description: 'While the upper rotunda houses sanitized histories curated by Markham, X-ray penetration exposes five deeper sub-levels cut into the western peak—including the hidden vault containing Warrick’s and Lyra’s original journals and Papa Sorrengail’s hidden feather-tail notes.',
-            xrayInsight: 'Notice the faint mage-light conduit lines trailing from the sub-vaults toward the Riders dormitories.'
-          },
-          {
-            id: 'basgiath-tunnels',
-            title: 'Marked Ones’ Clandestine Smuggling Tunnels',
-            layer: 'Hidden Sub-Strata',
-            coords: [1.35, -0.35, 0.85],
-            telemetry: 'Cargo: Talladium-Alloy Daggers • Shielding: Unpowered Mage-Light Crates',
-            description: 'Forgotten maintenance and drainage shafts threading from the forge underbelly out to the cliffside flight field. Used by Xaden, Garrick, Bodhi, and Violet to run weapons to the gryphon flyers fighting venin along the unshielded border.',
-            xrayInsight: 'Alloy signatures glow bright cyan inside the mountain passage.'
-          },
-          {
-            id: 'basgiath-venin',
-            title: 'Venin Desiccation Veins (Beyond the Ward Line)',
-            layer: 'Geomagical Corruption Scan',
-            coords: [2.75, -0.85, -1.1],
-            telemetry: 'Magic Depletion: 94% • Threat: Sage / Maven Infiltration',
-            description: 'Where the golden Ward Ley-Lines terminate at the eastern ridge, crimson necrotic veins branch through the earth. Here, dark wielders draw raw power directly from the ground instead of through a dragon bond—draining the bedrock into brittle gray ash and corrupting the soul.',
-            xrayInsight: 'A faint crimson thread is already probing beneath the outer foundation of the college.'
-          }
-        ]
+        id: 'basgiath-wardstone',
+        num: '01',
+        x: 54.5,
+        y: 86.0,
+        tag: 'DEEP BEDROCK VAULT (-850 FT)',
+        title: 'The Black-Iron Wardstone Cauldron & Fire Pillars',
+        telemetry: 'Material: Runed Black Iron • Ignition Requirement: Seven Dragon Breeds',
+        description: 'Carved deep beneath the chasm of Basgiath sits the ancient iron Wardstone cauldron, encircled by towering pillars of dragonfire. Golden ley-lines surge upward from this chamber through the mountain bedrock to project Navarre’s protective barrier.',
+        secret: 'For centuries, Navarre believed the First Six journals said "six and the one"—until Violet translated Lyra’s original passage proving it required SEVEN dragon breeds and one Wardstone!'
+      },
+      {
+        id: 'basgiath-parapet',
+        num: '02',
+        x: 41.0,
+        y: 73.5,
+        tag: 'RIDERS QUADRANT ENTRANCE',
+        title: 'The Parapet (200-Foot Abyssal Span)',
+        telemetry: 'Width: 18 Inches • Length: 220 Feet • Mortality Rate: ~15–20%',
+        description: 'A narrow, unrailed stone bridge slick with torrential rain and buffeted by canyon vortex winds. Every conscript must cross this span on Conscription Day to enter the Riders Quadrant. Under Ward-Sight, golden structural ley-threads trace the keystone arch.',
+        secret: 'High-friction flat-soled rider boots—like the pair Rhiannon traded with Violet on Conscription Day—are the difference between grip and a 200-foot fall.'
+      },
+      {
+        id: 'basgiath-ward-dome',
+        num: '03',
+        x: 50.0,
+        y: 16.0,
+        tag: 'GEODESIC ARCANE SHIELD',
+        title: 'The Great Ward Dome Lattice',
+        telemetry: 'Coverage: Navarre Interior • Effect: Nullifies Non-Dragon Magic',
+        description: 'Arching high above the twin peaks and soaring dragons is the shimmering golden geodesic lattice of the Wards. Within this dome, neither venin dark-wielders nor gryphon fliers can channel magic—making Basgiath the ultimate sanctuary and strategic prize.',
+        secret: 'When outposts along the border fail, the outer threads of this lattice fray—allowing wyvern and venin to push deeper inland.'
+      },
+      {
+        id: 'basgiath-archives',
+        num: '04',
+        x: 76.5,
+        y: 84.5,
+        tag: 'CLASSIFIED SUB-LEVELS',
+        title: 'Hidden Archive Sub-Vaults & Pre-Unification Tomes',
+        telemetry: 'Access: Royal / Scribe Clearance • Contents: Warrick & Lyra’s Journals',
+        description: 'Beneath the grand candlelit rotunda of the Archives lie secret subterranean vaults cut into the eastern and western cliffs. Here, forbidden pre-Unification histories, feathertail research hidden by Papa Sorrengail, and Marked Ones’ smuggling caches are concealed from command.',
+        secret: 'Another hidden chamber on the western cliff (x: 30%, y: 70%) connects to the tunnels used to smuggle talladium-alloy daggers out to the border.'
+      },
+      {
+        id: 'basgiath-venin',
+        num: '05',
+        x: 91.0,
+        y: 66.0,
+        tag: 'GEOMAGICAL CORRUPTION',
+        title: 'Creeping Venin Desiccation Veins',
+        telemetry: 'Threat Level: CRITICAL • Source: Direct Ground-Magic Draining',
+        description: 'Along the eastern cliff just outside the golden edge of the Ward Dome, jagged crimson veins crawl up the stone. This is the unmistakable signature of venin—dark wielders who bypass dragons to drain raw magic directly from the earth, leaving desiccated gray stone and soul-corrupted husks in their wake.',
+        secret: 'The crimson threads are actively probing for hairline fractures in the Wardstone’s foundation.'
       }
     ]
   }
 };
+const ARTIFACTS_3D = [
+  {
+    id: 'wardstone',
+    title: '01 • The Subterranean Wardstone Cauldron',
+    subtitle: 'Black Runed Iron • Seven-Breed Harmonic Projector',
+    description: 'Drag to rotate 360°. Deep beneath Basgiath sits the ancient black-iron cauldron inscribed with Unification runes. Six golden flame pillars represent the six known dragon breeds of the Vale, while the seventh cyan-gold crystal represents Andarna’s missing seventh breed frequency.'
+  },
+  {
+    id: 'relic-core',
+    title: '02 • The Dual-Bond Relic & Magma Heart Core',
+    subtitle: 'Quaternary Tether Astrolabe • Tairn, Andarna, Violet & Xaden',
+    description: 'Drag to rotate 360°. An arcane visualization of Tairn’s beating four-chambered magma heart suspended inside interlocking golden and storm-blue gyroscopic rings—demonstrating how the dragon relic regulates gigawatts of lightning without burning out human nerves.'
+  },
+  {
+    id: 'wyvern-stone',
+    title: '03 • Captured Wyvern Dark-Magic Rune Stone',
+    subtitle: 'Corrupted Granite Core • Tyrrish-Derived Animation Matrix',
+    description: 'Drag to rotate 360°. Extracted from the ribcage of a slain wyvern. Unlike true dragons who possess living hearts, wyvern are animated by heavy boulders etched with complex interlocking crimson runes—instantly collapsing if shattered by lightning.'
+  }
+];
 const QUIZ_QUESTIONS = [
   {
     question: 'As you step onto the rain-slicked stone of the Parapet with a 200-foot drop below, what governs your first stride?',
     options: [
-      {
-        text: 'Calculated physics—I test the friction of my boots, lower my center of gravity, and time the wind gusts.',
-        weights: { tairn: 3, andarna: 3, blue: 1, green: 2 }
-      },
-      {
-        text: 'Unrelenting defiance—the storm and the cadets behind me are just obstacles to conquer.',
-        weights: { tairn: 3, blue: 3, red: 2 }
-      },
-      {
-        text: 'Quiet observation—I watch where the stone crumbles under the boot ahead of me and adapt instantly.',
-        weights: { andarna: 3, green: 3, brown: 2 }
-      },
-      {
-        text: 'Unpredictable daring—I move fast before fear or hesitation can take root.',
-        weights: { red: 3, orange: 3, blue: 1 }
-      }
+      { text: 'Calculated physics—I test the friction of my boots, lower my center of gravity, and time the wind gusts.', weights: { tairn: 3, andarna: 3, green: 2 } },
+      { text: 'Unrelenting defiance—the storm and the cadets behind me are just obstacles to conquer.', weights: { tairn: 3, blue: 4, red: 2 } },
+      { text: 'Quiet observation—I watch where the stone shifts ahead of me and adapt every step.', weights: { andarna: 4, green: 3 } },
+      { text: 'Pure momentum—I move fast and fearless before hesitation can take root.', weights: { red: 4, blue: 2 } }
     ]
   },
   {
-    question: 'In the Archives at midnight, you uncover a pre-Unification journal that contradicts everything Navarre teaches. What do you do?',
+    question: 'In the Archives at midnight, you uncover a pre-Unification journal proving Navarre has hidden the truth about the borders. What do you do?',
     options: [
-      {
-        text: 'Translate every rune in secret, cross-reference the ward schematics, and weaponize the truth to save people outside the borders.',
-        weights: { tairn: 3, andarna: 4 }
-      },
-      {
-        text: 'Build a covert network of trusted allies to smuggle weapons and intelligence to the front lines immediately.',
-        weights: { blue: 4, tairn: 2 }
-      },
-      {
-        text: 'Analyze the tactical vulnerabilities carefully so our squad survives when the wards inevitably falter.',
-        weights: { green: 4, brown: 3 }
-      },
-      {
-        text: 'Use the forbidden knowledge to test the limits of my own signet in the sparring ring.',
-        weights: { red: 3, orange: 3 }
-      }
+      { text: 'Translate every rune in secret, decode the Wardstone schematics, and use the truth to protect everyone.', weights: { tairn: 3, andarna: 4 } },
+      { text: 'Lead covert midnight supply runs to smuggle talladium daggers to the front lines immediately.', weights: { blue: 4, tairn: 2 } },
+      { text: 'Brief my squad and map out tactical contingencies before making a single move.', weights: { green: 4, andarna: 2 } },
+      { text: 'Confront the lie head-on and test the full destructive limit of my signet.', weights: { red: 4, tairn: 2 } }
     ]
   },
   {
-    question: 'During Threshing in the canyon clearing, three armed cadets corner a smaller, golden juvenile dragon. How do you intervene?',
+    question: 'During Threshing in the canyon clearing, three armed cadets corner a smaller golden feathertail. How do you intervene?',
     options: [
-      {
-        text: 'Step directly between the blades and the dragon—even if I am outmatched in raw size, I have daggers, terrain, and willpower.',
-        weights: { tairn: 4, andarna: 4 }
-      },
-      {
-        text: 'Strike from the shadows before they realize they are being hunted, dismantling their leader first.',
-        weights: { blue: 4, orange: 2 }
-      },
-      {
-        text: 'Disarm them with precise biomechanics and force them to yield without wasting unnecessary blood.',
-        weights: { green: 3, brown: 4 }
-      },
-      {
-        text: 'Meet their aggression head-on with overwhelming offense until the clearing is mine.',
-        weights: { red: 4, tairn: 2 }
-      }
+      { text: 'Stand directly between their blades and the dragon—using terrain, daggers, and unbreakable willpower.', weights: { tairn: 4, andarna: 4 } },
+      { text: 'Strike from the shadows before they realize they are being hunted, neutralizing their leader first.', weights: { blue: 4 } },
+      { text: 'Outmaneuver them with precision biomechanics and force them to yield.', weights: { green: 4 } },
+      { text: 'Unleash overwhelming offensive force until the clearing belongs to me.', weights: { red: 4, tairn: 2 } }
     ]
   },
   {
     question: 'When the dragon’s golden eyes lock onto yours and its mind presses against your shields, what truth does it find inside you?',
     options: [
-      {
-        text: 'That physical fragility never meant weakness—my mind and loyalty are unbreakable iron.',
-        weights: { tairn: 4, andarna: 3 }
-      },
-      {
-        text: 'That I will carry a hundred scars on my own back to protect the people I swore to defend.',
-        weights: { blue: 4, brown: 2 }
-      },
-      {
-        text: 'That I question every order, seek hidden history, and refuse to let innocent lives be erased.',
-        weights: { andarna: 4, green: 3 }
-      },
-      {
-        text: 'That I burn with an untamed storm that refuses to bow to any wingleader or king.',
-        weights: { red: 4, orange: 3, tairn: 2 }
-      }
+      { text: 'That physical fragility never meant weakness—my mind and loyalty are unbreakable iron.', weights: { tairn: 4, andarna: 3 } },
+      { text: 'That I will carry a hundred scars on my own back to protect the people I swore to defend.', weights: { blue: 4 } },
+      { text: 'That I question every order, guard ancient knowledge, and refuse to let history be erased.', weights: { andarna: 4, green: 3 } },
+      { text: 'That I burn with an untamed storm that bows to no wingleader or king.', weights: { red: 4, tairn: 2 } }
     ]
   }
 ];
 const DRAGON_RESULTS = {
   tairn: {
     breed: 'Black Morningstartail (Lineage of Tairneanach)',
-    rarity: 'ULTRA-RARE (Only 2 Alive on the Continent)',
-    signet: 'Pure Atmospheric Lightning & High-Energy Conduit',
-    colorHex: '#38b6ff',
-    secondaryHex: '#c4f5ff',
-    specimenId: 'tairn',
+    rarity: 'ULTRA-RARE • APEX COMBAT MOUNT',
+    signet: 'Pure Atmospheric Lightning Wielder',
+    colorHex: '#5ecbff',
     quote: '“I know exactly who and what you are.”',
-    description: 'Black dragons are the rarest, largest, and most lethal on the Continent—combining the cunning intellect of a scribe with ferocious battlefield supremacy. Your X-ray resonance reveals high-voltage neural pathways capable of channeling raw sky-fire.'
+    description: 'Black dragons are the rarest, largest, and most lethal on the Continent—combining the cunning intellect of a scribe with ferocious battlefield supremacy.'
   },
   andarna: {
     breed: 'Iridescent Seventh Breed (Lineage of Andarnaurram)',
-    rarity: 'MYTHIC SINGULARITY (The Missing Seventh Flame)',
+    rarity: 'MYTHIC SINGULARITY • THE SEVENTH FLAME',
     signet: 'Chrono-Spatial Resonance & Ward Ignition',
-    colorHex: '#f4c55c',
-    secondaryHex: '#ff9e44',
-    specimenId: 'andarna',
+    colorHex: '#ffe08a',
     quote: '“I waited six centuries to hatch for someone who values truth over comfort.”',
-    description: 'Your mind bridges ancient lore and compassionate courage. Under X-ray tomography, your bond tether shimmers with iridescent seven-spectrum harmonics—the exact frequency needed to restore the ancient wards.'
+    description: 'Your mind bridges ancient lore and fearless compassion. Your bond carries the seven-spectrum harmonic needed to restore the ancient wards.'
   },
   blue: {
     breed: 'Blue Daggertail (Lineage of Sgaeyl)',
-    rarity: 'RARE (Ruthless & Uncompromising)',
-    signet: 'Abyssal Shadow Manipulation & Intent Perception',
-    colorHex: '#4b7bff',
-    secondaryHex: '#9d65ff',
-    specimenId: 'tairn',
+    rarity: 'RARE • RUTHLESS & UNCOMPROMISING',
+    signet: 'Abyssal Shadow Wielder & Intent Perception',
+    colorHex: '#8a7aff',
     quote: '“Blues do not care about rules—only relentless capability and loyalty to the chosen few.”',
-    description: 'Calculating, fierce, and fiercely protective beneath obsidian mental shields. Your X-ray scan reveals dense umbral filaments coiling along your forearms and a guarded dual-node cortex.'
+    description: 'Calculating, fierce, and fiercely protective beneath obsidian mental shields. Your signet commands tangible darkness and reads unguarded intentions.'
   },
   green: {
     breed: 'Green Swordtail (Lineage of Teine)',
-    rarity: 'TACTICAL APEX (Keen Intellect & Precision)',
-    signet: 'Ward Extension & Atmospheric Barrier Weaving',
-    colorHex: '#2ee68a',
-    secondaryHex: '#a3ffcf',
-    specimenId: 'tairn',
+    rarity: 'TACTICAL APEX • KEEN INTELLECT',
+    signet: 'Ward Extension & Protective Barrier Weaving',
+    colorHex: '#3ce699',
     quote: '“Sharp-minded, observant, and impossible to outmaneuver in a storm.”',
-    description: 'Greens prize riders who think three moves ahead in the chaos of war. Your X-ray resonance highlights a balanced cardio-neural circuit capable of projecting protective ward domes around your entire squad.'
+    description: 'Greens prize riders who think three moves ahead in the chaos of war, projecting impenetrable ward shields around their squad.'
   },
   red: {
     breed: 'Red Scorpiontail (Lineage of Thoirt)',
-    rarity: 'FEROCIOUS (Quick-Tempered & Devastating)',
+    rarity: 'FEROCIOUS • DEVASTATING OFFENSE',
     signet: 'Pyro-Kinetic Thermal Surge',
-    colorHex: '#ff3b5c',
-    secondaryHex: '#ff9e44',
-    specimenId: 'tairn',
+    colorHex: '#ff4766',
     quote: '“Never insult a Red—and never stand in front of its rider.”',
-    description: 'Fierce, passionate, and first into the breach. Your X-ray scan shows superheated arterial conduits and a high-impulse reflex arc built for close-quarters aerial dominance.'
+    description: 'Passionate, fearless, and first into the breach with overwhelming close-quarters aerial dominance.'
   }
 };
 
@@ -58350,918 +58190,231 @@ function createConduitMaterial(options = {}) {
 
 // --- models3D.js ---
 // ============================================================================
-// FOURTH WING: CODEX OCULUS — Sculpted 3D Models (v2 High-Detail Edition)
-// Smooth lofted organic geometry, curved Bezier wing membranes, crisp internal
-// osteology, beating heart, and dynamic lightning/shadow energy arcs.
+// FOURTH WING: THE EMPYREAN ARCHIVE — 3D Interactive Reliquary Artifacts
+// High-detail PBR & Emissive 3D Artifacts for the 360° Reliquary Viewer:
+// 1. The Black-Iron Wardstone Cauldron & Seven Dragon-Flame Pillars
+// 2. The Dual-Bond Relic Astrolabe & Magma Heart Core
+// 3. Captured Wyvern Dark-Magic Rune Stone
 // ============================================================================
-
-
-function createTube(points, radius, material, tubSegs = 40, radSegs = 10) {
-  const curve = new THREE.CatmullRomCurve3(points);
-  const geo = new THREE.TubeGeometry(curve, tubSegs, radius, radSegs, false);
-  return new THREE.Mesh(geo, material);
-}
-
-// Builds a smooth continuous lofted organic body along a 3D spine curve
-// with custom anatomical radius profile (neck -> chest -> waist -> tail)
-function createLoftedBodyGeometry(curve, radiusProfileFn, lengthSegs = 72, radialSegs = 24) {
-  const frames = curve.computeFrenetFrames(lengthSegs, false);
-  const positions = [];
-  const normals = [];
-  const uvs = [];
-  const indices = [];
-
-  for (let i = 0; i <= lengthSegs; i++) {
-    const u = i / lengthSegs;
-    const pt = curve.getPointAt(u);
-    const N = frames.normals[i];
-    const B = frames.binormals[i];
-    const { rx, ry } = radiusProfileFn(u);
-
-    for (let j = 0; j <= radialSegs; j++) {
-      const v = j / radialSegs;
-      const theta = v * Math.PI * 2;
-      const sin = Math.sin(theta);
-      const cos = Math.cos(theta);
-
-      // Slight dorsal ridge shaping at top (sin > 0.7)
-      const ridge = sin > 0.6 ? Math.pow((sin - 0.6) / 0.4, 2.0) * 0.08 * ry : 0;
-
-      const vx = pt.x + (cos * rx * B.x + (sin * ry + ridge) * N.x);
-      const vy = pt.y + (cos * rx * B.y + (sin * ry + ridge) * N.y);
-      const vz = pt.z + (cos * rx * B.z + (sin * ry + ridge) * N.z);
-
-      positions.push(vx, vy, vz);
-
-      const nx = cos * B.x + sin * N.x;
-      const ny = cos * B.y + sin * N.y;
-      const nz = cos * B.z + sin * N.z;
-      const len = Math.hypot(nx, ny, nz) || 1;
-      normals.push(nx / len, ny / len, nz / len);
-      uvs.push(u, v);
-    }
-  }
-
-  const stride = radialSegs + 1;
-  for (let i = 0; i < lengthSegs; i++) {
-    for (let j = 0; j < radialSegs; j++) {
-      const a = i * stride + j;
-      const b = (i + 1) * stride + j;
-      const c = (i + 1) * stride + (j + 1);
-      const d = i * stride + (j + 1);
-      indices.push(a, b, d);
-      indices.push(b, c, d);
-    }
-  }
-
-  const geo = new THREE.BufferGeometry();
-  geo.setIndex(indices);
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-  geo.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
-  geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
-  geo.computeVertexNormals();
-  return geo;
-}
-
-// ============================================================================
-// 1. SCULPTED DRAGON ANATOMY (Tairn, Andarna, Wyvern)
-// ============================================================================
-function buildDragonModel(specimenId = 'tairn', customColors = null) {
+function buildArtifact3D(artifactId = 'wardstone') {
   const root = new THREE.Group();
-  root.name = `dragon-${specimenId}`;
 
-  const isAndarna = specimenId === 'andarna';
-  const isWyvern = specimenId === 'wyvern';
-
-  const scaleFactor = isAndarna ? 0.85 : isWyvern ? 0.95 : 1.05;
-  root.scale.setScalar(scaleFactor);
-
-  const primaryHex = customColors?.colorHex || (isAndarna ? '#f4c55c' : isWyvern ? '#ff2a4b' : '#38b6ff');
-  const secondaryHex = customColors?.secondaryHex || (isAndarna ? '#ff9e44' : isWyvern ? '#9e0b22' : '#f4c55c');
-  const hideHex = customColors?.hideHex || (isAndarna ? '#2c200b' : isWyvern ? '#17111a' : '#090d16');
-
-  const extMat = createExteriorMaterial({
-    baseColor: hideHex,
-    specularColor: primaryHex,
-    scalePattern: 1.0
-  });
-  const wingMembraneMat = createExteriorMaterial({
-    baseColor: isAndarna ? '#211706' : '#0b101c',
-    specularColor: secondaryHex,
-    scalePattern: 1.0
-  });
-  const boneMat = createBoneMaterial({
-    boneTint: isWyvern ? '#dfd0d3' : '#f2ede0'
-  });
-  const conduitMat = createConduitMaterial({
-    color: primaryHex,
-    secondary: secondaryHex,
-    pulseSpeed: 6.5,
-    alwaysFaintlyVisible: true
-  });
-  const pyroMat = createConduitMaterial({
-    color: isWyvern ? '#00e5ff' : '#ff6b1a',
-    secondary: isWyvern ? '#ff2a4b' : '#ffd966',
-    pulseSpeed: 8.5,
-    alwaysFaintlyVisible: false
+  const blackIronMat = new THREE.MeshStandardMaterial({
+    color: '#141822',
+    metalness: 0.88,
+    roughness: 0.28
   });
 
-  // Sinuous S-curve spine from tail tip [-4.0] to neck/head [2.9]
-  const spinePts = [
-    new THREE.Vector3(-4.1, 0.15, 0),
-    new THREE.Vector3(-2.9, 0.05, 0),
-    new THREE.Vector3(-1.7, 0.28, 0),
-    new THREE.Vector3(-0.5, 0.52, 0),
-    new THREE.Vector3(0.55, 0.58, 0),
-    new THREE.Vector3(1.5, 0.78, 0),
-    new THREE.Vector3(2.25, 1.32, 0),
-    new THREE.Vector3(2.85, 1.38, 0)
-  ];
-  const spineCurve = new THREE.CatmullRomCurve3(spinePts);
-
-  // Smooth continuous lofted dragon body
-  const bodyGeo = createLoftedBodyGeometry(spineCurve, (u) => {
-    // u=0 is tail tip, u=0.55 is broad chest, u=0.85 is slender neck, u=1.0 is skull base
-    if (u < 0.35) {
-      const t = u / 0.35;
-      const r = THREE.MathUtils.lerp(0.05, 0.42, Math.pow(t, 1.3));
-      return { rx: r * 0.9, ry: r };
-    } else if (u < 0.68) {
-      const t = (u - 0.35) / 0.33;
-      const chest = Math.sin(t * Math.PI);
-      return {
-        rx: 0.42 + chest * 0.36,
-        ry: 0.44 + chest * 0.38
-      };
-    } else {
-      const t = (u - 0.68) / 0.32;
-      const r = THREE.MathUtils.lerp(0.42, 0.22, t);
-      return { rx: r * 0.88, ry: r };
-    }
-  });
-  root.add(new THREE.Mesh(bodyGeo, extMat));
-
-  // Dorsal spine armor crests along the back
-  for (let i = 4; i < 42; i++) {
-    const u = i / 44;
-    const pt = spineCurve.getPointAt(u);
-    const crestH = 0.12 + Math.sin(u * Math.PI) * 0.24;
-    const crestGeo = new THREE.ConeGeometry(0.045, crestH, 4);
-    const crest = new THREE.Mesh(crestGeo, extMat);
-    const offsetY = u > 0.35 && u < 0.68 ? 0.68 : 0.32;
-    crest.position.copy(pt).add(new THREE.Vector3(0, offsetY * Math.sin(u * Math.PI) + 0.18, 0));
-    crest.rotation.z = -0.45;
-    root.add(crest);
-  }
-
-  // --- SCULPTED HEAD, JAW & SWEPT HORNS ---
-  const headGroup = new THREE.Group();
-  headGroup.position.set(2.92, 1.35, 0);
-  root.add(headGroup);
-
-  // Upper skull & snout
-  const upperSkullGeo = new THREE.ConeGeometry(0.34, 0.98, 12);
-  upperSkullGeo.rotateZ(-Math.PI / 2);
-  upperSkullGeo.scale(1.0, 0.65, 0.82);
-  const upperSkull = new THREE.Mesh(upperSkullGeo, extMat);
-  upperSkull.position.set(0.32, 0.04, 0);
-  headGroup.add(upperSkull);
-
-  // Lower hinged jaw
-  const lowerJawGeo = new THREE.ConeGeometry(0.26, 0.84, 10);
-  lowerJawGeo.rotateZ(-Math.PI / 2);
-  lowerJawGeo.scale(1.0, 0.42, 0.72);
-  const lowerJaw = new THREE.Mesh(lowerJawGeo, extMat);
-  lowerJaw.position.set(0.26, -0.14, 0);
-  lowerJaw.rotation.z = -0.15;
-  headGroup.add(lowerJaw);
-
-  // Glowing Slit Eyes + Swept Occipital Horns + Brow Horns
-  const eyeMat = new THREE.MeshBasicMaterial({
-    color: isWyvern ? '#ff1e42' : '#ffd54f'
-  });
-  [-1, 1].forEach((side) => {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.046, 12, 12), eyeMat);
-    eye.scale.set(1.4, 0.8, 1.0);
-    eye.position.set(0.22, 0.08, side * 0.21);
-    headGroup.add(eye);
-
-    const mainHornPts = [
-      new THREE.Vector3(-0.02, 0.14, side * 0.15),
-      new THREE.Vector3(-0.48, 0.42, side * 0.36),
-      new THREE.Vector3(-1.05, 0.64, side * 0.48)
-    ];
-    headGroup.add(createTube(mainHornPts, 0.055, extMat, 20, 8));
-    headGroup.add(createTube(mainHornPts, 0.036, boneMat, 20, 6));
-
-    const browHornPts = [
-      new THREE.Vector3(0.08, 0.12, side * 0.19),
-      new THREE.Vector3(-0.28, 0.24, side * 0.32)
-    ];
-    headGroup.add(createTube(browHornPts, 0.03, extMat, 12, 6));
+  const burnishedGoldMat = new THREE.MeshStandardMaterial({
+    color: '#e5b85c',
+    emissive: '#8a5a10',
+    emissiveIntensity: 0.45,
+    metalness: 0.92,
+    roughness: 0.18
   });
 
-  // Internal X-Ray Cranium, Jawbone & Telepathic Bond Core
-  const innerSkull = new THREE.Mesh(upperSkullGeo.clone().scale(0.84, 0.84, 0.84), boneMat);
-  innerSkull.position.set(0.28, 0.04, 0);
-  headGroup.add(innerSkull);
+  const glowingGoldMat = new THREE.MeshBasicMaterial({
+    color: '#ffe08a'
+  });
 
-  const innerJaw = new THREE.Mesh(lowerJawGeo.clone().scale(0.82, 0.82, 0.82), boneMat);
-  innerJaw.position.set(0.24, -0.13, 0);
-  innerJaw.rotation.z = -0.15;
-  headGroup.add(innerJaw);
+  const cyanLightningMat = new THREE.MeshBasicMaterial({
+    color: '#5ecbff'
+  });
 
-  const cranialBondNexus = new THREE.Mesh(new THREE.OctahedronGeometry(0.12, 2), conduitMat);
-  cranialBondNexus.position.set(-0.04, 0.06, 0);
-  headGroup.add(cranialBondNexus);
+  const crimsonVeninMat = new THREE.MeshBasicMaterial({
+    color: '#ff2e55'
+  });
 
-  // --- DEEP X-RAY SKELETON: VERTEBRAE, RIBCAGE & STERNUM ---
-  for (let i = 0; i < 38; i++) {
-    const u = i / 37;
-    const pos = spineCurve.getPointAt(u);
-    const tangent = spineCurve.getTangentAt(u);
-    const vRad = 0.055 + Math.sin(u * Math.PI) * 0.075;
-
-    const vertGeo = new THREE.CylinderGeometry(vRad, vRad * 0.85, 0.12, 10);
-    vertGeo.rotateZ(Math.PI / 2);
-    const vert = new THREE.Mesh(vertGeo, boneMat);
-    vert.position.copy(pos);
-    vert.lookAt(pos.clone().add(tangent));
-    root.add(vert);
-
-    const neuralSpine = new THREE.Mesh(new THREE.BoxGeometry(0.035, vRad * 2.1, 0.025), boneMat);
-    neuralSpine.position.copy(pos).add(new THREE.Vector3(0, vRad * 1.25, 0));
-    neuralSpine.rotation.z = -0.35;
-    root.add(neuralSpine);
-  }
-
-  // 12 Pairs of Anatomical Thoracic Ribs
-  for (let r = 0; r < 12; r++) {
-    const u = 0.35 + (r / 11) * 0.32;
-    const sp = spineCurve.getPointAt(u);
-    const arch = Math.sin((r / 11) * Math.PI);
-    const w = 0.34 + arch * 0.35;
-    const h = 0.42 + arch * 0.38;
-
-    [-1, 1].forEach((side) => {
-      const ribPts = [
-        sp.clone(),
-        sp.clone().add(new THREE.Vector3(0.04, -h * 0.32, side * w)),
-        sp.clone().add(new THREE.Vector3(-0.05, -h * 0.85, side * w * 0.65)),
-        sp.clone().add(new THREE.Vector3(-0.08, -h, side * 0.05))
-      ];
-      root.add(createTube(ribPts, 0.026, boneMat, 16, 8));
-    });
-  }
-
-  // Sternum Keel
-  root.add(
-    createTube(
-      [
-        new THREE.Vector3(-0.55, -0.18, 0),
-        new THREE.Vector3(0.25, -0.26, 0),
-        new THREE.Vector3(1.1, -0.04, 0)
-      ],
-      0.05,
-      boneMat,
-      16,
-      8
-    )
-  );
-
-  // --- HEART / WYVERN RUNE STONE & PYRO-GLANDS ---
-  const heartGroup = new THREE.Group();
-  heartGroup.position.set(0.25, 0.3, 0);
-  root.add(heartGroup);
-
-  if (isWyvern) {
-    // Wyvern Dark-Magic Carved Rune Stone
-    const stone = new THREE.Mesh(
-      new THREE.DodecahedronGeometry(0.31, 0),
-      createExteriorMaterial({ baseColor: '#241520', specularColor: '#ff2a4b', scalePattern: 0 })
+  if (artifactId === 'wardstone') {
+    // --- 01. THE BLACK-IRON WARDSTONE CAULDRON & SEVEN BREED PILLARS ---
+    const pedestal = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.75, 2.05, 0.28, 32),
+      blackIronMat
     );
-    heartGroup.add(stone);
-    for (let k = 0; k < 3; k++) {
-      const rRing = new THREE.Mesh(new THREE.TorusGeometry(0.35 + k * 0.025, 0.016, 8, 36), conduitMat);
-      rRing.rotation.set(k * 1.1, k * 0.7, k * 0.4);
-      heartGroup.add(rRing);
-    }
-  } else {
-    const heart = new THREE.Mesh(new THREE.SphereGeometry(0.27, 20, 20), conduitMat);
-    heart.scale.set(1.25, 0.95, 0.9);
-    heartGroup.add(heart);
+    pedestal.position.y = -1.15;
+    root.add(pedestal);
 
-    const halo = new THREE.Mesh(new THREE.TorusGeometry(0.37, 0.02, 10, 44), pyroMat);
-    halo.rotation.x = Math.PI / 3;
-    heartGroup.add(halo);
-  }
-
-  // Pyro-Chemical Fire Sacs & Tracheal Ducts
-  [-1, 1].forEach((side) => {
-    const sac = new THREE.Mesh(new THREE.SphereGeometry(0.17, 16, 16), pyroMat);
-    sac.scale.set(1.8, 0.72, 0.7);
-    sac.position.set(1.15, 0.42, side * 0.22);
-    sac.rotation.z = 0.28;
-    root.add(sac);
-
-    root.add(
-      createTube(
-        [
-          new THREE.Vector3(1.25, 0.44, side * 0.2),
-          new THREE.Vector3(1.85, 0.82, side * 0.13),
-          new THREE.Vector3(2.42, 1.28, side * 0.08),
-          new THREE.Vector3(3.12, 1.26, side * 0.04)
-        ],
-        0.022,
-        pyroMat,
-        20,
-        6
-      )
-    );
-  });
-
-  // Main Spinal Signet Conduit
-  root.add(createTube(spinePts, 0.036, conduitMat, 48, 8));
-
-  // --- MUSCULAR LEGS & TALONS ---
-  const buildLeg = (hipPos, isFront, side) => {
-    const knee = hipPos.clone().add(new THREE.Vector3(isFront ? -0.22 : 0.3, -0.56, side * 0.22));
-    const ankle = knee.clone().add(new THREE.Vector3(isFront ? 0.34 : -0.34, -0.5, side * 0.05));
-    const foot = ankle.clone().add(new THREE.Vector3(0.26, -0.2, 0));
-    const pts = [hipPos, knee, ankle, foot];
-
-    root.add(createTube(pts, 0.145, extMat, 20, 12));
-    root.add(createTube(pts, 0.055, boneMat, 20, 8));
-    root.add(createTube(pts, 0.02, conduitMat, 20, 6));
-
-    [-0.09, 0, 0.09].forEach((zOff) => {
-      root.add(
-        createTube(
-          [foot.clone(), foot.clone().add(new THREE.Vector3(0.24, -0.06, zOff))],
-          0.026,
-          boneMat,
-          8,
-          6
-        )
+    // Glowing Geodesic Rune Rings on Pedestal Floor
+    [1.25, 1.65, 1.95].forEach((r, idx) => {
+      const floorRing = new THREE.Mesh(
+        new THREE.TorusGeometry(r, 0.016, 10, 64),
+        idx === 1 ? cyanLightningMat : glowingGoldMat
       );
+      floorRing.rotation.x = Math.PI / 2;
+      floorRing.position.y = -1.0;
+      root.add(floorRing);
     });
-  };
 
-  [-1, 1].forEach((side) => {
-    buildLeg(new THREE.Vector3(-0.75, 0.32, side * 0.42), false, side);
-    if (!isWyvern) {
-      buildLeg(new THREE.Vector3(0.92, 0.36, side * 0.45), true, side);
-    }
-  });
+    // Sculpted Black-Iron Cauldron Bowl
+    const cauldronGroup = new THREE.Group();
+    cauldronGroup.position.y = -0.35;
+    root.add(cauldronGroup);
 
-  // --- SCULPTED 5-RAY WINGS WITH SUBDIVIDED MEMBRANES ---
-  const leftWingGroup = new THREE.Group();
-  const rightWingGroup = new THREE.Group();
-
-  const buildWing = (side) => {
-    const wg = side > 0 ? leftWingGroup : rightWingGroup;
-    wg.position.set(0.62, 0.72, side * 0.34);
-    root.add(wg);
-
-    const shoulder = new THREE.Vector3(0, 0, 0);
-    const elbow = new THREE.Vector3(-0.42, 0.46, side * 0.96);
-    const wrist = new THREE.Vector3(0.38, 0.92, side * 2.15);
-    const tip = new THREE.Vector3(-0.68, 1.18, side * 4.55);
-
-    const leadPts = [shoulder, elbow, wrist, tip];
-    wg.add(createTube(leadPts, 0.082, extMat, 28, 10));
-    wg.add(createTube(leadPts, 0.044, boneMat, 28, 8));
-    wg.add(createTube(leadPts, 0.022, conduitMat, 28, 6));
-
-    const fingers = [
-      tip,
-      new THREE.Vector3(-1.18, 0.66, side * 3.9),
-      new THREE.Vector3(-1.58, 0.24, side * 2.95),
-      new THREE.Vector3(-1.68, -0.04, side * 1.95),
-      new THREE.Vector3(-1.35, -0.18, side * 1.05)
-    ];
-
-    for (let f = 1; f < fingers.length; f++) {
-      const fPts = [
-        wrist,
-        wrist.clone().lerp(fingers[f], 0.5).add(new THREE.Vector3(-0.14, 0.1, 0)),
-        fingers[f]
-      ];
-      wg.add(createTube(fPts, 0.036, extMat, 18, 8));
-      wg.add(createTube(fPts, 0.022, boneMat, 18, 6));
-      wg.add(createTube(fPts, 0.014, conduitMat, 18, 5));
-    }
-
-    // Subdivided curved wing membranes between each finger ray
-    for (let m = 0; m < fingers.length - 1; m++) {
-      const fA = fingers[m];
-      const fB = fingers[m + 1];
-      const positions = [];
-      const indices = [];
-      const steps = 10;
-
-      for (let i = 0; i <= steps; i++) {
-        const u = i / steps;
-        const pA = wrist.clone().lerp(fA, u);
-        const pB = wrist.clone().lerp(fB, u);
-        for (let j = 0; j <= steps; j++) {
-          const v = j / steps;
-          const pt = pA.clone().lerp(pB, v);
-          // Camber arch for realistic aerodynamic wing membrane
-          const camber = Math.sin(u * Math.PI) * Math.sin(v * Math.PI) * 0.14;
-          pt.y += camber;
-          positions.push(pt.x, pt.y, pt.z);
-        }
-      }
-
-      const stride = steps + 1;
-      for (let i = 0; i < steps; i++) {
-        for (let j = 0; j < steps; j++) {
-          const a = i * stride + j;
-          const b = (i + 1) * stride + j;
-          const c = (i + 1) * stride + (j + 1);
-          const d = i * stride + (j + 1);
-          indices.push(a, b, d, b, c, d);
-        }
-      }
-
-      const webGeo = new THREE.BufferGeometry();
-      webGeo.setIndex(indices);
-      webGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-      webGeo.computeVertexNormals();
-      wg.add(new THREE.Mesh(webGeo, wingMembraneMat));
-    }
-  };
-
-  buildWing(1);
-  buildWing(-1);
-
-  // --- TAIL WEAPONRY ---
-  const tailGroup = new THREE.Group();
-  tailGroup.position.set(-4.05, 0.15, 0);
-  root.add(tailGroup);
-
-  if (isAndarna) {
-    for (let p = -3; p <= 3; p++) {
-      const ang = p * 0.22;
-      const vaneGeo = new THREE.ConeGeometry(0.08, 0.88, 8);
-      vaneGeo.rotateZ(Math.PI / 2);
-      vaneGeo.scale(1.0, 0.22, 1.8);
-      const vane = new THREE.Mesh(vaneGeo, extMat);
-      vane.position.set(-0.32, Math.sin(ang) * 0.08, Math.sin(ang) * 0.38);
-      vane.rotation.y = ang;
-      tailGroup.add(vane);
-
-      const oss = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.008, 0.72, 6), boneMat);
-      oss.rotation.z = Math.PI / 2;
-      oss.rotation.y = ang;
-      oss.position.copy(vane.position);
-      tailGroup.add(oss);
-    }
-  } else if (isWyvern) {
-    const barbPts = [
-      new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(-0.45, 0.28, 0),
-      new THREE.Vector3(-0.25, 0.58, 0),
-      new THREE.Vector3(0.05, 0.42, 0)
-    ];
-    tailGroup.add(createTube(barbPts, 0.085, extMat, 16, 8));
-    tailGroup.add(createTube(barbPts, 0.042, boneMat, 16, 6));
-  } else {
-    // Tairn's Morningstartail Mace
-    const club = new THREE.Mesh(new THREE.SphereGeometry(0.32, 18, 18), extMat);
-    club.scale.set(1.45, 0.95, 0.95);
-    tailGroup.add(club);
-
-    const clubBone = new THREE.Mesh(new THREE.SphereGeometry(0.24, 14, 14), boneMat);
-    clubBone.scale.set(1.4, 0.9, 0.9);
-    tailGroup.add(clubBone);
-
-    for (let s = 0; s < 18; s++) {
-      const phi = Math.acos(1 - (2 * (s + 0.5)) / 18);
-      const theta = Math.PI * (1 + Math.sqrt(5)) * s;
-      const dir = new THREE.Vector3(
-        Math.cos(theta) * Math.sin(phi),
-        Math.sin(theta) * Math.sin(phi),
-        Math.cos(phi)
-      ).normalize();
-
-      const spOut = new THREE.Mesh(new THREE.ConeGeometry(0.052, 0.42, 6), extMat);
-      spOut.position.copy(dir.clone().multiplyScalar(0.35));
-      spOut.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-      tailGroup.add(spOut);
-
-      const spIn = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.35, 6), boneMat);
-      spIn.position.copy(dir.clone().multiplyScalar(0.31));
-      spIn.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-      tailGroup.add(spIn);
-    }
-  }
-
-  root.userData.updateAnimation = (t) => {
-    const flap = Math.sin(t * 1.7) * 0.24;
-    leftWingGroup.rotation.x = flap;
-    rightWingGroup.rotation.x = -flap;
-    const beat = 1.0 + Math.pow(Math.sin(t * 3.2), 6.0) * 0.16;
-    heartGroup.scale.setScalar(beat);
-    tailGroup.rotation.y = Math.sin(t * 1.2) * 0.14;
-    headGroup.rotation.y = Math.sin(t * 0.8) * 0.06;
-  };
-
-  return root;
-}
-
-// ============================================================================
-// 2. SCULPTED RIDER'S CONDUIT (Violet Sorrengail & Xaden Riorson)
-// ============================================================================
-function buildRiderModel(specimenId = 'violet') {
-  const root = new THREE.Group();
-  root.name = `rider-${specimenId}`;
-  root.scale.setScalar(1.38);
-  root.position.y = -0.3;
-
-  const isViolet = specimenId === 'violet';
-  const primaryHex = isViolet ? '#7ce8ff' : '#9d65ff';
-  const secondaryHex = isViolet ? '#f4c55c' : '#38b6ff';
-
-  const armorMat = createExteriorMaterial({
-    baseColor: isViolet ? '#0f1622' : '#090c14',
-    specularColor: primaryHex,
-    scalePattern: isViolet ? 1.0 : 0.2
-  });
-  const boneMat = createBoneMaterial({ boneTint: '#f2ece1' });
-  const conduitMat = createConduitMaterial({
-    color: primaryHex,
-    secondary: secondaryHex,
-    pulseSpeed: 8.5,
-    alwaysFaintlyVisible: true
-  });
-  const relicMat = createConduitMaterial({
-    color: isViolet ? '#f4c55c' : '#38b6ff',
-    secondary: isViolet ? '#7ce8ff' : '#b388ff',
-    pulseSpeed: 5.0,
-    alwaysFaintlyVisible: true
-  });
-
-  // Smooth Lofted Torso & Waist
-  const torsoSpine = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, -0.22, 0),
-    new THREE.Vector3(0, 0.22, 0.02),
-    new THREE.Vector3(0, 0.68, 0),
-    new THREE.Vector3(0, 1.08, -0.01)
-  ]);
-  const torsoGeo = createLoftedBodyGeometry(torsoSpine, (u) => {
-    // Hips -> narrow waist -> chest/shoulders
-    const waistDip = Math.sin(u * Math.PI);
-    const rx = THREE.MathUtils.lerp(0.26, 0.34, u) - waistDip * 0.05;
-    const ry = THREE.MathUtils.lerp(0.18, 0.22, u) - waistDip * 0.02;
-    return { rx, ry };
-  }, 36, 24);
-  root.add(new THREE.Mesh(torsoGeo, armorMat));
-
-  // Neck & Sculpted Head
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 0.26, 16), armorMat);
-  neck.position.set(0, 1.18, 0);
-  root.add(neck);
-
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.21, 24, 24), armorMat);
-  head.scale.set(0.88, 1.12, 0.95);
-  head.position.set(0, 1.48, 0.02);
-  root.add(head);
-
-  if (isViolet) {
-    // Silver-Tipped Crown & Braid
-    const braidPts = [
-      new THREE.Vector3(0, 1.66, -0.1),
-      new THREE.Vector3(0.08, 1.46, -0.23),
-      new THREE.Vector3(0.24, 1.15, -0.14),
-      new THREE.Vector3(0.31, 0.82, 0.14),
-      new THREE.Vector3(0.27, 0.48, 0.23)
-    ];
-    root.add(
-      createTube(
-        braidPts,
-        0.04,
-        createConduitMaterial({ color: '#e2edf8', secondary: '#7ce8ff', pulseSpeed: 3.0, alwaysFaintlyVisible: true }),
-        24,
-        8
-      )
+    const bowl = new THREE.Mesh(
+      new THREE.SphereGeometry(0.82, 32, 24, 0, Math.PI * 2, Math.PI * 0.28, Math.PI * 0.72),
+      blackIronMat
     );
-  }
+    cauldronGroup.add(bowl);
 
-  // Deep Articulated Skeleton Inside
-  const cranium = new THREE.Mesh(new THREE.SphereGeometry(0.17, 18, 18), boneMat);
-  cranium.scale.set(0.86, 1.05, 0.94);
-  cranium.position.set(0, 1.5, 0.02);
-  root.add(cranium);
+    const lipRing = new THREE.Mesh(
+      new THREE.TorusGeometry(0.74, 0.065, 16, 48),
+      burnishedGoldMat
+    );
+    lipRing.rotation.x = Math.PI / 2;
+    lipRing.position.y = 0.36;
+    cauldronGroup.add(lipRing);
 
-  for (let v = 0; v < 22; v++) {
-    const y = -0.14 + (v / 21) * 1.42;
-    const vert = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.044, 10), boneMat);
-    vert.position.set(0, y, -0.07);
-    root.add(vert);
-  }
+    // Molten Golden Dragonfire Core inside the Cauldron
+    const moltenCore = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.68, 0.5, 0.18, 32),
+      glowingGoldMat
+    );
+    moltenCore.position.y = 0.28;
+    cauldronGroup.add(moltenCore);
 
-  const sternum = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.46, 0.028), boneMat);
-  sternum.position.set(0, 0.68, 0.16);
-  root.add(sternum);
+    // Engraved Runic Equatorial Band around Cauldron
+    const runeBand = new THREE.Mesh(
+      new THREE.TorusGeometry(0.83, 0.022, 10, 48),
+      glowingGoldMat
+    );
+    runeBand.rotation.x = Math.PI / 2;
+    cauldronGroup.add(runeBand);
 
-  for (let r = 0; r < 10; r++) {
-    const y = 0.35 + (r / 9) * 0.55;
-    const w = 0.21 + Math.sin((r / 9) * Math.PI) * 0.095;
-    [-1, 1].forEach((side) => {
-      root.add(
-        createTube(
-          [
-            new THREE.Vector3(0, y, -0.07),
-            new THREE.Vector3(side * w, y - 0.02, 0.02),
-            new THREE.Vector3(side * w * 0.65, y - 0.05, 0.15),
-            new THREE.Vector3(side * 0.04, y - 0.04, 0.16)
-          ],
-          0.015,
-          boneMat,
-          14,
-          6
-        )
+    // 7 Orbiting Dragon-Breed Flame Crystals (6 Gold + 1 Iridescent Seventh Breed!)
+    const pillarsGroup = new THREE.Group();
+    root.add(pillarsGroup);
+
+    for (let i = 0; i < 7; i++) {
+      const ang = (i / 7) * Math.PI * 2;
+      const px = Math.cos(ang) * 1.48;
+      const pz = Math.sin(ang) * 1.48;
+      const isSeventh = i === 0;
+
+      const obelisk = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.14, 1.15, 6),
+        blackIronMat
       );
-    });
-  }
+      obelisk.position.set(px, -0.45, pz);
+      pillarsGroup.add(obelisk);
 
-  const pelvisBone = new THREE.Mesh(new THREE.TorusGeometry(0.19, 0.042, 10, 24), boneMat);
-  pelvisBone.rotation.x = Math.PI / 2.2;
-  pelvisBone.scale.set(1.2, 0.75, 1.0);
-  pelvisBone.position.set(0, -0.12, 0);
-  root.add(pelvisBone);
+      // Floating Flame Crystal above each pillar
+      const crystal = new THREE.Mesh(
+        new THREE.OctahedronGeometry(0.18, 1),
+        isSeventh ? cyanLightningMat : glowingGoldMat
+      );
+      crystal.scale.set(0.75, 1.65, 0.75);
+      crystal.position.set(px, 0.45, pz);
+      crystal.userData.baseY = 0.45;
+      crystal.userData.phase = i * 0.9;
+      pillarsGroup.add(crystal);
+    }
 
-  const handOrbs = [];
-  [-1, 1].forEach((side) => {
-    const shoulder = new THREE.Vector3(side * 0.38, 0.94, 0);
-    const elbow = new THREE.Vector3(side * 0.55, 0.54, 0.08);
-    const wrist = new THREE.Vector3(side * 0.58, 0.32, 0.28);
-    const armPts = [shoulder, elbow, wrist];
+    // Shimmering Geodesic Ward Dome Arching Over the Cauldron
+    const domeWire = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(2.15, 2),
+      new THREE.MeshBasicMaterial({
+        color: '#e5b85c',
+        wireframe: true,
+        transparent: true,
+        opacity: 0.18
+      })
+    );
+    domeWire.position.y = 0.1;
+    root.add(domeWire);
 
-    root.add(createTube(armPts, 0.082, armorMat, 18, 12));
-    root.add(createTube(armPts, 0.032, boneMat, 18, 8));
-    root.add(createTube(armPts, 0.02, conduitMat, 20, 6));
-
-    const orb = new THREE.Mesh(new THREE.IcosahedronGeometry(0.11, 2), conduitMat);
-    orb.position.copy(wrist).add(new THREE.Vector3(side * 0.04, 0.02, 0.08));
-    root.add(orb);
-    handOrbs.push(orb);
-
-    const hip = new THREE.Vector3(side * 0.19, -0.18, 0);
-    const knee = new THREE.Vector3(side * 0.22, -0.78, 0.04);
-    const ankle = new THREE.Vector3(side * 0.24, -1.35, 0);
-    const legPts = [hip, knee, ankle];
-
-    root.add(createTube(legPts, 0.112, armorMat, 18, 12));
-    root.add(createTube(legPts, 0.042, boneMat, 18, 8));
-    root.add(createTube(legPts, 0.016, conduitMat, 18, 6));
-
-    if (isViolet) {
-      [shoulder, knee].forEach((jp) => {
-        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.105, 0.011, 8, 28), relicMat);
-        ring.position.copy(jp);
-        ring.rotation.y = side * 0.5;
-        root.add(ring);
+    root.userData.updateAnimation = (t) => {
+      pillarsGroup.rotation.y = t * 0.25;
+      domeWire.rotation.y = -t * 0.12;
+      pillarsGroup.children.forEach((child) => {
+        if (child.userData.baseY !== undefined) {
+          child.position.y = child.userData.baseY + Math.sin(t * 2.8 + child.userData.phase) * 0.12;
+          child.rotation.y = t * 1.8;
+        }
       });
-    }
-  });
+    };
+  } else if (artifactId === 'relic-core') {
+    // --- 02. THE DUAL-BOND RELIC ASTROLABE & MAGMA HEART CORE ---
+    const heartCore = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.58, 3),
+      glowingGoldMat
+    );
+    heartCore.scale.set(1.0, 1.25, 0.95);
+    root.add(heartCore);
 
-  const riderHeart = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 16), conduitMat);
-  riderHeart.position.set(0.05, 0.68, 0.04);
-  root.add(riderHeart);
+    const innerCage = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.72, 1),
+      new THREE.MeshBasicMaterial({
+        color: '#5ecbff',
+        wireframe: true,
+        transparent: true,
+        opacity: 0.65
+      })
+    );
+    root.add(innerCage);
 
-  const cranialNode = new THREE.Mesh(new THREE.OctahedronGeometry(0.09, 2), relicMat);
-  cranialNode.position.set(0, 1.54, 0.04);
-  root.add(cranialNode);
-
-  root.add(
-    createTube(
-      [
-        new THREE.Vector3(0, 1.54, 0.04),
-        new THREE.Vector3(0, 1.15, -0.02),
-        new THREE.Vector3(0.05, 0.68, 0.04),
-        new THREE.Vector3(0, 0.15, 0)
-      ],
-      0.025,
-      conduitMat,
-      20,
-      8
-    )
-  );
-
-  // Orbiting Lightning / Shadow Tendrils around the Rider
-  const auraGroup = new THREE.Group();
-  root.add(auraGroup);
-  for (let s = 0; s < 3; s++) {
-    const pts = [];
-    for (let k = 0; k <= 18; k++) {
-      const f = k / 18;
-      const a = f * Math.PI * 3.0 + s * 2.1;
-      pts.push(
-        new THREE.Vector3(
-          Math.cos(a) * (0.48 + f * 0.22),
-          -0.65 + f * 2.15,
-          Math.sin(a) * (0.48 + f * 0.22)
-        )
+    // 4 Concentric Gyroscopic Astrolabe Rings (Tairn, Andarna, Violet, Xaden)
+    const rings = [];
+    const radii = [1.05, 1.32, 1.58, 1.84];
+    radii.forEach((r, idx) => {
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(r, 0.032, 16, 64),
+        idx % 2 === 0 ? burnishedGoldMat : cyanLightningMat
       );
-    }
-    auraGroup.add(createTube(pts, 0.018, isViolet ? relicMat : conduitMat, 36, 6));
-  }
-
-  root.userData.updateAnimation = (t) => {
-    const pulse = 1.0 + Math.pow(Math.sin(t * 3.8), 4.0) * 0.18;
-    riderHeart.scale.setScalar(pulse);
-    auraGroup.rotation.y = t * 0.65;
-    handOrbs.forEach((orb, idx) => {
-      orb.rotation.y = t * 2.5 * (idx === 0 ? 1 : -1);
-      orb.scale.setScalar(0.9 + Math.sin(t * 6.0 + idx) * 0.2);
+      root.add(ring);
+      rings.push(ring);
     });
-  };
 
-  return root;
-}
-
-// ============================================================================
-// 3. BASGIATH WAR COLLEGE & SUBTERRANEAN WARDSTONE
-// ============================================================================
-function buildBasgiathModel() {
-  const root = new THREE.Group();
-  root.name = 'basgiath-citadel';
-
-  const mountainMat = createExteriorMaterial({
-    baseColor: '#0c111b',
-    specularColor: '#38b6ff',
-    scalePattern: 0.0
-  });
-  const citadelMat = createExteriorMaterial({
-    baseColor: '#161f30',
-    specularColor: '#f4c55c',
-    scalePattern: 0.0
-  });
-  const bedrockBoneMat = createBoneMaterial({ boneTint: '#c8d4e3' });
-  const wardMat = createConduitMaterial({
-    color: '#f4c55c',
-    secondary: '#ffd97d',
-    pulseSpeed: 4.5,
-    alwaysFaintlyVisible: true
-  });
-  const tunnelMat = createConduitMaterial({
-    color: '#38b6ff',
-    secondary: '#7ce8ff',
-    pulseSpeed: 6.0,
-    alwaysFaintlyVisible: false
-  });
-  const veninMat = createConduitMaterial({
-    color: '#ff1e42',
-    secondary: '#9e0b22',
-    pulseSpeed: 5.5,
-    alwaysFaintlyVisible: true
-  });
-
-  const westPeak = new THREE.Mesh(new THREE.ConeGeometry(2.3, 3.4, 9), mountainMat);
-  westPeak.position.set(-1.95, -0.35, 0);
-  root.add(westPeak);
-
-  const eastPeak = new THREE.Mesh(new THREE.ConeGeometry(2.4, 3.6, 10), mountainMat);
-  eastPeak.position.set(1.85, -0.25, 0);
-  root.add(eastPeak);
-
-  const centralBase = new THREE.Mesh(new THREE.BoxGeometry(5.6, 1.6, 3.6), mountainMat);
-  centralBase.position.set(0, -1.35, 0);
-  root.add(centralBase);
-
-  // The Parapet Bridge
-  const parapetBridge = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.12, 0.18), citadelMat);
-  parapetBridge.position.set(0, 0.55, 1.55);
-  root.add(parapetBridge);
-
-  const parapetCore = new THREE.Mesh(new THREE.BoxGeometry(2.55, 0.08, 0.14), wardMat);
-  parapetCore.position.set(0, 0.55, 1.55);
-  root.add(parapetCore);
-
-  [-1.35, 1.35].forEach((xPos) => {
-    const turret = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.28, 1.35, 10), citadelMat);
-    turret.position.set(xPos, 0.65, 1.55);
-    root.add(turret);
-  });
-
-  for (let i = 0; i < 5; i++) {
-    const ang = (i / 5) * Math.PI * 2;
-    const tower = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.18, 0.22, 1.1 + (i % 2) * 0.4, 10),
-      citadelMat
+    root.userData.updateAnimation = (t) => {
+      const beat = 1.0 + Math.pow(Math.sin(t * 3.4), 6.0) * 0.18;
+      heartCore.scale.set(beat, beat * 1.22, beat * 0.95);
+      innerCage.rotation.y = t * 0.8;
+      innerCage.rotation.x = t * 0.5;
+      rings.forEach((r, idx) => {
+        r.rotation.x = t * (0.4 + idx * 0.18) * (idx % 2 === 0 ? 1 : -1);
+        r.rotation.y = t * (0.55 - idx * 0.1);
+      });
+    };
+  } else {
+    // --- 03. CAPTURED WYVERN DARK-MAGIC RUNE STONE ---
+    const boulder = new THREE.Mesh(
+      new THREE.DodecahedronGeometry(0.95, 1),
+      blackIronMat
     );
-    tower.position.set(1.55 + Math.cos(ang) * 0.55, 0.85, Math.sin(ang) * 0.55);
-    root.add(tower);
+    boulder.scale.set(0.9, 1.25, 0.85);
+    root.add(boulder);
+
+    // Glowing Crimson Venin Rune Matrix Cage around the Stone
+    const runeCage = new THREE.Mesh(
+      new THREE.DodecahedronGeometry(0.99, 1),
+      new THREE.MeshBasicMaterial({
+        color: '#ff2e55',
+        wireframe: true
+      })
+    );
+    runeCage.scale.set(0.9, 1.25, 0.85);
+    root.add(runeCage);
+
+    const darkRings = [];
+    [1.35, 1.65].forEach((r, idx) => {
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(r, 0.024, 12, 48),
+        crimsonVeninMat
+      );
+      root.add(ring);
+      darkRings.push(ring);
+    });
+
+    root.userData.updateAnimation = (t) => {
+      boulder.rotation.y = t * 0.45;
+      runeCage.rotation.y = t * 0.45;
+      boulder.position.y = Math.sin(t * 2.2) * 0.1;
+      runeCage.position.y = boulder.position.y;
+      darkRings[0].rotation.x = t * 0.7;
+      darkRings[0].rotation.y = t * 0.4;
+      darkRings[1].rotation.z = -t * 0.6;
+      darkRings[1].rotation.x = t * 0.3;
+    };
   }
-
-  const archives = new THREE.Mesh(new THREE.ConeGeometry(0.85, 1.15, 4), citadelMat);
-  archives.position.set(-1.85, 0.68, -0.55);
-  archives.rotation.y = Math.PI / 4;
-  root.add(archives);
-
-  for (let lvl = 0; lvl < 4; lvl++) {
-    const subVault = new THREE.Mesh(
-      new THREE.BoxGeometry(0.95 - lvl * 0.1, 0.14, 0.95 - lvl * 0.1),
-      bedrockBoneMat
-    );
-    subVault.position.set(-1.85, 0.15 - lvl * 0.26, -0.55);
-    root.add(subVault);
-  }
-
-  root.add(
-    createTube(
-      [
-        new THREE.Vector3(-1.85, -0.55, -0.55),
-        new THREE.Vector3(-0.4, -0.65, 0.35),
-        new THREE.Vector3(0.95, -0.45, 0.75),
-        new THREE.Vector3(2.35, -0.15, 1.15)
-      ],
-      0.055,
-      tunnelMat,
-      32,
-      8
-    )
-  );
-
-  const wardstoneGroup = new THREE.Group();
-  wardstoneGroup.position.set(0, -1.15, 0);
-  root.add(wardstoneGroup);
-
-  const cavernDome = new THREE.Mesh(
-    new THREE.SphereGeometry(1.15, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.65),
-    bedrockBoneMat
-  );
-  cavernDome.position.y = -0.25;
-  wardstoneGroup.add(cavernDome);
-
-  const wardstoneCore = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.28, 0.52, 16), wardMat);
-  wardstoneGroup.add(wardstoneCore);
-
-  for (let p = 0; p < 7; p++) {
-    const ang = (p / 7) * Math.PI * 2;
-    const px = Math.cos(ang) * 0.78;
-    const pz = Math.sin(ang) * 0.78;
-    const pillar = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.06, 0.08, 0.65, 8),
-      p === 6 ? tunnelMat : wardMat
-    );
-    pillar.position.set(px, 0.05, pz);
-    wardstoneGroup.add(pillar);
-
-    root.add(
-      createTube(
-        [
-          new THREE.Vector3(0, -1.15, 0),
-          new THREE.Vector3(px * 1.4, -0.4, pz * 1.4),
-          new THREE.Vector3(px * 2.5, 0.85, pz * 2.2),
-          new THREE.Vector3(0, 2.35, 0)
-        ],
-        0.025,
-        wardMat,
-        24,
-        6
-      )
-    );
-  }
-
-  const wardDomeWire = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(3.35, 2),
-    new THREE.MeshBasicMaterial({
-      color: '#f4c55c',
-      wireframe: true,
-      transparent: true,
-      opacity: 0.11
-    })
-  );
-  wardDomeWire.position.y = 0.1;
-  root.add(wardDomeWire);
-
-  for (let v = 0; v < 4; v++) {
-    root.add(
-      createTube(
-        [
-          new THREE.Vector3(3.6, -1.45, -1.4 + v * 0.7),
-          new THREE.Vector3(2.9, -1.05 + v * 0.1, -0.9 + v * 0.45),
-          new THREE.Vector3(2.15, -0.75, -0.4 + v * 0.25),
-          new THREE.Vector3(1.45, -0.95, 0)
-        ],
-        0.042,
-        veninMat,
-        20,
-        6
-      )
-    );
-  }
-
-  root.userData.updateAnimation = (t) => {
-    wardstoneCore.rotation.y = t * 0.6;
-    wardDomeWire.rotation.y = t * 0.08;
-    const throb = 1.0 + Math.sin(t * 3.0) * 0.08;
-    wardstoneCore.scale.set(throb, 1.0, throb);
-  };
 
   return root;
 }
@@ -59269,524 +58422,300 @@ function buildBasgiathModel() {
 
 // --- parapetGame.js ---
 // ============================================================================
-// FOURTH WING: CODEX OCULUS — Real-Time 3D Canyon Flight & X-Ray Wyvern Strike
-// Smooth 60fps mouse/keyboard flight control. Steer Tairn through the storm,
-// expose Wyvern Rune Stones in X-Ray Vision, and click/Space to fire Lightning!
+// FOURTH WING: THE EMPYREAN ARCHIVE — "Wielder of the Storm" Interactive Game
+// Move your X-Ray Sight over swooping Wyverns to reveal the glowing Red Rune
+// Stone inside their ribcage, then Click to strike them down with Lightning!
 // ============================================================================
-class ParapetMiniGame {
-  constructor(scene, camera, controls, audio, onExitCallback) {
-    this.scene = scene;
-    this.camera = camera;
-    this.controls = controls;
+class StormDefenseGame {
+  constructor(canvas, audio) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
     this.audio = audio;
-    this.onExitCallback = onExitCallback;
 
-    this.isActive = false;
-    this.group = new THREE.Group();
+    this.width = 600;
+    this.height = 310;
+    this.mouseX = 300;
+    this.mouseY = 155;
+    this.lensRadius = 78;
 
-    // Player Dragon (Tairn) state
-    this.playerDragon = null;
-    this.leftWing = null;
-    this.rightWing = null;
-    this.playerPos = new THREE.Vector2(0, 0);     // Current X, Y
-    this.targetPos = new THREE.Vector2(0, 0);     // Mouse/Key target X, Y
-    this.keys = { left: false, right: false, up: false, down: false };
-
-    // Gameplay state
-    this.score = 0;
-    this.wyvernsKilled = 0;
-    this.targetKills = 10;
-    this.shield = 100;
-    this.gameStatus = 'idle'; // 'playing' | 'won' | 'lost'
-    this.xrayPulseTimer = 999; // Keep X-ray vision active on targets!
-
-    // Entities
+    this.kills = 0;
+    this.wardHealth = 100;
     this.wyverns = [];
-    this.bolts = [];
-    this.orbs = [];
-    this.pillars = [];
-    this.explosions = [];
-    this.canyonSegments = [];
-
+    this.lightningBolts = [];
+    this.particles = [];
     this.spawnTimer = 0;
-    this.orbTimer = 0;
-    this.pillarTimer = 0;
 
+    this._resize();
+    window.addEventListener('resize', () => this._resize());
     this._bindEvents();
+    this._spawnWyvern();
+    this._spawnWyvern();
+  }
+
+  _resize() {
+    if (!this.canvas.parentElement) return;
+    const rect = this.canvas.parentElement.getBoundingClientRect();
+    this.width = Math.max(300, rect.width);
+    this.height = Math.max(240, rect.height);
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
   }
 
   _bindEvents() {
-    window.addEventListener('pointermove', (e) => {
-      if (!this.isActive || this.gameStatus !== 'playing') return;
-      // Map screen cursor smoothly to canyon flight bounds X: [-3.2, 3.2], Y: [-1.6, 2.0]
-      const nx = (e.clientX / window.innerWidth) * 2 - 1;
-      const ny = -(e.clientY / window.innerHeight) * 2 + 1;
-      this.targetPos.x = THREE.MathUtils.clamp(nx * 3.4, -3.2, 3.2);
-      this.targetPos.y = THREE.MathUtils.clamp(ny * 1.9, -1.4, 2.0);
+    this.canvas.addEventListener('pointermove', (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      this.mouseX = e.clientX - rect.left;
+      this.mouseY = e.clientY - rect.top;
     });
 
-    window.addEventListener('pointerdown', (e) => {
-      if (!this.isActive || this.gameStatus !== 'playing') return;
-      // Ignore clicks on top/bottom UI buttons
-      if (e.target.closest('button')) return;
-      this.fireLightningBolt();
-    });
-
-    window.addEventListener('keydown', (e) => {
-      if (!this.isActive) return;
-      const k = e.key.toLowerCase();
-      if (k === 'a' || e.key === 'ArrowLeft') this.keys.left = true;
-      if (k === 'd' || e.key === 'ArrowRight') this.keys.right = true;
-      if (k === 'w' || e.key === 'ArrowUp') this.keys.up = true;
-      if (k === 's' || e.key === 'ArrowDown') this.keys.down = true;
-      if (k === ' ' && this.gameStatus === 'playing') {
-        e.preventDefault();
-        this.fireLightningBolt();
-      }
-    });
-
-    window.addEventListener('keyup', (e) => {
-      const k = e.key.toLowerCase();
-      if (k === 'a' || e.key === 'ArrowLeft') this.keys.left = false;
-      if (k === 'd' || e.key === 'ArrowRight') this.keys.right = false;
-      if (k === 'w' || e.key === 'ArrowUp') this.keys.up = false;
-      if (k === 's' || e.key === 'ArrowDown') this.keys.down = false;
+    this.canvas.addEventListener('pointerdown', (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      this.mouseX = e.clientX - rect.left;
+      this.mouseY = e.clientY - rect.top;
+      this.strikeLightning(this.mouseX, this.mouseY);
     });
   }
 
-  start() {
-    this.isActive = true;
-    this.gameStatus = 'playing';
-    this.score = 0;
-    this.wyvernsKilled = 0;
-    this.shield = 100;
-    this.playerPos.set(0, 0.2);
-    this.targetPos.set(0, 0.2);
+  reset() {
+    this.kills = 0;
+    this.wardHealth = 100;
     this.wyverns = [];
-    this.bolts = [];
-    this.orbs = [];
-    this.pillars = [];
-    this.explosions = [];
-    this.canyonSegments = [];
-    this.spawnTimer = 0.5;
-    this.orbTimer = 1.8;
-    this.pillarTimer = 1.2;
-
-    this._buildArena();
-    this.scene.add(this.group);
-    this.controls.enabled = false;
-
-    this.camera.position.set(0, 1.35, 4.8);
-    this.camera.lookAt(0, 0.3, -10);
-    this.camera.rotation.z = 0;
-
-    this._updateHUD('STEER WITH MOUSE OR WASD • CLICK OR PRESS SPACE TO FIRE LIGHTNING AT WYVERN RUNE STONES!');
-  }
-
-  stop() {
-    this.isActive = false;
-    this.gameStatus = 'idle';
-    if (this.group.parent) {
-      this.scene.remove(this.group);
-    }
-    this.controls.enabled = true;
-  }
-
-  _buildArena() {
-    while (this.group.children.length > 0) {
-      this.group.remove(this.group.children[0]);
-    }
-
-    // 1. Build Player Dragon (Tairn with Violet's glowing lightning bond on his back!)
-    this.playerDragon = new THREE.Group();
-    const hideMat = createExteriorMaterial({
-      baseColor: '#090d16',
-      specularColor: '#38b6ff',
-      scalePattern: 1.0
-    });
-    const conduitMat = createConduitMaterial({
-      color: '#38b6ff',
-      secondary: '#f4c55c',
-      pulseSpeed: 9.0,
-      alwaysFaintlyVisible: true
-    });
-
-    // Sleek dragon body & neck
-    const body = new THREE.Mesh(new THREE.ConeGeometry(0.28, 1.85, 10), hideMat);
-    body.rotation.x = -Math.PI / 2;
-    this.playerDragon.add(body);
-
-    const core = new THREE.Mesh(new THREE.OctahedronGeometry(0.16, 1), conduitMat);
-    core.position.set(0, 0.08, -0.1);
-    this.playerDragon.add(core);
-
-    // Flapping Wings
-    this.leftWing = new THREE.Group();
-    this.rightWing = new THREE.Group();
-    const wingGeo = new THREE.ConeGeometry(0.45, 1.65, 4);
-    wingGeo.rotateZ(-Math.PI / 2);
-    wingGeo.scale(1.0, 0.12, 1.3);
-
-    const lwMesh = new THREE.Mesh(wingGeo, hideMat);
-    lwMesh.position.set(0.78, 0, -0.1);
-    this.leftWing.add(lwMesh);
-    const lwVein = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.03, 0.05), conduitMat);
-    lwVein.position.set(0.7, 0.02, -0.25);
-    this.leftWing.add(lwVein);
-
-    const rwMesh = new THREE.Mesh(wingGeo.clone().scale(-1, 1, 1), hideMat);
-    rwMesh.position.set(-0.78, 0, -0.1);
-    this.rightWing.add(rwMesh);
-    const rwVein = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.03, 0.05), conduitMat);
-    rwVein.position.set(-0.7, 0.02, -0.25);
-    this.rightWing.add(rwVein);
-
-    this.playerDragon.add(this.leftWing);
-    this.playerDragon.add(this.rightWing);
-    this.playerDragon.position.set(0, 0.2, 1.2);
-    this.group.add(this.playerDragon);
-
-    // 2. Repeating Canyon Walls rushing past to give a thrilling sense of speed
-    const wallMat = new THREE.MeshStandardMaterial({
-      color: '#0d1320',
-      roughness: 0.85,
-      metalness: 0.2
-    });
-    for (let i = 0; i < 14; i++) {
-      const seg = new THREE.Group();
-      seg.position.z = -i * 4.0;
-
-      [-1, 1].forEach((side) => {
-        const cliff = new THREE.Mesh(new THREE.ConeGeometry(2.2, 7.5, 6), wallMat);
-        cliff.position.set(side * 6.2, 0.5, 0);
-        seg.add(cliff);
-      });
-      this.group.add(seg);
-      this.canyonSegments.push(seg);
-    }
+    this.lightningBolts = [];
+    this.particles = [];
+    this._spawnWyvern();
+    this._spawnWyvern();
+    this._updateReadout('Wave reset! Hover over a Wyvern and click to shatter its Rune Stone.');
   }
 
   _spawnWyvern() {
-    const wyvernGroup = new THREE.Group();
-    const spawnX = (Math.random() - 0.5) * 5.6;
-    const spawnY = -0.8 + Math.random() * 2.5;
-    wyvernGroup.position.set(spawnX, spawnY, -36);
-
-    // Semi-transparent X-Ray Wyvern body + skeleton + blazing Red Rune Stone inside chest!
-    const boneMat = createBoneMaterial({ boneTint: '#d8c2c8' });
-    const runeMat = createConduitMaterial({
-      color: '#ff1e42',
-      secondary: '#ff9e44',
-      pulseSpeed: 12.0,
-      alwaysFaintlyVisible: true
-    });
-
-    const torso = new THREE.Mesh(new THREE.ConeGeometry(0.42, 1.9, 8), boneMat);
-    torso.rotation.x = Math.PI / 2;
-    wyvernGroup.add(torso);
-
-    // The Glowing Red Rune Stone Core (The Target!)
-    const runeStone = new THREE.Mesh(new THREE.OctahedronGeometry(0.28, 1), runeMat);
-    wyvernGroup.add(runeStone);
-
-    const targetRing = new THREE.Mesh(
-      new THREE.TorusGeometry(0.46, 0.025, 8, 28),
-      runeMat
-    );
-    wyvernGroup.add(targetRing);
-
-    // Wyvern Wings
-    const wWingGeo = new THREE.BoxGeometry(2.6, 0.06, 0.55);
-    const wWings = new THREE.Mesh(wWingGeo, boneMat);
-    wyvernGroup.add(wWings);
-
-    this.group.add(wyvernGroup);
+    if (this.wyverns.length >= 4) return;
+    const fromLeft = Math.random() < 0.5;
     this.wyverns.push({
-      mesh: wyvernGroup,
-      wings: wWings,
-      runeStone,
-      speed: 10.5 + Math.random() * 3.5,
-      swayOffset: Math.random() * Math.PI * 2
+      x: fromLeft ? -40 : this.width + 40,
+      y: 45 + Math.random() * (this.height - 125),
+      vx: (fromLeft ? 1 : -1) * (48 + Math.random() * 42),
+      vy: (Math.random() - 0.5) * 18,
+      wingPhase: Math.random() * Math.PI * 2,
+      scale: 0.85 + Math.random() * 0.35
     });
   }
 
-  _spawnWardOrb() {
-    const orbMat = createConduitMaterial({
-      color: '#f4c55c',
-      secondary: '#7ce8ff',
-      pulseSpeed: 8.0,
-      alwaysFaintlyVisible: true
-    });
-    const orbMesh = new THREE.Mesh(new THREE.OctahedronGeometry(0.26, 2), orbMat);
-    orbMesh.position.set((Math.random() - 0.5) * 5.0, -0.6 + Math.random() * 2.2, -34);
-    this.group.add(orbMesh);
-    this.orbs.push({ mesh: orbMesh, speed: 11.0 });
-  }
-
-  _spawnPillar() {
-    const pillarMat = createExteriorMaterial({
-      baseColor: '#141c2c',
-      specularColor: '#ff2a4b',
-      scalePattern: 0.0
-    });
-    const x = (Math.random() - 0.5) * 5.2;
-    const pillar = new THREE.Mesh(new THREE.ConeGeometry(0.58, 5.2, 7), pillarMat);
-    pillar.position.set(x, -1.1, -38);
-    this.group.add(pillar);
-    this.pillars.push({ mesh: pillar, speed: 12.0 });
-  }
-
-  fireLightningBolt() {
-    if (this.gameStatus !== 'playing') return;
-    this.audio.playPulseChime(1.45);
-
-    const boltMat = new THREE.MeshBasicMaterial({ color: '#8ce7ff' });
-    const boltGroup = new THREE.Group();
-    boltGroup.position.copy(this.playerDragon.position).add(new THREE.Vector3(0, 0.1, -0.6));
-
-    // Jagged lightning spear
-    const spear = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2.2, 6), boltMat);
-    spear.rotation.x = Math.PI / 2;
-    boltGroup.add(spear);
-
-    const halo = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.025, 6, 18), boltMat);
-    boltGroup.add(halo);
-
-    // Auto-assist aim slightly toward nearest Wyvern in front of player so combat feels amazing!
-    const vel = new THREE.Vector3(0, 0, -42);
-    let nearestWyvern = null;
-    let bestDist = 2.6; // Generous lock-on cone radius
-    this.wyverns.forEach((w) => {
-      if (w.mesh.position.z < boltGroup.position.z) {
-        const dXY = Math.hypot(
-          w.mesh.position.x - boltGroup.position.x,
-          w.mesh.position.y - boltGroup.position.y
-        );
-        if (dXY < bestDist) {
-          bestDist = dXY;
-          nearestWyvern = w;
-        }
+  strikeLightning(tx, ty) {
+    // Find nearest Wyvern within generous strike range (110px)
+    let hitWyvernIdx = -1;
+    let bestDist = 110;
+    this.wyverns.forEach((w, idx) => {
+      const d = Math.hypot(w.x - tx, w.y - ty);
+      if (d < bestDist) {
+        bestDist = d;
+        hitWyvernIdx = idx;
       }
     });
 
-    if (nearestWyvern) {
-      const dir = nearestWyvern.mesh.position.clone().sub(boltGroup.position).normalize();
-      vel.copy(dir.multiplyScalar(44));
-    }
+    const targetX = hitWyvernIdx >= 0 ? this.wyverns[hitWyvernIdx].x : tx;
+    const targetY = hitWyvernIdx >= 0 ? this.wyverns[hitWyvernIdx].y : ty;
 
-    this.group.add(boltGroup);
-    this.bolts.push({ mesh: boltGroup, vel });
+    // Create jagged branching lightning bolt from bottom center to target
+    const segments = [];
+    let cx = this.width * 0.5;
+    let cy = this.height;
+    const steps = 10;
+    for (let i = 1; i <= steps; i++) {
+      const t = i / steps;
+      const nx = cx + (targetX - cx) * t + (i < steps ? (Math.random() - 0.5) * 32 : 0);
+      const ny = cy + (targetY - cy) * t + (i < steps ? (Math.random() - 0.5) * 16 : 0);
+      segments.push({ x1: cx, y1: cy, x2: nx, y2: ny });
+      cx = nx;
+      cy = ny;
+    }
+    this.lightningBolts.push({ segments, alpha: 1.0 });
+
+    if (hitWyvernIdx >= 0) {
+      const w = this.wyverns[hitWyvernIdx];
+      this._spawnExplosion(w.x, w.y);
+      this.wyverns.splice(hitWyvernIdx, 1);
+      this.kills += 1;
+      if (this.audio) this.audio.playThunderAndLightning();
+      this._updateReadout(`⚡ DIRECT HIT! Shattered Wyvern Rune Stone! (${this.kills} Shattered)`);
+      setTimeout(() => this._spawnWyvern(), 450);
+    } else {
+      if (this.audio) this.audio.playPulseChime(1.3);
+      this._updateReadout('Aim your X-Ray Sight over a swooping Wyvern and click to strike!');
+    }
   }
 
-  _spawnExplosion(pos, colorHex = '#ff2a4b') {
-    const count = 12;
-    const expGroup = new THREE.Group();
-    expGroup.position.copy(pos);
-    const mat = new THREE.MeshBasicMaterial({ color: colorHex });
-    const parts = [];
-    for (let i = 0; i < count; i++) {
-      const p = new THREE.Mesh(new THREE.OctahedronGeometry(0.09, 0), mat);
-      const v = new THREE.Vector3(
-        (Math.random() - 0.5) * 8,
-        (Math.random() - 0.5) * 8,
-        (Math.random() - 0.5) * 8
-      );
-      expGroup.add(p);
-      parts.push({ mesh: p, vel: v });
-    }
-    this.group.add(expGroup);
-    this.explosions.push({ group: expGroup, parts, life: 0.45 });
-  }
-
-  update(dt, elapsed) {
-    if (!this.isActive) return;
-
-    if (this.gameStatus === 'playing') {
-      // Keyboard steering support
-      const keySpeed = 4.2 * dt;
-      if (this.keys.left) this.targetPos.x = Math.max(-3.2, this.targetPos.x - keySpeed);
-      if (this.keys.right) this.targetPos.x = Math.min(3.2, this.targetPos.x + keySpeed);
-      if (this.keys.up) this.targetPos.y = Math.min(2.0, this.targetPos.y + keySpeed);
-      if (this.keys.down) this.targetPos.y = Math.max(-1.4, this.targetPos.y - keySpeed);
-
-      // Smoothly move Tairn toward target position
-      const prevX = this.playerPos.x;
-      this.playerPos.lerp(this.targetPos, 0.16);
-      this.playerDragon.position.x = this.playerPos.x;
-      this.playerDragon.position.y = this.playerPos.y;
-
-      // Dynamic banking roll & wing flap
-      const roll = THREE.MathUtils.clamp((prevX - this.playerPos.x) * 3.5, -0.55, 0.55);
-      this.playerDragon.rotation.z = THREE.MathUtils.lerp(this.playerDragon.rotation.z, roll, 0.2);
-      const flap = Math.sin(elapsed * 11.0) * 0.38;
-      this.leftWing.rotation.z = flap;
-      this.rightWing.rotation.z = -flap;
-
-      // Subtle camera follow
-      this.camera.position.x = THREE.MathUtils.lerp(this.camera.position.x, this.playerPos.x * 0.35, 0.1);
-      this.camera.position.y = THREE.MathUtils.lerp(this.camera.position.y, 1.35 + this.playerPos.y * 0.25, 0.1);
-
-      // Scroll Canyon Segments
-      this.canyonSegments.forEach((seg) => {
-        seg.position.z += 16 * dt;
-        if (seg.position.z > 6) seg.position.z -= 14 * 4.0;
+  _spawnExplosion(x, y) {
+    for (let i = 0; i < 22; i++) {
+      const ang = Math.random() * Math.PI * 2;
+      const spd = 30 + Math.random() * 110;
+      this.particles.push({
+        x,
+        y,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd,
+        life: 0.65,
+        color: i % 2 === 0 ? '#ff3355' : '#ffe08a'
       });
-
-      // Spawn timers
-      this.spawnTimer -= dt;
-      if (this.spawnTimer <= 0) {
-        this._spawnWyvern();
-        this.spawnTimer = 1.35;
-      }
-
-      this.orbTimer -= dt;
-      if (this.orbTimer <= 0) {
-        this._spawnWardOrb();
-        this.orbTimer = 2.6;
-      }
-
-      this.pillarTimer -= dt;
-      if (this.pillarTimer <= 0) {
-        this._spawnPillar();
-        this.pillarTimer = 2.4;
-      }
-
-      // Update Lightning Bolts & Check Hits on Wyverns
-      for (let b = this.bolts.length - 1; b >= 0; b--) {
-        const bolt = this.bolts[b];
-        bolt.mesh.position.addScaledVector(bolt.vel, dt);
-
-        let hit = false;
-        for (let w = this.wyverns.length - 1; w >= 0; w--) {
-          const wyv = this.wyverns[w];
-          if (bolt.mesh.position.distanceTo(wyv.mesh.position) < 1.15) {
-            // Direct hit on Wyvern Rune Stone!
-            hit = true;
-            this._spawnExplosion(wyv.mesh.position, '#ff2a4b');
-            this.group.remove(wyv.mesh);
-            this.wyverns.splice(w, 1);
-
-            this.score += 250;
-            this.wyvernsKilled += 1;
-            this.audio.playThunderAndLightning();
-            this._updateHUD(`DIRECT HIT! Shattered Wyvern Rune Stone! (${this.wyvernsKilled}/${this.targetKills})`);
-
-            if (this.wyvernsKilled >= this.targetKills) {
-              this.gameStatus = 'won';
-              this._updateHUD('🏆 VICTORY! You shattered 10 Wyvern Rune Stones and defended Basgiath Skies!');
-            }
-            break;
-          }
-        }
-
-        if (hit || bolt.mesh.position.z < -42) {
-          this.group.remove(bolt.mesh);
-          this.bolts.splice(b, 1);
-        }
-      }
-
-      // Update Wyverns
-      for (let w = this.wyverns.length - 1; w >= 0; w--) {
-        const wyv = this.wyverns[w];
-        wyv.mesh.position.z += wyv.speed * dt;
-        wyv.mesh.position.x += Math.sin(elapsed * 2.5 + wyv.swayOffset) * dt * 1.1;
-        wyv.wings.rotation.z = Math.sin(elapsed * 9.0 + wyv.swayOffset) * 0.28;
-        wyv.runeStone.rotation.y += dt * 4.0;
-
-        if (wyv.mesh.position.distanceTo(this.playerDragon.position) < 0.95) {
-          this._spawnExplosion(wyv.mesh.position, '#ff2a4b');
-          this.group.remove(wyv.mesh);
-          this.wyverns.splice(w, 1);
-          this.shield = Math.max(0, this.shield - 25);
-          this.audio.playThunderAndLightning();
-          this._updateHUD('⚠ WYVERN COLLISION! Click or press SPACE to shoot them before they reach Tairn!');
-          if (this.shield <= 0) {
-            this.gameStatus = 'lost';
-            this._updateHUD('SHIELD DEPLETED! Click "↻ PLAY AGAIN" to launch back into the storm.');
-          }
-        } else if (wyv.mesh.position.z > 4.5) {
-          this.group.remove(wyv.mesh);
-          this.wyverns.splice(w, 1);
-        }
-      }
-
-      // Update Golden Ward Orbs
-      for (let o = this.orbs.length - 1; o >= 0; o--) {
-        const orb = this.orbs[o];
-        orb.mesh.position.z += orb.speed * dt;
-        orb.mesh.rotation.y += dt * 3.0;
-
-        if (orb.mesh.position.distanceTo(this.playerDragon.position) < 0.95) {
-          this._spawnExplosion(orb.mesh.position, '#f4c55c');
-          this.group.remove(orb.mesh);
-          this.orbs.splice(o, 1);
-          this.score += 100;
-          this.shield = Math.min(100, this.shield + 20);
-          this.audio.playPulseChime(1.65);
-          this._updateHUD('✦ COLLECTED GOLDEN FEATHERTAIL ORB! (+100 PTS & +20% Shield)');
-        } else if (orb.mesh.position.z > 4.5) {
-          this.group.remove(orb.mesh);
-          this.orbs.splice(o, 1);
-        }
-      }
-
-      // Update Canyon Pillars
-      for (let p = this.pillars.length - 1; p >= 0; p--) {
-        const pil = this.pillars[p];
-        pil.mesh.position.z += pil.speed * dt;
-        if (
-          Math.abs(pil.mesh.position.z - this.playerDragon.position.z) < 0.65 &&
-          Math.abs(pil.mesh.position.x - this.playerDragon.position.x) < 0.68 &&
-          this.playerDragon.position.y < 1.1
-        ) {
-          this._spawnExplosion(this.playerDragon.position, '#ff851b');
-          this.group.remove(pil.mesh);
-          this.pillars.splice(p, 1);
-          this.shield = Math.max(0, this.shield - 20);
-          this.audio.playThunderAndLightning();
-          this._updateHUD('⚠ CLIPPED A CANYON SPIRE! Steer left/right or fly higher to evade!');
-          if (this.shield <= 0) {
-            this.gameStatus = 'lost';
-            this._updateHUD('SHIELD DEPLETED! Click "↻ PLAY AGAIN" to launch back into the storm.');
-          }
-        } else if (pil.mesh.position.z > 4.5) {
-          this.group.remove(pil.mesh);
-          this.pillars.splice(p, 1);
-        }
-      }
     }
-
-    // Animate 3D particle explosions
-    for (let e = this.explosions.length - 1; e >= 0; e--) {
-      const exp = this.explosions[e];
-      exp.life -= dt;
-      exp.parts.forEach((pt) => {
-        pt.mesh.position.addScaledVector(pt.vel, dt);
-        pt.mesh.scale.multiplyScalar(0.92);
-      });
-      if (exp.life <= 0) {
-        this.group.remove(exp.group);
-        this.explosions.splice(e, 1);
-      }
-    }
-
-    this._updateHUD();
   }
 
-  _updateHUD(statusMessage = null) {
-    const progEl = document.getElementById('parapet-progress-fill');
-    const progText = document.getElementById('parapet-progress-text');
-    const shieldFill = document.getElementById('parapet-shield-fill');
-    const windLabel = document.getElementById('parapet-wind-readout');
-    const msgEl = document.getElementById('parapet-status-msg');
+  _updateReadout(statusMsg = null) {
+    const scoreEl = document.getElementById('storm-score-readout');
+    if (scoreEl) {
+      scoreEl.textContent = `WYVERNS SHATTERED: ${this.kills} • WARD: ${this.wardHealth}%`;
+    }
+    if (statusMsg) {
+      const st = document.getElementById('storm-status-text');
+      if (st) st.textContent = statusMsg;
+    }
+  }
 
-    const killPct = Math.min(100, Math.round((this.wyvernsKilled / this.targetKills) * 100));
-    if (progEl) progEl.style.width = `${killPct}%`;
-    if (progText) progText.textContent = `${this.wyvernsKilled} / ${this.targetKills} Wyverns (${this.score} PTS)`;
-    if (shieldFill) shieldFill.style.width = `${this.shield}%`;
-    if (windLabel) windLabel.textContent = `${this.shield}% INTEGRITY`;
-    if (statusMessage && msgEl) {
-      msgEl.textContent = statusMessage;
+  updateAndRender(dt, elapsed) {
+    const ctx = this.ctx;
+    const W = this.width;
+    const H = this.height;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Subtle Golden Ward Dome arch at bottom of canvas
+    ctx.save();
+    ctx.strokeStyle = 'rgba(229, 184, 92, 0.35)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(W * 0.5, H + 110, 175, Math.PI * 1.15, Math.PI * 1.85);
+    ctx.stroke();
+    ctx.restore();
+
+    // Spawn timer
+    this.spawnTimer -= dt;
+    if (this.spawnTimer <= 0) {
+      this._spawnWyvern();
+      this.spawnTimer = 2.1;
+    }
+
+    // Update & Draw Wyverns
+    for (let i = this.wyverns.length - 1; i >= 0; i--) {
+      const w = this.wyverns[i];
+      w.x += w.vx * dt;
+      w.y += Math.sin(elapsed * 2.5 + w.wingPhase) * 18 * dt;
+      w.wingPhase += dt * 7.5;
+
+      // Wrap around if off screen
+      if (w.vx > 0 && w.x > W + 50) w.x = -40;
+      if (w.vx < 0 && w.x < -50) w.x = W + 40;
+
+      const distToLens = Math.hypot(w.x - this.mouseX, w.y - this.mouseY);
+      const inXray = distToLens < this.lensRadius + 24;
+
+      ctx.save();
+      ctx.translate(w.x, w.y);
+      ctx.scale(w.scale, w.scale);
+
+      const flapY = Math.sin(w.wingPhase) * 16;
+
+      if (inXray) {
+        // X-RAY SKELETAL VIEW + BLAZING RED RUNE STONE!
+        ctx.strokeStyle = '#f6f1e7';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(-36, -flapY);
+        ctx.lineTo(-14, -6);
+        ctx.lineTo(0, 0);
+        ctx.lineTo(14, -6);
+        ctx.lineTo(36, -flapY);
+        ctx.stroke();
+
+        // Ribcage bones
+        for (let r = -6; r <= 6; r += 4) {
+          ctx.beginPath();
+          ctx.moveTo(-7, r);
+          ctx.lineTo(7, r);
+          ctx.stroke();
+        }
+
+        // Blazing Crimson Rune Stone Target in Chest
+        ctx.fillStyle = '#ff2e55';
+        ctx.shadowColor = '#ff2e55';
+        ctx.shadowBlur = 16;
+        ctx.beginPath();
+        ctx.arc(0, 0, 7.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Target lock ring
+        ctx.strokeStyle = '#ffe08a';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(0, 0, 14 + Math.sin(elapsed * 10) * 2, 0, Math.PI * 2);
+        ctx.stroke();
+      } else {
+        // Dark Exterior Wyvern Silhouette
+        ctx.fillStyle = '#182236';
+        ctx.strokeStyle = 'rgba(94, 203, 255, 0.45)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(0, -10);
+        ctx.lineTo(14, -6);
+        ctx.lineTo(38, -flapY);
+        ctx.lineTo(16, 6);
+        ctx.lineTo(0, 16);
+        ctx.lineTo(-16, 6);
+        ctx.lineTo(-38, -flapY);
+        ctx.lineTo(-14, -6);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Draw X-Ray Aiming Lens around Cursor
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255, 224, 138, 0.8)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(this.mouseX, this.mouseY, this.lensRadius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(94, 203, 255, 0.06)';
+    ctx.fill();
+    ctx.restore();
+
+    // Draw Active Lightning Bolts
+    for (let b = this.lightningBolts.length - 1; b >= 0; b--) {
+      const bolt = this.lightningBolts[b];
+      bolt.alpha -= dt * 3.2;
+      if (bolt.alpha <= 0) {
+        this.lightningBolts.splice(b, 1);
+        continue;
+      }
+      ctx.save();
+      ctx.strokeStyle = `rgba(140, 235, 255, ${bolt.alpha})`;
+      ctx.shadowColor = '#5ecbff';
+      ctx.shadowBlur = 18;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      bolt.segments.forEach((s) => {
+        ctx.moveTo(s.x1, s.y1);
+        ctx.lineTo(s.x2, s.y2);
+      });
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Draw Explosion Particles
+    for (let p = this.particles.length - 1; p >= 0; p--) {
+      const pt = this.particles[p];
+      pt.life -= dt;
+      if (pt.life <= 0) {
+        this.particles.splice(p, 1);
+        continue;
+      }
+      pt.x += pt.vx * dt;
+      pt.y += pt.vy * dt;
+      ctx.fillStyle = pt.color;
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 2.8, 0, Math.PI * 2);
+      ctx.fill();
     }
   }
 }
@@ -59794,7 +58723,9 @@ class ParapetMiniGame {
 
 // --- main.js ---
 // ============================================================================
-// FOURTH WING: CODEX OCULUS — Main 3D Engine & Clean UI Controller (v2)
+// FOURTH WING: THE EMPYREAN ARCHIVE — Main Experience Controller (v3)
+// Orchestrates the Hero Second-Sight Sanctum, 3D WebGL Artifact Reliquary,
+// Atmospheric Embers/Rain/Lightning FX, Wielder of the Storm Game, & Quiz.
 // ============================================================================
 
 
@@ -59804,617 +58735,546 @@ class ParapetMiniGame {
 
 
 
-
-class FourthWingOculusApp {
+class EmpyreanArchiveApp {
   constructor() {
-    this.canvasContainer = document.getElementById('viewport-container');
-    this.reticleEl = document.getElementById('xray-reticle');
-    this.hotspotsContainer = document.getElementById('hotspots-layer');
-    this.loreDrawer = document.getElementById('lore-drawer');
-
     this.audio = new ArcaneAudioEngine();
 
-    this.currentModeId = 'dragon';
-    this.currentSpecimenId = 'tairn';
-    this.currentModel = null;
-    this.customQuizColors = null;
-
-    this.targetLensUV = new THREE.Vector2(0.5, 0.5);
-    this.currentLensUV = new THREE.Vector2(0.5, 0.5);
-    this.mousePx = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 };
+    // Hero Second-Sight Stage state
+    this.currentRealmId = 'dragon';
+    this.visionMode = 'lens'; // 'lens' | 'real' | 'xray'
+    this.lensRadiusPx = 145;
     this.isLensPinned = false;
 
-    this.isFlythroughActive = false;
-    this.flythroughTime = 0;
-    this.cameraLerpTargetPos = null;
-    this.cameraLerpLookAt = null;
+    this.targetLensPct = { x: 53.5, y: 47.0 };
+    this.currentLensPct = { x: 53.5, y: 47.0 };
 
+    this.stageFrame = document.getElementById('stage-frame');
+    this.parallaxInner = document.getElementById('parallax-scene-inner');
+    this.imgReal = document.getElementById('scene-img-real');
+    this.imgXray = document.getElementById('scene-img-xray');
+    this.lensRing = document.getElementById('arcane-lens-ring');
+    this.hotspotsLayer = document.getElementById('stage-hotspots');
+    this.fxCanvas = document.getElementById('stage-fx-canvas');
+    this.fxCtx = this.fxCanvas.getContext('2d');
+
+    // Stage FX (Embers, Rain, Lightning Flash)
+    this.embers = [];
+    this.rainDrops = [];
+    this.lightningFlashAlpha = 0;
+    this.lightningBolts = [];
+
+    // 3D Reliquary state
+    this.currentArtifactId = 'wardstone';
+    this.artifactModel = null;
+
+    // Quiz state
     this.quizStep = 0;
-    this.quizScores = { tairn: 0, andarna: 0, blue: 0, green: 0, red: 0, brown: 0, orange: 0 };
+    this.quizScores = { tairn: 0, andarna: 0, blue: 0, green: 0, red: 0 };
 
     this.clock = new THREE.Clock();
-    this._initThree();
-    this._initAtmosphere();
-    this.parapetGame = new ParapetMiniGame(
-      this.scene,
-      this.camera,
-      this.controls,
-      this.audio,
-      () => this.exitParapetGame()
-    );
 
-    this._loadSpecimen('dragon', 'tairn');
-    this._bindUIEvents();
+    this._initStageFX();
+    this._loadRealm('dragon');
+    this._init3DReliquary();
+    this._initStormGame();
+    this._initQuiz();
+    this._bindEvents();
     this._animate();
   }
 
-  _initThree() {
-    this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color('#05070c');
-    this.scene.fog = new THREE.FogExp2('#060911', 0.055);
+  // ==========================================================================
+  // 1. HERO SECOND-SIGHT SANCTUM & ATMOSPHERIC FX
+  // ==========================================================================
+  _initStageFX() {
+    const resizeFX = () => {
+      if (!this.stageFrame) return;
+      const r = this.stageFrame.getBoundingClientRect();
+      this.fxCanvas.width = Math.max(400, r.width);
+      this.fxCanvas.height = Math.max(250, r.height);
+    };
+    resizeFX();
+    window.addEventListener('resize', resizeFX);
 
-    this.camera = new THREE.PerspectiveCamera(
-      44,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      120
-    );
-    this.camera.position.set(2.6, 1.45, 5.2);
-
-    this.renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      powerPreference: 'high-performance'
-    });
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.15;
-    this.canvasContainer.appendChild(this.renderer.domElement);
-
-    this.composer = new EffectComposer(this.renderer);
-    const renderPass = new RenderPass(this.scene, this.camera);
-    this.composer.addPass(renderPass);
-
-    this.bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
-      0.68,
-      0.42,
-      0.24
-    );
-    this.composer.addPass(this.bloomPass);
-
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.enableDamping = true;
-    this.controls.dampingFactor = 0.06;
-    this.controls.maxDistance = 13;
-    this.controls.minDistance = 1.6;
-    this.controls.target.set(0, 0.35, 0);
-
-    const ambient = new THREE.AmbientLight('#1d2a44', 1.6);
-    this.scene.add(ambient);
-
-    this.keyLight = new THREE.DirectionalLight('#7ce8ff', 2.8);
-    this.keyLight.position.set(5, 8, 6);
-    this.scene.add(this.keyLight);
-
-    this.rimLight = new THREE.DirectionalLight('#f4c55c', 1.9);
-    this.rimLight.position.set(-6, -3, -5);
-    this.scene.add(this.rimLight);
-
-    this.modelContainer = new THREE.Group();
-    this.scene.add(this.modelContainer);
-  }
-
-  _initAtmosphere() {
-    const count = 480;
-    const positions = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
-    this.particleSpeeds = new Float32Array(count);
-
-    const cGold = new THREE.Color('#f4c55c');
-    const cCyan = new THREE.Color('#38b6ff');
-    const cCrimson = new THREE.Color('#ff3b5c');
-
-    for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 22;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 14;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 18;
-      this.particleSpeeds[i] = 0.22 + Math.random() * 0.65;
-
-      const pick = Math.random();
-      const col = pick < 0.55 ? cGold : pick < 0.9 ? cCyan : cCrimson;
-      colors[i * 3] = col.r;
-      colors[i * 3 + 1] = col.g;
-      colors[i * 3 + 2] = col.b;
+    for (let i = 0; i < 48; i++) {
+      this.embers.push({
+        x: Math.random() * 1200,
+        y: Math.random() * 700,
+        vx: (Math.random() - 0.5) * 18,
+        vy: -18 - Math.random() * 32,
+        size: 1.2 + Math.random() * 2.4,
+        alpha: 0.35 + Math.random() * 0.6,
+        color: Math.random() < 0.7 ? '#ffe08a' : '#5ecbff'
+      });
     }
 
-    const pGeo = new THREE.BufferGeometry();
-    pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    pGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-    const pMat = new THREE.PointsMaterial({
-      size: 0.05,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.68,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false
-    });
-
-    this.emberParticles = new THREE.Points(pGeo, pMat);
-    this.scene.add(this.emberParticles);
-
-    const gridHelper = new THREE.PolarGridHelper(4.8, 16, 8, 64, '#1b2b44', '#0f1828');
-    gridHelper.position.y = -1.65;
-    this.scene.add(gridHelper);
-    this.floorGrid = gridHelper;
-
-    this.lightningGroup = new THREE.Group();
-    this.scene.add(this.lightningGroup);
+    for (let i = 0; i < 65; i++) {
+      this.rainDrops.push({
+        x: Math.random() * 1200,
+        y: Math.random() * 700,
+        len: 12 + Math.random() * 16,
+        speed: 380 + Math.random() * 220
+      });
+    }
   }
 
-  triggerStormLightning(playSound = true) {
-    sharedUniforms.uLightningFlash.value = 1.25;
-    if (playSound) {
+  triggerLightningStrike(playAudio = true) {
+    this.lightningFlashAlpha = 0.55;
+    if (playAudio) {
       this.audio.playThunderAndLightning();
     }
 
-    while (this.lightningGroup.children.length > 0) {
-      this.lightningGroup.remove(this.lightningGroup.children[0]);
-    }
-
-    const boltPts = [];
-    let curr = new THREE.Vector3((Math.random() - 0.5) * 8, 6.5, -4 - Math.random() * 4);
-    boltPts.push(curr.clone());
+    const W = this.fxCanvas.width;
+    const H = this.fxCanvas.height;
+    let cx = W * (0.2 + Math.random() * 0.6);
+    let cy = 0;
+    const segs = [];
     for (let i = 0; i < 10; i++) {
-      curr = curr.clone().add(
-        new THREE.Vector3((Math.random() - 0.5) * 1.4, -1.05, (Math.random() - 0.5) * 0.8)
-      );
-      boltPts.push(curr);
+      const nx = cx + (Math.random() - 0.5) * 55;
+      const ny = cy + H / 10;
+      segs.push({ x1: cx, y1: cy, x2: nx, y2: ny });
+      cx = nx;
+      cy = ny;
     }
-    const curve = new THREE.CatmullRomCurve3(boltPts);
-    const geo = new THREE.TubeGeometry(curve, 24, 0.04, 6, false);
-    const mat = new THREE.MeshBasicMaterial({ color: '#c4f5ff', transparent: true, opacity: 0.95 });
-    this.lightningGroup.add(new THREE.Mesh(geo, mat));
+    this.lightningBolts.push({ segs, alpha: 1.0 });
   }
 
-  _loadSpecimen(modeId, specimenId = null, customQuizColors = null) {
-    this.currentModeId = modeId;
-    const modeData = SCAN_MODES[modeId];
-    const specList = modeData.specimens;
-    const chosenSpec = specimenId
-      ? specList.find((s) => s.id === specimenId) || specList[0]
-      : specList[0];
+  _loadRealm(realmId) {
+    this.currentRealmId = realmId;
+    const realm = REALMS[realmId];
 
-    this.currentSpecimenId = chosenSpec.id;
-    this.customQuizColors = customQuizColors;
+    document.getElementById('realm-kicker').textContent = realm.chapterKicker;
+    document.getElementById('realm-headline').textContent = realm.headline;
+    document.getElementById('realm-sublead').textContent = realm.sublead;
 
-    sharedUniforms.uThemeColor.value.set(customQuizColors?.colorHex || chosenSpec.themeColor);
-    sharedUniforms.uSecondaryColor.value.set(customQuizColors?.secondaryHex || chosenSpec.secondaryColor);
+    this.imgReal.src = realm.realImage;
+    this.imgXray.src = realm.xrayImage;
 
-    while (this.modelContainer.children.length > 0) {
-      this.modelContainer.remove(this.modelContainer.children[0]);
-    }
-
-    if (modeId === 'dragon') {
-      this.currentModel = buildDragonModel(chosenSpec.id, customQuizColors);
-      this.cameraLerpTargetPos = new THREE.Vector3(2.6, 1.4, 5.2);
-      this.cameraLerpLookAt = new THREE.Vector3(0.1, 0.45, 0);
-    } else if (modeId === 'rider') {
-      this.currentModel = buildRiderModel(chosenSpec.id);
-      this.cameraLerpTargetPos = new THREE.Vector3(0.0, 0.8, 4.1);
-      this.cameraLerpLookAt = new THREE.Vector3(0.0, 0.45, 0);
-    } else if (modeId === 'basgiath') {
-      this.currentModel = buildBasgiathModel();
-      this.cameraLerpTargetPos = new THREE.Vector3(0.0, 1.85, 6.0);
-      this.cameraLerpLookAt = new THREE.Vector3(0.0, -0.2, 0);
-    }
-
-    this.modelContainer.add(this.currentModel);
-    this._renderSpecimenUI(modeData, chosenSpec);
-    this._buildHotspots(chosenSpec);
-  }
-
-  _renderSpecimenUI(modeData, spec) {
-    const titleEl = document.getElementById('hud-mode-title');
-    if (titleEl) titleEl.textContent = modeData.title;
-    document.getElementById('specimen-name').textContent = spec.name;
-    document.getElementById('specimen-class').textContent = spec.classification;
-    document.getElementById('specimen-summary').textContent = spec.summary;
-
-    const statsGrid = document.getElementById('telemetry-stats');
-    if (this.currentModeId === 'rider') {
-      statsGrid.innerHTML = `
-        <div class="stat-box"><span class="stat-label">SIGNET</span><span class="stat-val">${spec.signet}</span></div>
-        <div class="stat-box"><span class="stat-label">CARDIAC</span><span class="stat-val">${spec.heartRate}</span></div>
-      `;
-    } else {
-      statsGrid.innerHTML = `
-        <div class="stat-box"><span class="stat-label">SPAN / SCALE</span><span class="stat-val">${spec.wingspan}</span></div>
-        <div class="stat-box"><span class="stat-label">CORE THERMAL</span><span class="stat-val">${spec.coreTemp}</span></div>
-      `;
-    }
-
-    const subTabs = document.getElementById('specimen-tabs');
-    subTabs.innerHTML = '';
-    modeData.specimens.forEach((s) => {
-      const btn = document.createElement('button');
-      btn.className = `specimen-pill ${s.id === spec.id ? 'active' : ''}`;
-      btn.textContent = s.name;
-      btn.addEventListener('click', () => {
-        this.audio.playPulseChime(1.2);
-        this._loadSpecimen(this.currentModeId, s.id);
-      });
-      subTabs.appendChild(btn);
+    // Update realm tab buttons
+    document.querySelectorAll('.realm-tab').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.realm === realmId);
     });
 
-    if (spec.hotspots && spec.hotspots.length > 0) {
-      this._showHotspotCard(spec.hotspots[0], false);
-    }
-  }
+    // Build numbered hotspot pins on the stage & quick-chips in the sidebar
+    this.hotspotsLayer.innerHTML = '';
+    const chipsContainer = document.getElementById('hotspot-chips');
+    chipsContainer.innerHTML = '';
 
-  _buildHotspots(spec) {
-    this.hotspotsContainer.innerHTML = '';
-    this.activeHotspots = [];
-
-    (spec.hotspots || []).forEach((h, idx) => {
+    realm.hotspots.forEach((h, idx) => {
+      // Pin on the 16:9 Stage
       const pin = document.createElement('button');
-      pin.className = 'hotspot-pin';
+      pin.className = `stage-pin ${idx === 0 ? 'active' : ''}`;
+      pin.style.left = `${h.x}%`;
+      pin.style.top = `${h.y}%`;
+      pin.dataset.id = h.id;
       pin.innerHTML = `
-        <span class="hotspot-index">${idx + 1}</span>
-        <span class="hotspot-label">${h.title}</span>
+        <span>${h.num}</span>
+        <span class="pin-tooltip">${h.title}</span>
       `;
       pin.addEventListener('click', (e) => {
         e.stopPropagation();
-        this.audio.playPulseChime(1.35);
-        this._focusOnHotspot(h, pin);
+        this.audio.playPulseChime(1.25);
+        this._selectHotspot(h);
       });
-      this.hotspotsContainer.appendChild(pin);
-      this.activeHotspots.push({
-        data: h,
-        el: pin,
-        worldPos: new THREE.Vector3(...h.coords)
+      this.hotspotsLayer.appendChild(pin);
+
+      // Chip in the Right Sidebar
+      const chip = document.createElement('button');
+      chip.className = `hotspot-chip ${idx === 0 ? 'active' : ''}`;
+      chip.dataset.id = h.id;
+      chip.textContent = `${h.num} • ${h.title.split(' ')[0]} ${h.title.split(' ')[1] || ''}`;
+      chip.addEventListener('click', () => {
+        this.audio.playPulseChime(1.25);
+        this._selectHotspot(h);
       });
+      chipsContainer.appendChild(chip);
+    });
+
+    if (realm.hotspots.length > 0) {
+      this._selectHotspot(realm.hotspots[0], false);
+    }
+  }
+
+  _selectHotspot(h, moveLens = true) {
+    document.querySelectorAll('.stage-pin').forEach((p) => {
+      p.classList.toggle('active', p.dataset.id === h.id);
+    });
+    document.querySelectorAll('.hotspot-chip').forEach((c) => {
+      c.classList.toggle('active', c.dataset.id === h.id);
+    });
+
+    document.getElementById('codex-tag').textContent = `${h.num} • ${h.tag}`;
+    document.getElementById('codex-title').textContent = h.title;
+    document.getElementById('codex-telemetry').textContent = h.telemetry;
+    document.getElementById('codex-desc').textContent = h.description;
+    document.getElementById('codex-secret').textContent = h.secret;
+
+    if (moveLens) {
+      this.targetLensPct.x = h.x;
+      this.targetLensPct.y = h.y;
+      if (this.visionMode === 'real') {
+        this._setVisionMode('lens');
+      }
+    }
+  }
+
+  _setVisionMode(mode) {
+    this.visionMode = mode;
+    document.querySelectorAll('.vision-pill').forEach((p) => {
+      p.classList.toggle('active', p.dataset.vision === mode);
+    });
+
+    if (mode === 'real') {
+      this.imgXray.style.clipPath = 'circle(0px at 50% 50%)';
+      this.lensRing.style.opacity = '0';
+    } else if (mode === 'xray') {
+      this.imgXray.style.clipPath = 'circle(150% at 50% 50%)';
+      this.lensRing.style.opacity = '0';
+    } else {
+      this.lensRing.style.opacity = '1';
+      this._updateLensDOM();
+    }
+  }
+
+  _updateLensDOM() {
+    if (this.visionMode !== 'lens') return;
+    const xPct = this.currentLensPct.x;
+    const yPct = this.currentLensPct.y;
+
+    this.imgXray.style.clipPath = `circle(${this.lensRadiusPx}px at ${xPct}% ${yPct}%)`;
+    this.lensRing.style.left = `${xPct}%`;
+    this.lensRing.style.top = `${yPct}%`;
+    const d = this.lensRadiusPx * 2;
+    this.lensRing.style.width = `${d}px`;
+    this.lensRing.style.height = `${d}px`;
+    this.lensRing.style.marginLeft = `${-this.lensRadiusPx}px`;
+    this.lensRing.style.marginTop = `${-this.lensRadiusPx}px`;
+  }
+
+  // ==========================================================================
+  // 2. SECTION II: 3D WEBGL ARTIFACT RELIQUARY
+  // ==========================================================================
+  _init3DReliquary() {
+    this.reliquaryBox = document.getElementById('artifact-3d-container');
+    const rect = this.reliquaryBox.getBoundingClientRect();
+    const w = Math.max(360, rect.width);
+    const h = Math.max(320, rect.height);
+
+    this.scene3D = new THREE.Scene();
+    this.camera3D = new THREE.PerspectiveCamera(42, w / h, 0.1, 100);
+    this.camera3D.position.set(0, 1.35, 4.8);
+
+    this.renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    this.renderer3D.setSize(w, h);
+    this.renderer3D.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer3D.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer3D.toneMappingExposure = 1.2;
+    this.reliquaryBox.appendChild(this.renderer3D.domElement);
+
+    this.composer3D = new EffectComposer(this.renderer3D);
+    this.composer3D.addPass(new RenderPass(this.scene3D, this.camera3D));
+    this.composer3D.addPass(
+      new UnrealBloomPass(new THREE.Vector2(w, h), 0.75, 0.4, 0.22)
+    );
+
+    this.controls3D = new OrbitControls(this.camera3D, this.renderer3D.domElement);
+    this.controls3D.enableDamping = true;
+    this.controls3D.autoRotate = true;
+    this.controls3D.autoRotateSpeed = 1.4;
+    this.controls3D.maxDistance = 8;
+    this.controls3D.minDistance = 2.4;
+
+    this.scene3D.add(new THREE.AmbientLight('#263554', 1.8));
+    const key = new THREE.DirectionalLight('#ffe08a', 3.2);
+    key.position.set(4, 6, 5);
+    this.scene3D.add(key);
+
+    const rim = new THREE.DirectionalLight('#5ecbff', 2.4);
+    rim.position.set(-5, -3, -4);
+    this.scene3D.add(rim);
+
+    this.artifactHolder = new THREE.Group();
+    this.scene3D.add(this.artifactHolder);
+
+    // Populate Artifact Selector Cards
+    const stack = document.getElementById('artifact-cards-list');
+    ARTIFACTS_3D.forEach((art, idx) => {
+      const card = document.createElement('div');
+      card.className = `artifact-selector-card ${idx === 0 ? 'active' : ''}`;
+      card.dataset.id = art.id;
+      card.innerHTML = `
+        <div class="hero-kicker" style="margin-bottom:4px;">${art.subtitle}</div>
+        <h3>${art.title}</h3>
+        <p>${art.description}</p>
+      `;
+      card.addEventListener('click', () => {
+        this.audio.playPulseChime(1.2);
+        document.querySelectorAll('.artifact-selector-card').forEach((c) => {
+          c.classList.toggle('active', c.dataset.id === art.id);
+        });
+        this._loadArtifact3D(art.id);
+      });
+      stack.appendChild(card);
+    });
+
+    this._loadArtifact3D('wardstone');
+
+    window.addEventListener('resize', () => {
+      const r = this.reliquaryBox.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0) {
+        this.camera3D.aspect = r.width / r.height;
+        this.camera3D.updateProjectionMatrix();
+        this.renderer3D.setSize(r.width, r.height);
+        this.composer3D.setSize(r.width, r.height);
+      }
     });
   }
 
-  _focusOnHotspot(hotspot, pinEl) {
-    document.querySelectorAll('.hotspot-pin').forEach((p) => p.classList.remove('selected'));
-    if (pinEl) pinEl.classList.add('selected');
-
-    const target = new THREE.Vector3(...hotspot.coords);
-    this.cameraLerpLookAt = target.clone();
-    const offset = new THREE.Vector3(0.75, 0.5, 2.7);
-    this.cameraLerpTargetPos = target.clone().add(offset);
-
-    if (sharedUniforms.uXrayDepth.value < 0.65) {
-      sharedUniforms.uXrayDepth.value = 0.88;
-      const slider = document.getElementById('xray-depth-slider');
-      if (slider) slider.value = 88;
-      document.getElementById('xray-depth-val').textContent = '88%';
+  _loadArtifact3D(artifactId) {
+    while (this.artifactHolder.children.length > 0) {
+      this.artifactHolder.remove(this.artifactHolder.children[0]);
     }
+    this.artifactModel = buildArtifact3D(artifactId);
+    this.artifactHolder.add(this.artifactModel);
+  }
 
-    this._showHotspotCard(hotspot, true);
-    if (this.loreDrawer) {
-      this.loreDrawer.classList.remove('hidden');
+  // ==========================================================================
+  // 3. SECTION III: WIELDER OF THE STORM GAME & THRESHING QUIZ
+  // ==========================================================================
+  _initStormGame() {
+    const canvas = document.getElementById('storm-game-canvas');
+    if (canvas) {
+      this.stormGame = new StormDefenseGame(canvas, this.audio);
+    }
+    const resetBtn = document.getElementById('btn-reset-storm-game');
+    if (resetBtn && this.stormGame) {
+      resetBtn.addEventListener('click', () => {
+        this.audio.playPulseChime(1.1);
+        this.stormGame.reset();
+      });
     }
   }
 
-  _showHotspotCard(hotspot) {
-    document.getElementById('codex-layer-tag').textContent = hotspot.layer;
-    document.getElementById('codex-title').textContent = hotspot.title;
-    document.getElementById('codex-telemetry').textContent = hotspot.telemetry;
-    document.getElementById('codex-desc').textContent = hotspot.description;
-    document.getElementById('codex-xray-insight').textContent = hotspot.xrayInsight;
-  }
-
-  startCinematicFlythrough() {
-    this.audio.resume();
-    this.triggerStormLightning(true);
-    this.isFlythroughActive = !this.isFlythroughActive;
-    this.flythroughTime = 0;
-
-    const btn = document.getElementById('btn-flythrough');
-    btn.classList.toggle('active', this.isFlythroughActive);
-    btn.textContent = this.isFlythroughActive ? '⏹ Stop Orbit' : '🎬 Orbit';
-  }
-
-  openDragonQuiz() {
-    this.audio.playPulseChime(1.1);
+  _initQuiz() {
     this.quizStep = 0;
-    this.quizScores = { tairn: 0, andarna: 0, blue: 0, green: 0, red: 0, brown: 0, orange: 0 };
-    document.getElementById('quiz-modal').classList.remove('hidden');
-    this._renderQuizStep();
+    this.quizScores = { tairn: 0, andarna: 0, blue: 0, green: 0, red: 0 };
+    this._renderQuiz();
   }
 
-  _renderQuizStep() {
-    const body = document.getElementById('quiz-body');
+  _renderQuiz() {
+    const container = document.getElementById('quiz-container');
+    if (!container) return;
+
     if (this.quizStep < QUIZ_QUESTIONS.length) {
       const q = QUIZ_QUESTIONS[this.quizStep];
-      body.innerHTML = `
-        <div class="quiz-progress">THRESHING RESONANCE • QUESTION ${this.quizStep + 1} OF ${QUIZ_QUESTIONS.length}</div>
-        <h3 class="quiz-question">${q.question}</h3>
-        <div class="quiz-options">
+      container.innerHTML = `
+        <div style="font-size:11px;color:var(--cyan-signet);margin-top:8px;letter-spacing:0.12em;">
+          QUESTION ${this.quizStep + 1} OF ${QUIZ_QUESTIONS.length}
+        </div>
+        <div class="quiz-question-text">${q.question}</div>
+        <div class="quiz-choices">
           ${q.options
             .map(
-              (opt, idx) => `
-            <button class="quiz-option-btn" data-idx="${idx}">
-              <span class="opt-bullet">◆</span>
-              <span>${opt.text}</span>
+              (o, idx) => `
+            <button class="quiz-choice-btn" data-idx="${idx}">
+              <strong style="color:var(--gold-primary);margin-right:8px;">0${idx + 1}</strong> ${o.text}
             </button>
           `
             )
             .join('')}
         </div>
       `;
-      body.querySelectorAll('.quiz-option-btn').forEach((btn) => {
+      container.querySelectorAll('.quiz-choice-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
           const opt = q.options[Number(btn.dataset.idx)];
           Object.entries(opt.weights).forEach(([k, w]) => {
             this.quizScores[k] = (this.quizScores[k] || 0) + w;
           });
-          this.audio.playPulseChime(1.25 + this.quizStep * 0.1);
+          this.audio.playPulseChime(1.2 + this.quizStep * 0.12);
           this.quizStep++;
-          this._renderQuizStep();
+          this._renderQuiz();
         });
       });
     } else {
-      const validKeys = Object.keys(DRAGON_RESULTS);
       let bestKey = 'tairn';
-      let bestScore = -1;
-      validKeys.forEach((k) => {
-        if ((this.quizScores[k] || 0) > bestScore) {
-          bestScore = this.quizScores[k];
+      let bestVal = -1;
+      Object.keys(DRAGON_RESULTS).forEach((k) => {
+        if ((this.quizScores[k] || 0) > bestVal) {
+          bestVal = this.quizScores[k];
           bestKey = k;
         }
       });
-
       const res = DRAGON_RESULTS[bestKey];
-      this.triggerStormLightning(true);
+      this.triggerLightningStrike(true);
 
-      body.innerHTML = `
-        <div class="quiz-progress" style="color:${res.colorHex}">BOND TETHER LOCKED • THRESHING COMPLETE</div>
-        <h2 class="quiz-result-title" style="color:${res.colorHex}">${res.breed}</h2>
-        <div class="quiz-rarity">${res.rarity}</div>
-        <blockquote class="quiz-quote">${res.quote}</blockquote>
-        <p class="quiz-desc">${res.description}</p>
-        <div class="quiz-signet-box">
-          <span>MANIFESTED SIGNET CONDUIT:</span>
-          <strong style="color:${res.secondaryHex}">${res.signet}</strong>
-        </div>
-        <div class="quiz-actions">
-          <button id="btn-apply-quiz-dragon" class="cta-primary">VIEW YOUR DRAGON IN 3D X-RAY</button>
-          <button id="btn-retry-quiz" class="cta-secondary">RETAKE</button>
+      container.innerHTML = `
+        <div style="margin-top:14px;padding:18px;border-radius:14px;background:rgba(229,184,92,0.08);border:1px solid ${res.colorHex};">
+          <div style="font-size:10.5px;letter-spacing:0.16em;color:${res.colorHex};font-weight:700;">
+            ${res.rarity}
+          </div>
+          <h4 style="font-family:var(--font-display);font-size:22px;color:#fff;margin:6px 0;">
+            ${res.breed}
+          </h4>
+          <p style="font-family:var(--font-editorial);font-style:italic;font-size:18px;color:var(--gold-bright);margin-bottom:10px;">
+            ${res.quote}
+          </p>
+          <p style="font-size:13.5px;line-height:1.55;color:var(--text-secondary);margin-bottom:12px;">
+            ${res.description}
+          </p>
+          <div style="font-size:12.5px;color:var(--text-ivory);margin-bottom:16px;">
+            <strong>Awakened Signet:</strong> <span style="color:${res.colorHex}">${res.signet}</span>
+          </div>
+          <button id="btn-retake-quiz" class="btn-gold">↻ Retake Threshing Trial</button>
         </div>
       `;
-
-      document.getElementById('btn-apply-quiz-dragon').addEventListener('click', () => {
-        document.getElementById('quiz-modal').classList.add('hidden');
-        this._setModeTabUI('dragon');
-        this._loadSpecimen('dragon', res.specimenId, {
-          colorHex: res.colorHex,
-          secondaryHex: res.secondaryHex
-        });
-      });
-      document.getElementById('btn-retry-quiz').addEventListener('click', () => {
-        this.openDragonQuiz();
+      document.getElementById('btn-retake-quiz').addEventListener('click', () => {
+        this._initQuiz();
       });
     }
   }
 
-  launchParapetGame() {
-    this.audio.resume();
-    this.triggerStormLightning(true);
-    this.isFlythroughActive = false;
-    this.modelContainer.visible = false;
-    this.floorGrid.visible = false;
-    this.hotspotsContainer.classList.add('hidden');
-    document.getElementById('main-inspector-ui').classList.add('hidden');
-    document.getElementById('parapet-game-ui').classList.remove('hidden');
-    this.parapetGame.start();
-  }
-
-  exitParapetGame() {
-    this.parapetGame.stop();
-    sharedUniforms.uFullXray.value = 0.0;
-    this.modelContainer.visible = true;
-    this.floorGrid.visible = true;
-    this.hotspotsContainer.classList.remove('hidden');
-    document.getElementById('parapet-game-ui').classList.add('hidden');
-    document.getElementById('main-inspector-ui').classList.remove('hidden');
-    this._loadSpecimen(this.currentModeId, this.currentSpecimenId, this.customQuizColors);
-  }
-
-  _setModeTabUI(modeId) {
-    document.querySelectorAll('.mode-tab').forEach((t) => {
-      t.classList.toggle('active', t.dataset.mode === modeId);
-    });
-  }
-
-  _bindUIEvents() {
-    const enterBtn = document.getElementById('btn-enter-archive');
-    if (enterBtn) {
-      enterBtn.addEventListener('click', () => {
-        this.audio.init();
-        this.audio.playThunderAndLightning();
-        document.getElementById('intro-overlay').classList.add('fade-out');
-        setTimeout(() => {
-          document.getElementById('intro-overlay').classList.add('hidden');
-        }, 500);
-        this.triggerStormLightning(false);
-      });
-    }
-
-    document.querySelectorAll('.mode-tab').forEach((tab) => {
+  // ==========================================================================
+  // 4. EVENT BINDINGS & MAIN ANIMATION LOOP
+  // ==========================================================================
+  _bindEvents() {
+    // Realm Switcher Tabs
+    document.querySelectorAll('.realm-tab').forEach((tab) => {
       tab.addEventListener('click', () => {
-        const mode = tab.dataset.mode;
-        if (this.parapetGame.isActive) {
-          this.exitParapetGame();
-        }
-        this.audio.playPulseChime(1.0);
-        this._setModeTabUI(mode);
-        this._loadSpecimen(mode);
+        this.audio.playPulseChime(1.1);
+        this.triggerLightningStrike(false);
+        this._loadRealm(tab.dataset.realm);
       });
     });
 
-    window.addEventListener('pointermove', (e) => {
-      if (this.isLensPinned) return;
-      const prevX = this.mousePx.x;
-      const prevY = this.mousePx.y;
-      this.mousePx.x = e.clientX;
-      this.mousePx.y = e.clientY;
-
-      this.targetLensUV.set(
-        e.clientX / window.innerWidth,
-        1.0 - e.clientY / window.innerHeight
-      );
-
-      if (this.reticleEl) {
-        this.reticleEl.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-      }
-
-      const speed = Math.hypot(e.clientX - prevX, e.clientY - prevY) / 45.0;
-      this.audio.updateScannerHum(Math.min(1.0, speed), sharedUniforms.uXrayDepth.value, true);
+    // Vision Mode Pills
+    document.querySelectorAll('.vision-pill').forEach((pill) => {
+      pill.addEventListener('click', () => {
+        this.audio.playPulseChime(1.2);
+        this._setVisionMode(pill.dataset.vision);
+      });
     });
 
-    this.renderer.domElement.addEventListener('dblclick', () => {
-      this.isLensPinned = !this.isLensPinned;
-      this.reticleEl.classList.toggle('pinned', this.isLensPinned);
-      this.audio.playPulseChime(this.isLensPinned ? 1.4 : 0.85);
-      const pinStatus = document.getElementById('reticle-status-text');
-      if (pinStatus) {
-        pinStatus.textContent = this.isLensPinned ? 'LOCKED LENS' : 'X-RAY LENS';
-      }
-    });
-
-    const depthSlider = document.getElementById('xray-depth-slider');
-    depthSlider.addEventListener('input', (e) => {
-      const val = Number(e.target.value) / 100;
-      sharedUniforms.uXrayDepth.value = val;
-      document.getElementById('xray-depth-val').textContent = `${Math.round(val * 100)}%`;
-    });
-
-    const radiusSlider = document.getElementById('xray-radius-slider');
-    radiusSlider.addEventListener('input', (e) => {
-      const val = Number(e.target.value) / 100;
-      sharedUniforms.uLensRadius.value = val;
-      const pxDiameter = Math.round(val * window.innerHeight * 2);
-      this.reticleEl.style.width = `${pxDiameter}px`;
-      this.reticleEl.style.height = `${pxDiameter}px`;
-      this.reticleEl.style.marginLeft = `${-pxDiameter / 2}px`;
-      this.reticleEl.style.marginTop = `${-pxDiameter / 2}px`;
-      document.getElementById('xray-radius-val').textContent = `${Math.round(val * 100)}%`;
-    });
-
-    const btnFullXray = document.getElementById('btn-full-xray');
-    btnFullXray.addEventListener('click', () => {
-      const next = sharedUniforms.uFullXray.value > 0.5 ? 0.0 : 1.0;
-      sharedUniforms.uFullXray.value = next;
-      btnFullXray.classList.toggle('active', next > 0.5);
-      btnFullXray.textContent = next > 0.5 ? '◉ Full X-Ray: ON' : '◎ Full X-Ray';
-      this.reticleEl.classList.toggle('hidden', next > 0.5);
-      this.audio.playPulseChime(1.3);
-    });
-
-    document.getElementById('btn-lightning-surge').addEventListener('click', () => {
-      this.triggerStormLightning(true);
-    });
-
-    document.getElementById('btn-flythrough').addEventListener('click', () => {
-      this.startCinematicFlythrough();
-    });
-
-    // Lore Drawer Toggle & Close
-    document.getElementById('btn-toggle-drawer').addEventListener('click', () => {
-      this.loreDrawer.classList.toggle('hidden');
-      this.audio.playPulseChime(1.1);
-    });
-    document.getElementById('btn-close-drawer').addEventListener('click', () => {
-      this.loreDrawer.classList.add('hidden');
-    });
-
-    // Quiz & Dedication Modals
-    document.getElementById('btn-open-quiz').addEventListener('click', () => {
-      this.openDragonQuiz();
-    });
-    document.getElementById('btn-close-quiz').addEventListener('click', () => {
-      document.getElementById('quiz-modal').classList.add('hidden');
-    });
-
-    document.getElementById('btn-open-dedication').addEventListener('click', () => {
-      this.audio.playPulseChime(1.15);
-      document.getElementById('dedication-modal').classList.remove('hidden');
-    });
-    document.getElementById('btn-close-dedication').addEventListener('click', () => {
-      document.getElementById('dedication-modal').classList.add('hidden');
-    });
-
-    // 3D Flight Game Controls
-    document.getElementById('btn-launch-parapet').addEventListener('click', () => {
-      this.launchParapetGame();
-    });
-    document.getElementById('btn-parapet-exit').addEventListener('click', () => {
-      this.exitParapetGame();
-    });
-    document.getElementById('btn-parapet-restart').addEventListener('click', () => {
-      this.parapetGame.start();
-    });
-    const fireBtn = document.getElementById('btn-parapet-fire');
-    if (fireBtn) {
-      fireBtn.addEventListener('click', () => {
-        this.parapetGame.fireLightningBolt();
+    // Lens Radius Slider
+    const radSlider = document.getElementById('lens-radius-slider');
+    if (radSlider) {
+      radSlider.addEventListener('input', (e) => {
+        this.lensRadiusPx = Number(e.target.value);
+        if (this.visionMode !== 'lens') {
+          this._setVisionMode('lens');
+        } else {
+          this._updateLensDOM();
+        }
       });
     }
 
-    const btnAudio = document.getElementById('btn-audio-toggle');
-    btnAudio.addEventListener('click', () => {
-      const muted = this.audio.toggleMute();
-      btnAudio.textContent = muted ? '🔇' : '🔊';
+    // Stage Cursor Tracking & 3D Parallax Tilt
+    this.stageFrame.addEventListener('pointermove', (e) => {
+      this.audio.resume();
+      const rect = this.stageFrame.getBoundingClientRect();
+      const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+      const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+
+      if (!this.isLensPinned) {
+        this.targetLensPct.x = Math.max(0, Math.min(100, xPct));
+        this.targetLensPct.y = Math.max(0, Math.min(100, yPct));
+      }
+
+      // Subtle 3D Parallax Shift on the Scene
+      const shiftX = ((xPct - 50) / 50) * -10;
+      const shiftY = ((yPct - 50) / 50) * -7;
+      this.parallaxInner.style.transform = `translate3d(${shiftX}px, ${shiftY}px, 0)`;
     });
 
-    this.controls.addEventListener('start', () => {
-      this.cameraLerpTargetPos = null;
-      this.cameraLerpLookAt = null;
-      if (this.isFlythroughActive) {
-        this.isFlythroughActive = false;
-        const btn = document.getElementById('btn-flythrough');
-        btn.classList.remove('active');
-        btn.textContent = '🎬 Orbit';
+    // Double-Click Stage to Pin/Unpin Lens
+    this.stageFrame.addEventListener('dblclick', () => {
+      this.isLensPinned = !this.isLensPinned;
+      this.audio.playPulseChime(this.isLensPinned ? 1.45 : 0.9);
+      const lbl = document.getElementById('lens-status-label');
+      if (lbl) {
+        lbl.textContent = this.isLensPinned
+          ? 'LENS PINNED • DBL-CLICK TO UNLOCK'
+          : 'SECOND-SIGHT LENS • DBL-CLICK TO PIN';
       }
     });
 
-    window.addEventListener('resize', () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      this.camera.aspect = w / h;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(w, h);
-      this.composer.setSize(w, h);
-      sharedUniforms.uAspect.value = w / h;
+    // Header Lightning & Audio Buttons
+    document.getElementById('btn-trigger-lightning').addEventListener('click', () => {
+      this.triggerLightningStrike(true);
+    });
+
+    const audioBtn = document.getElementById('btn-audio-toggle');
+    audioBtn.addEventListener('click', () => {
+      const muted = this.audio.toggleMute();
+      audioBtn.textContent = muted ? '🔇 Storm Audio: OFF' : '🔊 Storm Audio: ON';
     });
   }
 
-  _updateHotspotScreenPositions() {
-    if (!this.activeHotspots || this.parapetGame.isActive) return;
-    const halfW = window.innerWidth * 0.5;
-    const halfH = window.innerHeight * 0.5;
+  _renderStageFX(dt) {
+    const ctx = this.fxCtx;
+    const W = this.fxCanvas.width;
+    const H = this.fxCanvas.height;
 
-    this.activeHotspots.forEach((h) => {
-      const projected = h.worldPos.clone();
-      projected.project(this.camera);
+    ctx.clearRect(0, 0, W, H);
 
-      if (projected.z > 1.0) {
-        h.el.style.opacity = '0';
-        h.el.style.pointerEvents = 'none';
-        return;
+    // 1. Storm Rain Streaks
+    ctx.strokeStyle = 'rgba(185, 215, 255, 0.16)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    this.rainDrops.forEach((r) => {
+      r.y += r.speed * dt;
+      r.x -= r.speed * 0.15 * dt;
+      if (r.y > H) {
+        r.y = -20;
+        r.x = Math.random() * W;
       }
-
-      const x = projected.x * halfW + halfW;
-      const y = -(projected.y * halfH) + halfH;
-      h.el.style.opacity = '1';
-      h.el.style.pointerEvents = 'auto';
-      h.el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      if (r.x < 0) r.x = W;
+      ctx.moveTo(r.x, r.y);
+      ctx.lineTo(r.x - 3, r.y + r.len);
     });
+    ctx.stroke();
+
+    // 2. Floating Golden Embers & Signet Sparks
+    this.embers.forEach((em) => {
+      em.x += em.vx * dt;
+      em.y += em.vy * dt;
+      if (em.y < -10) {
+        em.y = H + 10;
+        em.x = Math.random() * W;
+      }
+      ctx.fillStyle = em.color;
+      ctx.globalAlpha = em.alpha;
+      ctx.beginPath();
+      ctx.arc(em.x, em.y, em.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1.0;
+
+    // 3. Lightning Flash & Bolts
+    if (this.lightningFlashAlpha > 0.01) {
+      ctx.fillStyle = `rgba(180, 230, 255, ${this.lightningFlashAlpha * 0.25})`;
+      ctx.fillRect(0, 0, W, H);
+      this.lightningFlashAlpha = Math.max(0, this.lightningFlashAlpha - dt * 1.8);
+    }
+
+    for (let i = this.lightningBolts.length - 1; i >= 0; i--) {
+      const b = this.lightningBolts[i];
+      b.alpha -= dt * 3.0;
+      if (b.alpha <= 0) {
+        this.lightningBolts.splice(i, 1);
+        continue;
+      }
+      ctx.save();
+      ctx.strokeStyle = `rgba(200, 242, 255, ${b.alpha})`;
+      ctx.shadowColor = '#5ecbff';
+      ctx.shadowBlur = 16;
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      b.segs.forEach((s) => {
+        ctx.moveTo(s.x1, s.y1);
+        ctx.lineTo(s.x2, s.y2);
+      });
+      ctx.stroke();
+      ctx.restore();
+    }
   }
 
   _animate() {
@@ -60423,79 +59283,32 @@ class FourthWingOculusApp {
     const dt = Math.min(this.clock.getDelta(), 0.1);
     const elapsed = this.clock.getElapsedTime();
 
-    sharedUniforms.uTime.value = elapsed;
+    // Smoothly interpolate Second-Sight Lens position
+    this.currentLensPct.x += (this.targetLensPct.x - this.currentLensPct.x) * 0.22;
+    this.currentLensPct.y += (this.targetLensPct.y - this.currentLensPct.y) * 0.22;
+    this._updateLensDOM();
 
-    this.currentLensUV.lerp(this.targetLensUV, 0.18);
-    sharedUniforms.uLensPos.value.copy(this.currentLensUV);
+    // Render Stage FX (Rain, Embers, Lightning)
+    this._renderStageFX(dt);
 
-    if (sharedUniforms.uLightningFlash.value > 0.001) {
-      sharedUniforms.uLightningFlash.value = Math.max(
-        0.0,
-        sharedUniforms.uLightningFlash.value - dt * 2.4
-      );
-      this.keyLight.intensity = 2.8 + sharedUniforms.uLightningFlash.value * 4.2;
-      if (sharedUniforms.uLightningFlash.value < 0.05 && this.lightningGroup.children.length > 0) {
-        while (this.lightningGroup.children.length > 0) {
-          this.lightningGroup.remove(this.lightningGroup.children[0]);
-        }
-      }
+    // Render 3D Artifact Reliquary
+    if (this.artifactModel && this.artifactModel.userData.updateAnimation) {
+      this.artifactModel.userData.updateAnimation(elapsed);
+    }
+    if (this.controls3D && this.composer3D) {
+      this.controls3D.update();
+      this.composer3D.render();
     }
 
-    if (Math.random() < 0.002) {
-      this.triggerStormLightning(false);
+    // Render Wielder of the Storm Mini-Game
+    if (this.stormGame) {
+      this.stormGame.updateAndRender(dt, elapsed);
     }
-
-    if (this.emberParticles) {
-      const posAttr = this.emberParticles.geometry.attributes.position;
-      for (let i = 0; i < posAttr.count; i++) {
-        let y = posAttr.getY(i) + this.particleSpeeds[i] * dt;
-        let x = posAttr.getX(i) + Math.sin(elapsed * 0.8 + i) * 0.005;
-        if (y > 7.0) y = -7.0;
-        posAttr.setXY(i, x, y);
-      }
-      posAttr.needsUpdate = true;
-    }
-
-    if (this.parapetGame.isActive) {
-      sharedUniforms.uFullXray.value = 1.0;
-      this.parapetGame.update(dt, elapsed);
-    } else {
-      if (this.currentModel && this.currentModel.userData.updateAnimation) {
-        this.currentModel.userData.updateAnimation(elapsed);
-      }
-
-      if (this.isFlythroughActive) {
-        this.flythroughTime += dt * 0.42;
-        const radius = 4.6 + Math.sin(this.flythroughTime * 1.3) * 1.1;
-        this.camera.position.x = Math.cos(this.flythroughTime) * radius;
-        this.camera.position.z = Math.sin(this.flythroughTime) * radius;
-        this.camera.position.y = 1.15 + Math.sin(this.flythroughTime * 0.85) * 0.95;
-        this.controls.target.set(Math.sin(this.flythroughTime * 0.5) * 0.4, 0.35, 0);
-        if (!this.isLensPinned) {
-          this.targetLensUV.set(
-            0.5 + Math.cos(this.flythroughTime * 2.1) * 0.14,
-            0.5 + Math.sin(this.flythroughTime * 1.7) * 0.12
-          );
-        }
-      } else if (this.cameraLerpTargetPos && this.cameraLerpLookAt) {
-        this.camera.position.lerp(this.cameraLerpTargetPos, 0.08);
-        this.controls.target.lerp(this.cameraLerpLookAt, 0.08);
-        if (this.camera.position.distanceTo(this.cameraLerpTargetPos) < 0.04) {
-          this.cameraLerpTargetPos = null;
-          this.cameraLerpLookAt = null;
-        }
-      }
-
-      this.controls.update();
-      this._updateHotspotScreenPositions();
-    }
-
-    this.composer.render();
   }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  window.fourthWingApp = new FourthWingOculusApp();
+  window.empyreanApp = new EmpyreanArchiveApp();
 });
 
 })();
