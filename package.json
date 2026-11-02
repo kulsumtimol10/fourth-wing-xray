@@ -1,0 +1,9 @@
+{
+  "name": "fourth-wing-xray",
+  "version": "1.0.0",
+  "description": "Fourth Wing: Codex Oculus — 3D X-Ray Tomography Archive of Basgiath",
+  "type": "module",
+  "scripts": {
+    "start": "python -m http.server 8080"
+  }
+}
