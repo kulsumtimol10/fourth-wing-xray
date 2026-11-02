@@ -1,7 +1,7 @@
 // ============================================================================
-// FOURTH WING: CODEX OCULUS — Procedural 3D Anatomical & Architectural Models
-// Builds multi-layered Exterior, Vascular/Signet, and Deep Skeletal meshes
-// for Dragons (Tairn, Andarna, Wyvern), Riders (Violet, Xaden), and Basgiath.
+// FOURTH WING: CODEX OCULUS — Sculpted 3D Models (v2 High-Detail Edition)
+// Smooth lofted organic geometry, curved Bezier wing membranes, crisp internal
+// osteology, beating heart, and dynamic lightning/shadow energy arcs.
 // ============================================================================
 
 import * as THREE from 'three';
@@ -11,15 +11,75 @@ import {
   createConduitMaterial
 } from './xrayShader.js';
 
-// Helper to create a 3D tube along a list of Vector3 points
-function createTubeFromPoints(points, radius, material, tubularSegments = 36, radialSegments = 8) {
+function createTube(points, radius, material, tubSegs = 40, radSegs = 10) {
   const curve = new THREE.CatmullRomCurve3(points);
-  const geo = new THREE.TubeGeometry(curve, tubularSegments, radius, radialSegments, false);
+  const geo = new THREE.TubeGeometry(curve, tubSegs, radius, radSegs, false);
   return new THREE.Mesh(geo, material);
 }
 
+// Builds a smooth continuous lofted organic body along a 3D spine curve
+// with custom anatomical radius profile (neck -> chest -> waist -> tail)
+function createLoftedBodyGeometry(curve, radiusProfileFn, lengthSegs = 72, radialSegs = 24) {
+  const frames = curve.computeFrenetFrames(lengthSegs, false);
+  const positions = [];
+  const normals = [];
+  const uvs = [];
+  const indices = [];
+
+  for (let i = 0; i <= lengthSegs; i++) {
+    const u = i / lengthSegs;
+    const pt = curve.getPointAt(u);
+    const N = frames.normals[i];
+    const B = frames.binormals[i];
+    const { rx, ry } = radiusProfileFn(u);
+
+    for (let j = 0; j <= radialSegs; j++) {
+      const v = j / radialSegs;
+      const theta = v * Math.PI * 2;
+      const sin = Math.sin(theta);
+      const cos = Math.cos(theta);
+
+      // Slight dorsal ridge shaping at top (sin > 0.7)
+      const ridge = sin > 0.6 ? Math.pow((sin - 0.6) / 0.4, 2.0) * 0.08 * ry : 0;
+
+      const vx = pt.x + (cos * rx * B.x + (sin * ry + ridge) * N.x);
+      const vy = pt.y + (cos * rx * B.y + (sin * ry + ridge) * N.y);
+      const vz = pt.z + (cos * rx * B.z + (sin * ry + ridge) * N.z);
+
+      positions.push(vx, vy, vz);
+
+      const nx = cos * B.x + sin * N.x;
+      const ny = cos * B.y + sin * N.y;
+      const nz = cos * B.z + sin * N.z;
+      const len = Math.hypot(nx, ny, nz) || 1;
+      normals.push(nx / len, ny / len, nz / len);
+      uvs.push(u, v);
+    }
+  }
+
+  const stride = radialSegs + 1;
+  for (let i = 0; i < lengthSegs; i++) {
+    for (let j = 0; j < radialSegs; j++) {
+      const a = i * stride + j;
+      const b = (i + 1) * stride + j;
+      const c = (i + 1) * stride + (j + 1);
+      const d = i * stride + (j + 1);
+      indices.push(a, b, d);
+      indices.push(b, c, d);
+    }
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setIndex(indices);
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geo.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+  geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+  geo.computeVertexNormals();
+  return geo;
+}
+
 // ============================================================================
-// 1. DRAGON ANATOMY 3D BUILDER (Tairn, Andarna, Wyvern)
+// 1. SCULPTED DRAGON ANATOMY (Tairn, Andarna, Wyvern)
 // ============================================================================
 export function buildDragonModel(specimenId = 'tairn', customColors = null) {
   const root = new THREE.Group();
@@ -28,12 +88,12 @@ export function buildDragonModel(specimenId = 'tairn', customColors = null) {
   const isAndarna = specimenId === 'andarna';
   const isWyvern = specimenId === 'wyvern';
 
-  const scaleFactor = isAndarna ? 0.78 : isWyvern ? 0.92 : 1.05;
+  const scaleFactor = isAndarna ? 0.85 : isWyvern ? 0.95 : 1.05;
   root.scale.setScalar(scaleFactor);
 
   const primaryHex = customColors?.colorHex || (isAndarna ? '#f4c55c' : isWyvern ? '#ff2a4b' : '#38b6ff');
   const secondaryHex = customColors?.secondaryHex || (isAndarna ? '#ff9e44' : isWyvern ? '#9e0b22' : '#f4c55c');
-  const hideHex = customColors?.hideHex || (isAndarna ? '#3a2b10' : isWyvern ? '#1a151c' : '#080b11');
+  const hideHex = customColors?.hideHex || (isAndarna ? '#2c200b' : isWyvern ? '#17111a' : '#090d16');
 
   const extMat = createExteriorMaterial({
     baseColor: hideHex,
@@ -41,400 +101,397 @@ export function buildDragonModel(specimenId = 'tairn', customColors = null) {
     scalePattern: 1.0
   });
   const wingMembraneMat = createExteriorMaterial({
-    baseColor: isAndarna ? '#2c1f0b' : '#0b0e17',
+    baseColor: isAndarna ? '#211706' : '#0b101c',
     specularColor: secondaryHex,
     scalePattern: 1.0
   });
   const boneMat = createBoneMaterial({
-    boneTint: isWyvern ? '#d6c5c8' : '#ebe5d5'
+    boneTint: isWyvern ? '#dfd0d3' : '#f2ede0'
   });
   const conduitMat = createConduitMaterial({
     color: primaryHex,
     secondary: secondaryHex,
-    pulseSpeed: isWyvern ? 4.0 : 7.0,
+    pulseSpeed: 6.5,
     alwaysFaintlyVisible: true
   });
   const pyroMat = createConduitMaterial({
     color: isWyvern ? '#00e5ff' : '#ff6b1a',
     secondary: isWyvern ? '#ff2a4b' : '#ffd966',
-    pulseSpeed: 9.0,
+    pulseSpeed: 8.5,
     alwaysFaintlyVisible: false
   });
 
-  // Groups for animation
-  const leftWingGroup = new THREE.Group();
-  const rightWingGroup = new THREE.Group();
-  const heartGroup = new THREE.Group();
-  const tailGroup = new THREE.Group();
-
-  // Spine curve from tail [-3.8] through torso [0] up sinuous neck to head [3.1]
+  // Sinuous S-curve spine from tail tip [-4.0] to neck/head [2.9]
   const spinePts = [
-    new THREE.Vector3(-3.9, 0.25, 0),
-    new THREE.Vector3(-2.8, 0.12, 0),
-    new THREE.Vector3(-1.6, 0.32, 0),
-    new THREE.Vector3(-0.5, 0.55, 0),
-    new THREE.Vector3(0.6, 0.62, 0),
-    new THREE.Vector3(1.6, 0.85, 0),
-    new THREE.Vector3(2.35, 1.35, 0),
-    new THREE.Vector3(2.95, 1.38, 0)
+    new THREE.Vector3(-4.1, 0.15, 0),
+    new THREE.Vector3(-2.9, 0.05, 0),
+    new THREE.Vector3(-1.7, 0.28, 0),
+    new THREE.Vector3(-0.5, 0.52, 0),
+    new THREE.Vector3(0.55, 0.58, 0),
+    new THREE.Vector3(1.5, 0.78, 0),
+    new THREE.Vector3(2.25, 1.32, 0),
+    new THREE.Vector3(2.85, 1.38, 0)
   ];
   const spineCurve = new THREE.CatmullRomCurve3(spinePts);
 
-  // --- A. EXTERIOR MUSCULATURE & SCALES ALONG SPINE ---
-  const bodyRadii = [0.12, 0.22, 0.42, 0.68, 0.78, 0.52, 0.36, 0.28];
-  const bodySegments = 44;
-  for (let i = 0; i < bodySegments; i++) {
-    const t = i / (bodySegments - 1);
-    const pos = spineCurve.getPointAt(t);
-    const tangent = spineCurve.getTangentAt(t);
-    const idxFloat = t * (bodyRadii.length - 1);
-    const idx0 = Math.floor(idxFloat);
-    const idx1 = Math.min(bodyRadii.length - 1, idx0 + 1);
-    const r = THREE.MathUtils.lerp(bodyRadii[idx0], bodyRadii[idx1], idxFloat - idx0);
-
-    // Sculpted overlapping scale ring segment
-    const segGeo = new THREE.SphereGeometry(r, 14, 12);
-    segGeo.scale(1.35, 0.92, 0.88);
-    const segMesh = new THREE.Mesh(segGeo, extMat);
-    segMesh.position.copy(pos);
-    segMesh.lookAt(pos.clone().add(tangent));
-    root.add(segMesh);
-
-    // Dorsal ridge armor plates
-    if (i % 2 === 0 && t > 0.06 && t < 0.94) {
-      const spikeH = 0.14 + Math.sin(t * Math.PI) * 0.22;
-      const spikeGeo = new THREE.ConeGeometry(0.06, spikeH, 5);
-      const spike = new THREE.Mesh(spikeGeo, extMat);
-      spike.position.copy(pos).add(new THREE.Vector3(0, r * 0.88 + spikeH * 0.35, 0));
-      spike.rotation.z = -0.38;
-      root.add(spike);
+  // Smooth continuous lofted dragon body
+  const bodyGeo = createLoftedBodyGeometry(spineCurve, (u) => {
+    // u=0 is tail tip, u=0.55 is broad chest, u=0.85 is slender neck, u=1.0 is skull base
+    if (u < 0.35) {
+      const t = u / 0.35;
+      const r = THREE.MathUtils.lerp(0.05, 0.42, Math.pow(t, 1.3));
+      return { rx: r * 0.9, ry: r };
+    } else if (u < 0.68) {
+      const t = (u - 0.35) / 0.33;
+      const chest = Math.sin(t * Math.PI);
+      return {
+        rx: 0.42 + chest * 0.36,
+        ry: 0.44 + chest * 0.38
+      };
+    } else {
+      const t = (u - 0.68) / 0.32;
+      const r = THREE.MathUtils.lerp(0.42, 0.22, t);
+      return { rx: r * 0.88, ry: r };
     }
+  });
+  root.add(new THREE.Mesh(bodyGeo, extMat));
+
+  // Dorsal spine armor crests along the back
+  for (let i = 4; i < 42; i++) {
+    const u = i / 44;
+    const pt = spineCurve.getPointAt(u);
+    const crestH = 0.12 + Math.sin(u * Math.PI) * 0.24;
+    const crestGeo = new THREE.ConeGeometry(0.045, crestH, 4);
+    const crest = new THREE.Mesh(crestGeo, extMat);
+    const offsetY = u > 0.35 && u < 0.68 ? 0.68 : 0.32;
+    crest.position.copy(pt).add(new THREE.Vector3(0, offsetY * Math.sin(u * Math.PI) + 0.18, 0));
+    crest.rotation.z = -0.45;
+    root.add(crest);
   }
 
-  // --- B. SCULPTED DRACONIC HEAD, HORNS & JAWS (Exterior + Skull Inside) ---
-  const headPos = new THREE.Vector3(3.05, 1.32, 0);
+  // --- SCULPTED HEAD, JAW & SWEPT HORNS ---
   const headGroup = new THREE.Group();
-  headGroup.position.copy(headPos);
+  headGroup.position.set(2.92, 1.35, 0);
   root.add(headGroup);
 
-  // Exterior Armored Cranium & Snout
-  const snoutGeo = new THREE.ConeGeometry(0.36, 0.95, 8);
-  snoutGeo.rotateZ(-Math.PI / 2);
-  snoutGeo.scale(1.0, 0.68, 0.82);
-  const snoutMesh = new THREE.Mesh(snoutGeo, extMat);
-  snoutMesh.position.set(0.28, 0.02, 0);
-  headGroup.add(snoutMesh);
+  // Upper skull & snout
+  const upperSkullGeo = new THREE.ConeGeometry(0.34, 0.98, 12);
+  upperSkullGeo.rotateZ(-Math.PI / 2);
+  upperSkullGeo.scale(1.0, 0.65, 0.82);
+  const upperSkull = new THREE.Mesh(upperSkullGeo, extMat);
+  upperSkull.position.set(0.32, 0.04, 0);
+  headGroup.add(upperSkull);
 
-  const jawGeo = new THREE.ConeGeometry(0.28, 0.82, 7);
-  jawGeo.rotateZ(-Math.PI / 2);
-  jawGeo.scale(1.0, 0.45, 0.72);
-  const jawMesh = new THREE.Mesh(jawGeo, extMat);
-  jawMesh.position.set(0.22, -0.14, 0);
-  jawMesh.rotation.z = -0.12;
-  headGroup.add(jawMesh);
+  // Lower hinged jaw
+  const lowerJawGeo = new THREE.ConeGeometry(0.26, 0.84, 10);
+  lowerJawGeo.rotateZ(-Math.PI / 2);
+  lowerJawGeo.scale(1.0, 0.42, 0.72);
+  const lowerJaw = new THREE.Mesh(lowerJawGeo, extMat);
+  lowerJaw.position.set(0.26, -0.14, 0);
+  lowerJaw.rotation.z = -0.15;
+  headGroup.add(lowerJaw);
 
-  // Glowing Golden / Crimson Eyes
+  // Glowing Slit Eyes + Swept Occipital Horns + Brow Horns
   const eyeMat = new THREE.MeshBasicMaterial({
     color: isWyvern ? '#ff1e42' : '#ffd54f'
   });
   [-1, 1].forEach((side) => {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.048, 10, 10), eyeMat);
-    eye.position.set(0.18, 0.08, side * 0.22);
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.046, 12, 12), eyeMat);
+    eye.scale.set(1.4, 0.8, 1.0);
+    eye.position.set(0.22, 0.08, side * 0.21);
     headGroup.add(eye);
 
-    // Swept-back Occipital Horns (Exterior + Bone core)
-    const hornPts = [
-      new THREE.Vector3(-0.05, 0.14, side * 0.16),
-      new THREE.Vector3(-0.45, 0.38, side * 0.34),
-      new THREE.Vector3(-0.95, 0.56, side * 0.46)
+    const mainHornPts = [
+      new THREE.Vector3(-0.02, 0.14, side * 0.15),
+      new THREE.Vector3(-0.48, 0.42, side * 0.36),
+      new THREE.Vector3(-1.05, 0.64, side * 0.48)
     ];
-    headGroup.add(createTubeFromPoints(hornPts, 0.055, extMat, 16, 7));
-    headGroup.add(createTubeFromPoints(hornPts, 0.038, boneMat, 16, 6));
+    headGroup.add(createTube(mainHornPts, 0.055, extMat, 20, 8));
+    headGroup.add(createTube(mainHornPts, 0.036, boneMat, 20, 6));
+
+    const browHornPts = [
+      new THREE.Vector3(0.08, 0.12, side * 0.19),
+      new THREE.Vector3(-0.28, 0.24, side * 0.32)
+    ];
+    headGroup.add(createTube(browHornPts, 0.03, extMat, 12, 6));
   });
 
-  // Deep Layer: Articulated Dragon Skull & Fangs inside Head
-  const skullGeo = new THREE.ConeGeometry(0.29, 0.84, 8);
-  skullGeo.rotateZ(-Math.PI / 2);
-  skullGeo.scale(1.0, 0.62, 0.75);
-  const skullMesh = new THREE.Mesh(skullGeo, boneMat);
-  skullMesh.position.set(0.24, 0.02, 0);
-  headGroup.add(skullMesh);
+  // Internal X-Ray Cranium, Jawbone & Telepathic Bond Core
+  const innerSkull = new THREE.Mesh(upperSkullGeo.clone().scale(0.84, 0.84, 0.84), boneMat);
+  innerSkull.position.set(0.28, 0.04, 0);
+  headGroup.add(innerSkull);
 
-  const mandibleGeo = new THREE.ConeGeometry(0.23, 0.74, 7);
-  mandibleGeo.rotateZ(-Math.PI / 2);
-  mandibleGeo.scale(1.0, 0.38, 0.66);
-  const mandibleMesh = new THREE.Mesh(mandibleGeo, boneMat);
-  mandibleMesh.position.set(0.2, -0.13, 0);
-  mandibleMesh.rotation.z = -0.14;
-  headGroup.add(mandibleMesh);
+  const innerJaw = new THREE.Mesh(lowerJawGeo.clone().scale(0.82, 0.82, 0.82), boneMat);
+  innerJaw.position.set(0.24, -0.13, 0);
+  innerJaw.rotation.z = -0.15;
+  headGroup.add(innerJaw);
 
-  // Cranial Bond Nexus Core inside the skull
-  const cranialCore = new THREE.Mesh(
-    new THREE.OctahedronGeometry(0.13, 2),
-    conduitMat
-  );
-  cranialCore.position.set(-0.08, 0.05, 0);
-  headGroup.add(cranialCore);
+  const cranialBondNexus = new THREE.Mesh(new THREE.OctahedronGeometry(0.12, 2), conduitMat);
+  cranialBondNexus.position.set(-0.04, 0.06, 0);
+  headGroup.add(cranialBondNexus);
 
-  // --- C. DEEP SKELETAL VERTEBRAE & RIBCAGE ---
-  const numVertebrae = 36;
-  for (let i = 0; i < numVertebrae; i++) {
-    const t = i / (numVertebrae - 1);
-    const pos = spineCurve.getPointAt(t);
-    const tangent = spineCurve.getTangentAt(t);
-    const vSize = 0.06 + Math.sin(t * Math.PI) * 0.075;
+  // --- DEEP X-RAY SKELETON: VERTEBRAE, RIBCAGE & STERNUM ---
+  for (let i = 0; i < 38; i++) {
+    const u = i / 37;
+    const pos = spineCurve.getPointAt(u);
+    const tangent = spineCurve.getTangentAt(u);
+    const vRad = 0.055 + Math.sin(u * Math.PI) * 0.075;
 
-    const vertGeo = new THREE.CylinderGeometry(vSize, vSize * 0.85, 0.13, 8);
+    const vertGeo = new THREE.CylinderGeometry(vRad, vRad * 0.85, 0.12, 10);
     vertGeo.rotateZ(Math.PI / 2);
     const vert = new THREE.Mesh(vertGeo, boneMat);
     vert.position.copy(pos);
     vert.lookAt(pos.clone().add(tangent));
     root.add(vert);
 
-    // Spinous process (bone fin)
-    const procGeo = new THREE.BoxGeometry(0.04, vSize * 2.2, 0.03);
-    const proc = new THREE.Mesh(procGeo, boneMat);
-    proc.position.copy(pos).add(new THREE.Vector3(0, vSize * 1.3, 0));
-    proc.rotation.z = -0.3;
-    root.add(proc);
+    const neuralSpine = new THREE.Mesh(new THREE.BoxGeometry(0.035, vRad * 2.1, 0.025), boneMat);
+    neuralSpine.position.copy(pos).add(new THREE.Vector3(0, vRad * 1.25, 0));
+    neuralSpine.rotation.z = -0.35;
+    root.add(neuralSpine);
   }
 
-  // 12 Pairs of Curved Thoracic Ribs + Sternum Keel
-  for (let rIdx = 0; rIdx < 12; rIdx++) {
-    const t = 0.34 + (rIdx / 11) * 0.34;
-    const spinePos = spineCurve.getPointAt(t);
-    const ribArch = Math.sin((rIdx / 11) * Math.PI);
-    const ribWidth = 0.32 + ribArch * 0.36;
-    const ribDrop = 0.42 + ribArch * 0.38;
+  // 12 Pairs of Anatomical Thoracic Ribs
+  for (let r = 0; r < 12; r++) {
+    const u = 0.35 + (r / 11) * 0.32;
+    const sp = spineCurve.getPointAt(u);
+    const arch = Math.sin((r / 11) * Math.PI);
+    const w = 0.34 + arch * 0.35;
+    const h = 0.42 + arch * 0.38;
 
     [-1, 1].forEach((side) => {
       const ribPts = [
-        spinePos.clone(),
-        spinePos.clone().add(new THREE.Vector3(0.04, -ribDrop * 0.35, side * ribWidth)),
-        spinePos.clone().add(new THREE.Vector3(-0.05, -ribDrop * 0.85, side * ribWidth * 0.65)),
-        spinePos.clone().add(new THREE.Vector3(-0.1, -ribDrop, side * 0.06))
+        sp.clone(),
+        sp.clone().add(new THREE.Vector3(0.04, -h * 0.32, side * w)),
+        sp.clone().add(new THREE.Vector3(-0.05, -h * 0.85, side * w * 0.65)),
+        sp.clone().add(new THREE.Vector3(-0.08, -h, side * 0.05))
       ];
-      root.add(createTubeFromPoints(ribPts, 0.026, boneMat, 14, 6));
+      root.add(createTube(ribPts, 0.026, boneMat, 16, 8));
     });
   }
 
-  // Sternum Keel Bone
-  const sternumPts = [
-    new THREE.Vector3(-0.6, -0.18, 0),
-    new THREE.Vector3(0.2, -0.25, 0),
-    new THREE.Vector3(1.1, -0.05, 0)
-  ];
-  root.add(createTubeFromPoints(sternumPts, 0.055, boneMat, 16, 6));
+  // Sternum Keel
+  root.add(
+    createTube(
+      [
+        new THREE.Vector3(-0.55, -0.18, 0),
+        new THREE.Vector3(0.25, -0.26, 0),
+        new THREE.Vector3(1.1, -0.04, 0)
+      ],
+      0.05,
+      boneMat,
+      16,
+      8
+    )
+  );
 
-  // --- D. INTERNAL ORGANS: HEART / WYVERN RUNE STONE & PYRO-GLANDS ---
-  heartGroup.position.set(0.25, 0.32, 0);
+  // --- HEART / WYVERN RUNE STONE & PYRO-GLANDS ---
+  const heartGroup = new THREE.Group();
+  heartGroup.position.set(0.25, 0.3, 0);
   root.add(heartGroup);
 
   if (isWyvern) {
-    // Wyvern Dark-Magic Carved Rune Stone inside the ribcage!
-    const runeStoneGeo = new THREE.DodecahedronGeometry(0.32, 0);
-    const runeStoneMat = createExteriorMaterial({
-      baseColor: '#261a24',
-      specularColor: '#ff2a4b',
-      scalePattern: 0.0
-    });
-    const runeStone = new THREE.Mesh(runeStoneGeo, runeStoneMat);
-    heartGroup.add(runeStone);
-
-    // Glowing interlocking venin rune rings around the stone
-    for (let r = 0; r < 3; r++) {
-      const ringGeo = new THREE.TorusGeometry(0.35 + r * 0.03, 0.018, 8, 32);
-      const ring = new THREE.Mesh(ringGeo, conduitMat);
-      ring.rotation.set(r * 1.1, r * 0.8, r * 0.5);
-      heartGroup.add(ring);
+    // Wyvern Dark-Magic Carved Rune Stone
+    const stone = new THREE.Mesh(
+      new THREE.DodecahedronGeometry(0.31, 0),
+      createExteriorMaterial({ baseColor: '#241520', specularColor: '#ff2a4b', scalePattern: 0 })
+    );
+    heartGroup.add(stone);
+    for (let k = 0; k < 3; k++) {
+      const rRing = new THREE.Mesh(new THREE.TorusGeometry(0.35 + k * 0.025, 0.016, 8, 36), conduitMat);
+      rRing.rotation.set(k * 1.1, k * 0.7, k * 0.4);
+      heartGroup.add(rRing);
     }
   } else {
-    // True Dragon Four-Chambered Magma Heart & Bond Core
-    const heartGeo = new THREE.SphereGeometry(0.28, 18, 18);
-    heartGeo.scale(1.25, 0.95, 0.9);
-    const heartMesh = new THREE.Mesh(heartGeo, conduitMat);
-    heartGroup.add(heartMesh);
+    const heart = new THREE.Mesh(new THREE.SphereGeometry(0.27, 20, 20), conduitMat);
+    heart.scale.set(1.25, 0.95, 0.9);
+    heartGroup.add(heart);
 
-    // Golden-Azure Bond Tether Anchor Ring
-    const bondHaloGeo = new THREE.TorusGeometry(0.38, 0.022, 10, 40);
-    const bondHalo = new THREE.Mesh(bondHaloGeo, pyroMat);
-    bondHalo.rotation.x = Math.PI / 3;
-    heartGroup.add(bondHalo);
+    const halo = new THREE.Mesh(new THREE.TorusGeometry(0.37, 0.02, 10, 44), pyroMat);
+    halo.rotation.x = Math.PI / 3;
+    heartGroup.add(halo);
   }
 
-  // Bifurcated Pyro-Chemical Ignition Sacs & Tracheal Flame Ducts
+  // Pyro-Chemical Fire Sacs & Tracheal Ducts
   [-1, 1].forEach((side) => {
-    const sacGeo = new THREE.SphereGeometry(0.18, 14, 14);
-    sacGeo.scale(1.8, 0.75, 0.7);
-    const sac = new THREE.Mesh(sacGeo, pyroMat);
-    sac.position.set(1.15, 0.42, side * 0.24);
+    const sac = new THREE.Mesh(new THREE.SphereGeometry(0.17, 16, 16), pyroMat);
+    sac.scale.set(1.8, 0.72, 0.7);
+    sac.position.set(1.15, 0.42, side * 0.22);
     sac.rotation.z = 0.28;
     root.add(sac);
 
-    // Tracheal Flame Duct from Sac to Jaw
-    const ductPts = [
-      new THREE.Vector3(1.25, 0.44, side * 0.22),
-      new THREE.Vector3(1.85, 0.82, side * 0.14),
-      new THREE.Vector3(2.45, 1.28, side * 0.09),
-      new THREE.Vector3(3.15, 1.26, side * 0.05)
-    ];
-    root.add(createTubeFromPoints(ductPts, 0.024, pyroMat, 20, 6));
+    root.add(
+      createTube(
+        [
+          new THREE.Vector3(1.25, 0.44, side * 0.2),
+          new THREE.Vector3(1.85, 0.82, side * 0.13),
+          new THREE.Vector3(2.42, 1.28, side * 0.08),
+          new THREE.Vector3(3.12, 1.26, side * 0.04)
+        ],
+        0.022,
+        pyroMat,
+        20,
+        6
+      )
+    );
   });
 
-  // Main Spinal & Vascular Signet Conduit
-  root.add(createTubeFromPoints(spinePts, 0.036, conduitMat, 40, 8));
+  // Main Spinal Signet Conduit
+  root.add(createTube(spinePts, 0.036, conduitMat, 48, 8));
 
-  // --- E. LIMBS (4 Legs for True Dragons, 2 Hind Legs Only for Wyvern!) ---
+  // --- MUSCULAR LEGS & TALONS ---
   const buildLeg = (hipPos, isFront, side) => {
-    const kneePos = hipPos.clone().add(new THREE.Vector3(isFront ? -0.25 : 0.32, -0.58, side * 0.22));
-    const anklePos = kneePos.clone().add(new THREE.Vector3(isFront ? 0.35 : -0.35, -0.52, side * 0.05));
-    const footPos = anklePos.clone().add(new THREE.Vector3(0.28, -0.22, 0));
+    const knee = hipPos.clone().add(new THREE.Vector3(isFront ? -0.22 : 0.3, -0.56, side * 0.22));
+    const ankle = knee.clone().add(new THREE.Vector3(isFront ? 0.34 : -0.34, -0.5, side * 0.05));
+    const foot = ankle.clone().add(new THREE.Vector3(0.26, -0.2, 0));
+    const pts = [hipPos, knee, ankle, foot];
 
-    const legPts = [hipPos, kneePos, anklePos, footPos];
-    // Exterior muscular leg
-    root.add(createTubeFromPoints(legPts, 0.14, extMat, 18, 10));
-    // Deep femur / tibia / tarsal bones
-    root.add(createTubeFromPoints(legPts, 0.055, boneMat, 18, 8));
-    // Arterial signet conduit
-    root.add(createTubeFromPoints(legPts, 0.022, conduitMat, 18, 6));
+    root.add(createTube(pts, 0.145, extMat, 20, 12));
+    root.add(createTube(pts, 0.055, boneMat, 20, 8));
+    root.add(createTube(pts, 0.02, conduitMat, 20, 6));
 
-    // 3 Talons
-    [-0.1, 0, 0.1].forEach((tOffset) => {
-      const clawPts = [
-        footPos.clone(),
-        footPos.clone().add(new THREE.Vector3(0.24, -0.06, tOffset))
-      ];
-      root.add(createTubeFromPoints(clawPts, 0.028, boneMat, 8, 6));
+    [-0.09, 0, 0.09].forEach((zOff) => {
+      root.add(
+        createTube(
+          [foot.clone(), foot.clone().add(new THREE.Vector3(0.24, -0.06, zOff))],
+          0.026,
+          boneMat,
+          8,
+          6
+        )
+      );
     });
   };
 
-  // Hind legs (present on both Dragons and Wyverns)
   [-1, 1].forEach((side) => {
-    buildLeg(new THREE.Vector3(-0.75, 0.35, side * 0.42), false, side);
+    buildLeg(new THREE.Vector3(-0.75, 0.32, side * 0.42), false, side);
     if (!isWyvern) {
-      // Front legs ONLY on true four-legged Dragons!
-      buildLeg(new THREE.Vector3(0.95, 0.38, side * 0.46), true, side);
+      buildLeg(new THREE.Vector3(0.92, 0.36, side * 0.45), true, side);
     }
   });
 
-  // --- F. ARTICULATED 5-RAY METACARPAL WINGS ---
+  // --- SCULPTED 5-RAY WINGS WITH SUBDIVIDED MEMBRANES ---
+  const leftWingGroup = new THREE.Group();
+  const rightWingGroup = new THREE.Group();
+
   const buildWing = (side) => {
-    const wingContainer = side > 0 ? leftWingGroup : rightWingGroup;
-    wingContainer.position.set(0.65, 0.72, side * 0.32);
-    root.add(wingContainer);
+    const wg = side > 0 ? leftWingGroup : rightWingGroup;
+    wg.position.set(0.62, 0.72, side * 0.34);
+    root.add(wg);
 
     const shoulder = new THREE.Vector3(0, 0, 0);
-    const elbow = new THREE.Vector3(-0.45, 0.48, side * 0.95);
-    const wrist = new THREE.Vector3(0.35, 0.92, side * 2.15);
-    const wingTip = new THREE.Vector3(-0.65, 1.15, side * 4.45);
+    const elbow = new THREE.Vector3(-0.42, 0.46, side * 0.96);
+    const wrist = new THREE.Vector3(0.38, 0.92, side * 2.15);
+    const tip = new THREE.Vector3(-0.68, 1.18, side * 4.55);
 
-    const mainSparPts = [shoulder, elbow, wrist, wingTip];
-    // Exterior armored wing leading edge
-    wingContainer.add(createTubeFromPoints(mainSparPts, 0.085, extMat, 24, 8));
-    // Internal Humerus, Radius/Ulna & Metacarpal Lead Strut
-    wingContainer.add(createTubeFromPoints(mainSparPts, 0.045, boneMat, 24, 8));
-    // Wing Signet Artery
-    wingContainer.add(createTubeFromPoints(mainSparPts, 0.022, conduitMat, 24, 6));
+    const leadPts = [shoulder, elbow, wrist, tip];
+    wg.add(createTube(leadPts, 0.082, extMat, 28, 10));
+    wg.add(createTube(leadPts, 0.044, boneMat, 28, 8));
+    wg.add(createTube(leadPts, 0.022, conduitMat, 28, 6));
 
-    // 4 Additional Elongated Phalanges (Wing Fingers) radiating from the carpal wrist
-    const fingerTips = [
-      wingTip,
-      new THREE.Vector3(-1.15, 0.65, side * 3.85),
-      new THREE.Vector3(-1.55, 0.22, side * 2.95),
-      new THREE.Vector3(-1.65, -0.05, side * 1.95),
+    const fingers = [
+      tip,
+      new THREE.Vector3(-1.18, 0.66, side * 3.9),
+      new THREE.Vector3(-1.58, 0.24, side * 2.95),
+      new THREE.Vector3(-1.68, -0.04, side * 1.95),
       new THREE.Vector3(-1.35, -0.18, side * 1.05)
     ];
 
-    for (let f = 1; f < fingerTips.length; f++) {
-      const phalanxPts = [
+    for (let f = 1; f < fingers.length; f++) {
+      const fPts = [
         wrist,
-        wrist.clone().lerp(fingerTips[f], 0.5).add(new THREE.Vector3(-0.12, 0.08, 0)),
-        fingerTips[f]
+        wrist.clone().lerp(fingers[f], 0.5).add(new THREE.Vector3(-0.14, 0.1, 0)),
+        fingers[f]
       ];
-      wingContainer.add(createTubeFromPoints(phalanxPts, 0.038, extMat, 16, 7));
-      wingContainer.add(createTubeFromPoints(phalanxPts, 0.024, boneMat, 16, 6));
-      wingContainer.add(createTubeFromPoints(phalanxPts, 0.014, conduitMat, 16, 5));
+      wg.add(createTube(fPts, 0.036, extMat, 18, 8));
+      wg.add(createTube(fPts, 0.022, boneMat, 18, 6));
+      wg.add(createTube(fPts, 0.014, conduitMat, 18, 5));
     }
 
-    // Wing Membranes stretched between the phalanges
-    for (let m = 0; m < fingerTips.length - 1; m++) {
-      const geom = new THREE.BufferGeometry();
-      const v0 = wrist;
-      const v1 = fingerTips[m];
-      const v2 = fingerTips[m + 1];
-      const vertices = new Float32Array([
-        v0.x, v0.y, v0.z,
-        v1.x, v1.y, v1.z,
-        v2.x, v2.y, v2.z
-      ]);
-      geom.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-      geom.computeVertexNormals();
-      const webMesh = new THREE.Mesh(geom, wingMembraneMat);
-      wingContainer.add(webMesh);
-    }
+    // Subdivided curved wing membranes between each finger ray
+    for (let m = 0; m < fingers.length - 1; m++) {
+      const fA = fingers[m];
+      const fB = fingers[m + 1];
+      const positions = [];
+      const indices = [];
+      const steps = 10;
 
-    // Inner propatagium membrane (wrist -> elbow -> shoulder/body)
-    const innerGeom = new THREE.BufferGeometry();
-    const bodyRear = new THREE.Vector3(-1.35, -0.18, side * 0.2);
-    const innerVerts = new Float32Array([
-      wrist.x, wrist.y, wrist.z,
-      fingerTips[4].x, fingerTips[4].y, fingerTips[4].z,
-      bodyRear.x, bodyRear.y, bodyRear.z,
-      wrist.x, wrist.y, wrist.z,
-      bodyRear.x, bodyRear.y, bodyRear.z,
-      shoulder.x, shoulder.y, shoulder.z
-    ]);
-    innerGeom.setAttribute('position', new THREE.BufferAttribute(innerVerts, 3));
-    innerGeom.computeVertexNormals();
-    wingContainer.add(new THREE.Mesh(innerGeom, wingMembraneMat));
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const pA = wrist.clone().lerp(fA, u);
+        const pB = wrist.clone().lerp(fB, u);
+        for (let j = 0; j <= steps; j++) {
+          const v = j / steps;
+          const pt = pA.clone().lerp(pB, v);
+          // Camber arch for realistic aerodynamic wing membrane
+          const camber = Math.sin(u * Math.PI) * Math.sin(v * Math.PI) * 0.14;
+          pt.y += camber;
+          positions.push(pt.x, pt.y, pt.z);
+        }
+      }
+
+      const stride = steps + 1;
+      for (let i = 0; i < steps; i++) {
+        for (let j = 0; j < steps; j++) {
+          const a = i * stride + j;
+          const b = (i + 1) * stride + j;
+          const c = (i + 1) * stride + (j + 1);
+          const d = i * stride + (j + 1);
+          indices.push(a, b, d, b, c, d);
+        }
+      }
+
+      const webGeo = new THREE.BufferGeometry();
+      webGeo.setIndex(indices);
+      webGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      webGeo.computeVertexNormals();
+      wg.add(new THREE.Mesh(webGeo, wingMembraneMat));
+    }
   };
 
   buildWing(1);
   buildWing(-1);
 
-  // --- G. TAIL WEAPONRY (Morningstartail vs. Feathertail vs. Scorpiontail) ---
-  tailGroup.position.set(-3.85, 0.25, 0);
+  // --- TAIL WEAPONRY ---
+  const tailGroup = new THREE.Group();
+  tailGroup.position.set(-4.05, 0.15, 0);
   root.add(tailGroup);
 
   if (isAndarna) {
-    // Feathertail Golden Plume Vanes + Ossicles
     for (let p = -3; p <= 3; p++) {
-      const angle = p * 0.22;
-      const vaneGeo = new THREE.ConeGeometry(0.08, 0.85, 6);
+      const ang = p * 0.22;
+      const vaneGeo = new THREE.ConeGeometry(0.08, 0.88, 8);
       vaneGeo.rotateZ(Math.PI / 2);
-      vaneGeo.scale(1.0, 0.25, 1.8);
+      vaneGeo.scale(1.0, 0.22, 1.8);
       const vane = new THREE.Mesh(vaneGeo, extMat);
-      vane.position.set(-0.32, Math.sin(angle) * 0.08, Math.sin(angle) * 0.38);
-      vane.rotation.y = angle;
+      vane.position.set(-0.32, Math.sin(ang) * 0.08, Math.sin(ang) * 0.38);
+      vane.rotation.y = ang;
       tailGroup.add(vane);
 
-      const ossicle = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.008, 0.72, 6), boneMat);
-      ossicle.rotation.z = Math.PI / 2;
-      ossicle.rotation.y = angle;
-      ossicle.position.copy(vane.position);
-      tailGroup.add(ossicle);
+      const oss = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.008, 0.72, 6), boneMat);
+      oss.rotation.z = Math.PI / 2;
+      oss.rotation.y = ang;
+      oss.position.copy(vane.position);
+      tailGroup.add(oss);
     }
   } else if (isWyvern) {
-    // Scorpion / Daggertail Barbed Stinger
     const barbPts = [
       new THREE.Vector3(0, 0, 0),
       new THREE.Vector3(-0.45, 0.28, 0),
       new THREE.Vector3(-0.25, 0.58, 0),
       new THREE.Vector3(0.05, 0.42, 0)
     ];
-    tailGroup.add(createTubeFromPoints(barbPts, 0.09, extMat, 16, 8));
-    tailGroup.add(createTubeFromPoints(barbPts, 0.045, boneMat, 16, 6));
+    tailGroup.add(createTube(barbPts, 0.085, extMat, 16, 8));
+    tailGroup.add(createTube(barbPts, 0.042, boneMat, 16, 6));
   } else {
-    // Tairn's Morningstartail Spiked Club Mace!
-    const clubMesh = new THREE.Mesh(new THREE.SphereGeometry(0.32, 16, 16), extMat);
-    clubMesh.scale.set(1.45, 0.95, 0.95);
-    tailGroup.add(clubMesh);
+    // Tairn's Morningstartail Mace
+    const club = new THREE.Mesh(new THREE.SphereGeometry(0.32, 18, 18), extMat);
+    club.scale.set(1.45, 0.95, 0.95);
+    tailGroup.add(club);
 
     const clubBone = new THREE.Mesh(new THREE.SphereGeometry(0.24, 14, 14), boneMat);
     clubBone.scale.set(1.4, 0.9, 0.9);
     tailGroup.add(clubBone);
 
-    // 18 Radial Detachable Ossicone Spikes
     for (let s = 0; s < 18; s++) {
       const phi = Math.acos(1 - (2 * (s + 0.5)) / 18);
       const theta = Math.PI * (1 + Math.sqrt(5)) * s;
@@ -444,29 +501,24 @@ export function buildDragonModel(specimenId = 'tairn', customColors = null) {
         Math.cos(phi)
       ).normalize();
 
-      const spikeOuter = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.42, 6), extMat);
-      spikeOuter.position.copy(dir.clone().multiplyScalar(0.35));
-      spikeOuter.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-      tailGroup.add(spikeOuter);
+      const spOut = new THREE.Mesh(new THREE.ConeGeometry(0.052, 0.42, 6), extMat);
+      spOut.position.copy(dir.clone().multiplyScalar(0.35));
+      spOut.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+      tailGroup.add(spOut);
 
-      const spikeInner = new THREE.Mesh(new THREE.ConeGeometry(0.032, 0.36, 6), boneMat);
-      spikeInner.position.copy(dir.clone().multiplyScalar(0.32));
-      spikeInner.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-      tailGroup.add(spikeInner);
+      const spIn = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.35, 6), boneMat);
+      spIn.position.copy(dir.clone().multiplyScalar(0.31));
+      spIn.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+      tailGroup.add(spIn);
     }
   }
 
-  // Real-time anatomical animation hook
   root.userData.updateAnimation = (t) => {
-    const flap = Math.sin(t * 1.65) * 0.22;
+    const flap = Math.sin(t * 1.7) * 0.24;
     leftWingGroup.rotation.x = flap;
     rightWingGroup.rotation.x = -flap;
-
-    // Heartbeat / Rune-stone pulse
     const beat = 1.0 + Math.pow(Math.sin(t * 3.2), 6.0) * 0.16;
     heartGroup.scale.setScalar(beat);
-
-    // Subtle tail sway
     tailGroup.rotation.y = Math.sin(t * 1.2) * 0.14;
     headGroup.rotation.y = Math.sin(t * 0.8) * 0.06;
   };
@@ -475,26 +527,24 @@ export function buildDragonModel(specimenId = 'tairn', customColors = null) {
 }
 
 // ============================================================================
-// 2. RIDER'S CONDUIT 3D BUILDER (Violet Sorrengail & Xaden Riorson)
+// 2. SCULPTED RIDER'S CONDUIT (Violet Sorrengail & Xaden Riorson)
 // ============================================================================
 export function buildRiderModel(specimenId = 'violet') {
   const root = new THREE.Group();
   root.name = `rider-${specimenId}`;
   root.scale.setScalar(1.38);
-  root.position.y = -0.35;
+  root.position.y = -0.3;
 
   const isViolet = specimenId === 'violet';
-  const primaryHex = isViolet ? '#7ce8ff' : '#8a64ff';
+  const primaryHex = isViolet ? '#7ce8ff' : '#9d65ff';
   const secondaryHex = isViolet ? '#f4c55c' : '#38b6ff';
 
   const armorMat = createExteriorMaterial({
-    baseColor: isViolet ? '#101820' : '#090b12',
+    baseColor: isViolet ? '#0f1622' : '#090c14',
     specularColor: primaryHex,
-    scalePattern: isViolet ? 1.0 : 0.2 // Dragon-scale corset on Violet!
+    scalePattern: isViolet ? 1.0 : 0.2
   });
-  const boneMat = createBoneMaterial({
-    boneTint: '#eee8da'
-  });
+  const boneMat = createBoneMaterial({ boneTint: '#f2ece1' });
   const conduitMat = createConduitMaterial({
     color: primaryHex,
     secondary: secondaryHex,
@@ -508,231 +558,179 @@ export function buildRiderModel(specimenId = 'violet') {
     alwaysFaintlyVisible: true
   });
 
-  // --- A. EXTERIOR SCULPTED RIDER SILHOUETTE & SCALE ARMOR ---
-  // Torso (Dragon-Scale Corset / Wingleader Armor)
-  const torsoGeo = new THREE.CylinderGeometry(0.32, 0.24, 1.05, 18, 12);
-  torsoGeo.scale(1.15, 1.0, 0.72);
-  const torsoMesh = new THREE.Mesh(torsoGeo, armorMat);
-  torsoMesh.position.set(0, 0.55, 0);
-  root.add(torsoMesh);
+  // Smooth Lofted Torso & Waist
+  const torsoSpine = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(0, -0.22, 0),
+    new THREE.Vector3(0, 0.22, 0.02),
+    new THREE.Vector3(0, 0.68, 0),
+    new THREE.Vector3(0, 1.08, -0.01)
+  ]);
+  const torsoGeo = createLoftedBodyGeometry(torsoSpine, (u) => {
+    // Hips -> narrow waist -> chest/shoulders
+    const waistDip = Math.sin(u * Math.PI);
+    const rx = THREE.MathUtils.lerp(0.26, 0.34, u) - waistDip * 0.05;
+    const ry = THREE.MathUtils.lerp(0.18, 0.22, u) - waistDip * 0.02;
+    return { rx, ry };
+  }, 36, 24);
+  root.add(new THREE.Mesh(torsoGeo, armorMat));
 
-  // Pelvis / Flight Leathers
-  const pelvisGeo = new THREE.CylinderGeometry(0.24, 0.28, 0.38, 16);
-  pelvisGeo.scale(1.12, 1.0, 0.74);
-  const pelvisMesh = new THREE.Mesh(pelvisGeo, armorMat);
-  pelvisMesh.position.set(0, -0.1, 0);
-  root.add(pelvisMesh);
+  // Neck & Sculpted Head
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 0.26, 16), armorMat);
+  neck.position.set(0, 1.18, 0);
+  root.add(neck);
 
-  // Head & Neck Exterior
-  const neckMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 0.28, 14), armorMat);
-  neckMesh.position.set(0, 1.18, 0);
-  root.add(neckMesh);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.21, 24, 24), armorMat);
+  head.scale.set(0.88, 1.12, 0.95);
+  head.position.set(0, 1.48, 0.02);
+  root.add(head);
 
-  const headGeo = new THREE.SphereGeometry(0.22, 20, 20);
-  headGeo.scale(0.88, 1.12, 0.95);
-  const headMesh = new THREE.Mesh(headGeo, armorMat);
-  headMesh.position.set(0, 1.48, 0.02);
-  root.add(headMesh);
-
-  // Violet's Iconic Silver-Tipped Braid sweeping over her right shoulder!
   if (isViolet) {
+    // Silver-Tipped Crown & Braid
     const braidPts = [
-      new THREE.Vector3(0, 1.65, -0.12),
-      new THREE.Vector3(0.08, 1.45, -0.24),
-      new THREE.Vector3(0.24, 1.15, -0.15),
-      new THREE.Vector3(0.32, 0.82, 0.14),
-      new THREE.Vector3(0.28, 0.48, 0.24)
+      new THREE.Vector3(0, 1.66, -0.1),
+      new THREE.Vector3(0.08, 1.46, -0.23),
+      new THREE.Vector3(0.24, 1.15, -0.14),
+      new THREE.Vector3(0.31, 0.82, 0.14),
+      new THREE.Vector3(0.27, 0.48, 0.23)
     ];
-    const braidMat = createConduitMaterial({
-      color: '#d8e6f2',
-      secondary: '#7ce8ff',
-      pulseSpeed: 3.0,
-      alwaysFaintlyVisible: true
-    });
-    root.add(createTubeFromPoints(braidPts, 0.042, braidMat, 24, 8));
+    root.add(
+      createTube(
+        braidPts,
+        0.04,
+        createConduitMaterial({ color: '#e2edf8', secondary: '#7ce8ff', pulseSpeed: 3.0, alwaysFaintlyVisible: true }),
+        24,
+        8
+      )
+    );
   }
 
-  // Strapped Alloy Throwing Daggers along ribs & thighs
-  [-1, 1].forEach((side) => {
-    for (let d = 0; d < 3; d++) {
-      const dagger = new THREE.Mesh(
-        new THREE.ConeGeometry(0.018, 0.22, 4),
-        relicMat
-      );
-      dagger.position.set(side * 0.34, 0.38 + d * 0.12, 0.14);
-      dagger.rotation.z = side * 0.45;
-      root.add(dagger);
-    }
-  });
-
-  // --- B. DEEP ARTICULATED HUMAN SKELETON ---
-  // Cranium & Mandible inside Head
-  const cranium = new THREE.Mesh(new THREE.SphereGeometry(0.175, 16, 16), boneMat);
+  // Deep Articulated Skeleton Inside
+  const cranium = new THREE.Mesh(new THREE.SphereGeometry(0.17, 18, 18), boneMat);
   cranium.scale.set(0.86, 1.05, 0.94);
-  cranium.position.set(0, 1.51, 0.02);
+  cranium.position.set(0, 1.5, 0.02);
   root.add(cranium);
 
-  const jawBone = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.08, 0.12, 10), boneMat);
-  jawBone.position.set(0, 1.36, 0.05);
-  root.add(jawBone);
-
-  // 24 Human Vertebrae (Cervical, Thoracic, Lumbar)
   for (let v = 0; v < 22; v++) {
-    const y = -0.12 + (v / 21) * 1.42;
-    const zCurve = Math.sin((v / 21) * Math.PI * 2.0) * 0.035;
-    const vert = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.048, 0.045, 10), boneMat);
-    vert.position.set(0, y, -0.08 + zCurve);
+    const y = -0.14 + (v / 21) * 1.42;
+    const vert = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.044, 10), boneMat);
+    vert.position.set(0, y, -0.07);
     root.add(vert);
   }
 
-  // 10 Pairs of Human Ribs + Sternum
-  const sternum = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.48, 0.03), boneMat);
+  const sternum = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.46, 0.028), boneMat);
   sternum.position.set(0, 0.68, 0.16);
   root.add(sternum);
 
   for (let r = 0; r < 10; r++) {
-    const y = 0.35 + (r / 9) * 0.56;
-    const w = 0.22 + Math.sin((r / 9) * Math.PI) * 0.1;
+    const y = 0.35 + (r / 9) * 0.55;
+    const w = 0.21 + Math.sin((r / 9) * Math.PI) * 0.095;
     [-1, 1].forEach((side) => {
-      const ribPts = [
-        new THREE.Vector3(0, y, -0.08),
-        new THREE.Vector3(side * w, y - 0.02, 0.02),
-        new THREE.Vector3(side * (w * 0.65), y - 0.05, 0.15),
-        new THREE.Vector3(side * 0.04, y - 0.04, 0.16)
-      ];
-      root.add(createTubeFromPoints(ribPts, 0.016, boneMat, 14, 6));
+      root.add(
+        createTube(
+          [
+            new THREE.Vector3(0, y, -0.07),
+            new THREE.Vector3(side * w, y - 0.02, 0.02),
+            new THREE.Vector3(side * w * 0.65, y - 0.05, 0.15),
+            new THREE.Vector3(side * 0.04, y - 0.04, 0.16)
+          ],
+          0.015,
+          boneMat,
+          14,
+          6
+        )
+      );
     });
   }
 
-  // Pelvis Ilium Iliac Crest
-  const pelvisRing = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.045, 10, 24), boneMat);
-  pelvisRing.rotation.x = Math.PI / 2.2;
-  pelvisRing.scale.set(1.2, 0.75, 1.0);
-  pelvisRing.position.set(0, -0.1, 0);
-  root.add(pelvisRing);
+  const pelvisBone = new THREE.Mesh(new THREE.TorusGeometry(0.19, 0.042, 10, 24), boneMat);
+  pelvisBone.rotation.x = Math.PI / 2.2;
+  pelvisBone.scale.set(1.2, 0.75, 1.0);
+  pelvisBone.position.set(0, -0.12, 0);
+  root.add(pelvisBone);
 
-  // Arms & Legs (Exterior Armor + Internal Humerus/Radius/Ulna & Femur/Tibia + Signet Conduits)
-  const handSpheres = [];
+  const handOrbs = [];
   [-1, 1].forEach((side) => {
-    // Clavicle
-    const clavPts = [
-      new THREE.Vector3(0, 0.96, 0.12),
-      new THREE.Vector3(side * 0.38, 0.98, 0.02)
-    ];
-    root.add(createTubeFromPoints(clavPts, 0.022, boneMat, 8, 6));
-
-    // Arm poised in active Signet Channeling Stance
-    const shoulder = new THREE.Vector3(side * 0.39, 0.94, 0.0);
-    const elbow = new THREE.Vector3(side * 0.56, 0.54, 0.08);
+    const shoulder = new THREE.Vector3(side * 0.38, 0.94, 0);
+    const elbow = new THREE.Vector3(side * 0.55, 0.54, 0.08);
     const wrist = new THREE.Vector3(side * 0.58, 0.32, 0.28);
     const armPts = [shoulder, elbow, wrist];
 
-    root.add(createTubeFromPoints(armPts, 0.085, armorMat, 16, 10));
-    root.add(createTubeFromPoints(armPts, 0.034, boneMat, 16, 8));
-    root.add(createTubeFromPoints(armPts, 0.02, conduitMat, 20, 6));
+    root.add(createTube(armPts, 0.082, armorMat, 18, 12));
+    root.add(createTube(armPts, 0.032, boneMat, 18, 8));
+    root.add(createTube(armPts, 0.02, conduitMat, 20, 6));
 
-    // Channeling Signet Energy Orb in each palm!
     const orb = new THREE.Mesh(new THREE.IcosahedronGeometry(0.11, 2), conduitMat);
     orb.position.copy(wrist).add(new THREE.Vector3(side * 0.04, 0.02, 0.08));
     root.add(orb);
-    handSpheres.push(orb);
+    handOrbs.push(orb);
 
-    // Legs (Hip -> Knee -> Ankle)
-    const hip = new THREE.Vector3(side * 0.2, -0.18, 0);
-    const knee = new THREE.Vector3(side * 0.23, -0.78, 0.04);
-    const ankle = new THREE.Vector3(side * 0.25, -1.35, 0.0);
+    const hip = new THREE.Vector3(side * 0.19, -0.18, 0);
+    const knee = new THREE.Vector3(side * 0.22, -0.78, 0.04);
+    const ankle = new THREE.Vector3(side * 0.24, -1.35, 0);
     const legPts = [hip, knee, ankle];
 
-    root.add(createTubeFromPoints(legPts, 0.115, armorMat, 16, 10));
-    root.add(createTubeFromPoints(legPts, 0.044, boneMat, 16, 8));
-    root.add(createTubeFromPoints(legPts, 0.016, conduitMat, 16, 6));
+    root.add(createTube(legPts, 0.112, armorMat, 18, 12));
+    root.add(createTube(legPts, 0.042, boneMat, 18, 8));
+    root.add(createTube(legPts, 0.016, conduitMat, 18, 6));
 
-    // For Violet: EDS Hypermobile Joint Biomechanical Telemetry Rings at Shoulder & Knee
     if (isViolet) {
-      [shoulder, knee].forEach((jointPos) => {
-        const edsRing = new THREE.Mesh(
-          new THREE.TorusGeometry(0.11, 0.012, 8, 28),
-          relicMat
-        );
-        edsRing.position.copy(jointPos);
-        edsRing.rotation.y = side * 0.5;
-        root.add(edsRing);
+      [shoulder, knee].forEach((jp) => {
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.105, 0.011, 8, 28), relicMat);
+        ring.position.copy(jp);
+        ring.rotation.y = side * 0.5;
+        root.add(ring);
       });
     }
   });
 
-  // --- C. RELIC INSCRIPTIONS & HEART / CRANIAL NEXUS ---
-  const riderHeart = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 14), conduitMat);
+  const riderHeart = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 16), conduitMat);
   riderHeart.position.set(0.05, 0.68, 0.04);
   root.add(riderHeart);
 
-  // Cranial Bond Node (Dual-Dragon for Violet / Prefrontal Intinnsic + Sgaeyl for Xaden)
-  const cranialNode = new THREE.Mesh(new THREE.OctahedronGeometry(0.095, 2), relicMat);
+  const cranialNode = new THREE.Mesh(new THREE.OctahedronGeometry(0.09, 2), relicMat);
   cranialNode.position.set(0, 1.54, 0.04);
   root.add(cranialNode);
 
-  // Cerebro-Cardiac Main Conduit
   root.add(
-    createTubeFromPoints(
+    createTube(
       [
         new THREE.Vector3(0, 1.54, 0.04),
         new THREE.Vector3(0, 1.15, -0.02),
         new THREE.Vector3(0.05, 0.68, 0.04),
-        new THREE.Vector3(0, 0.15, 0.0)
+        new THREE.Vector3(0, 0.15, 0)
       ],
-      0.026,
+      0.025,
       conduitMat,
       20,
       8
     )
   );
 
-  if (isViolet) {
-    // Violet's Dorsal Twin-Dragon Relic (Spreading across her upper back)
-    [-1, 1].forEach((side) => {
-      const relicWingPts = [
-        new THREE.Vector3(0, 0.68, -0.22),
-        new THREE.Vector3(side * 0.18, 0.82, -0.23),
-        new THREE.Vector3(side * 0.32, 0.72, -0.19),
-        new THREE.Vector3(side * 0.14, 0.52, -0.22)
-      ];
-      root.add(createTubeFromPoints(relicWingPts, 0.022, relicMat, 18, 6));
-    });
-  } else {
-    // Xaden's 107 Rebellion Relic spiraling from left wrist up arm across chest to jaw
-    const rebPts = [
-      new THREE.Vector3(-0.58, 0.34, 0.28),
-      new THREE.Vector3(-0.59, 0.55, 0.12),
-      new THREE.Vector3(-0.42, 0.88, 0.06),
-      new THREE.Vector3(-0.18, 1.05, 0.12),
-      new THREE.Vector3(-0.08, 1.32, 0.09)
-    ];
-    root.add(createTubeFromPoints(rebPts, 0.026, relicMat, 28, 7));
-
-    // Swirling Shadow Tendrils coiling around Xaden
-    for (let s = 0; s < 3; s++) {
-      const shadowPts = [];
-      for (let k = 0; k <= 16; k++) {
-        const frac = k / 16;
-        const ang = frac * Math.PI * 3.0 + s * 2.1;
-        shadowPts.push(
-          new THREE.Vector3(
-            Math.cos(ang) * (0.48 + frac * 0.25),
-            -0.6 + frac * 2.1,
-            Math.sin(ang) * (0.48 + frac * 0.25)
-          )
-        );
-      }
-      root.add(createTubeFromPoints(shadowPts, 0.024, conduitMat, 32, 6));
+  // Orbiting Lightning / Shadow Tendrils around the Rider
+  const auraGroup = new THREE.Group();
+  root.add(auraGroup);
+  for (let s = 0; s < 3; s++) {
+    const pts = [];
+    for (let k = 0; k <= 18; k++) {
+      const f = k / 18;
+      const a = f * Math.PI * 3.0 + s * 2.1;
+      pts.push(
+        new THREE.Vector3(
+          Math.cos(a) * (0.48 + f * 0.22),
+          -0.65 + f * 2.15,
+          Math.sin(a) * (0.48 + f * 0.22)
+        )
+      );
     }
+    auraGroup.add(createTube(pts, 0.018, isViolet ? relicMat : conduitMat, 36, 6));
   }
 
   root.userData.updateAnimation = (t) => {
     const pulse = 1.0 + Math.pow(Math.sin(t * 3.8), 4.0) * 0.18;
     riderHeart.scale.setScalar(pulse);
-    handSpheres.forEach((orb, idx) => {
+    auraGroup.rotation.y = t * 0.65;
+    handOrbs.forEach((orb, idx) => {
       orb.rotation.y = t * 2.5 * (idx === 0 ? 1 : -1);
-      orb.rotation.x = t * 1.8;
       orb.scale.setScalar(0.9 + Math.sin(t * 6.0 + idx) * 0.2);
     });
   };
@@ -741,25 +739,23 @@ export function buildRiderModel(specimenId = 'violet') {
 }
 
 // ============================================================================
-// 3. BASGIATH WAR COLLEGE & SUBTERRANEAN WARDSTONE 3D BUILDER
+// 3. BASGIATH WAR COLLEGE & SUBTERRANEAN WARDSTONE
 // ============================================================================
 export function buildBasgiathModel() {
   const root = new THREE.Group();
   root.name = 'basgiath-citadel';
 
   const mountainMat = createExteriorMaterial({
-    baseColor: '#0e131d',
+    baseColor: '#0c111b',
     specularColor: '#38b6ff',
     scalePattern: 0.0
   });
   const citadelMat = createExteriorMaterial({
-    baseColor: '#171f2e',
+    baseColor: '#161f30',
     specularColor: '#f4c55c',
     scalePattern: 0.0
   });
-  const bedrockBoneMat = createBoneMaterial({
-    boneTint: '#c8d4e3'
-  });
+  const bedrockBoneMat = createBoneMaterial({ boneTint: '#c8d4e3' });
   const wardMat = createConduitMaterial({
     color: '#f4c55c',
     secondary: '#ffd97d',
@@ -779,12 +775,11 @@ export function buildBasgiathModel() {
     alwaysFaintlyVisible: true
   });
 
-  // --- A. EXTERIOR TWIN MOUNTAIN PEAKS & CANYON RIFT ---
-  const westPeak = new THREE.Mesh(new THREE.ConeGeometry(2.3, 3.4, 7), mountainMat);
+  const westPeak = new THREE.Mesh(new THREE.ConeGeometry(2.3, 3.4, 9), mountainMat);
   westPeak.position.set(-1.95, -0.35, 0);
   root.add(westPeak);
 
-  const eastPeak = new THREE.Mesh(new THREE.ConeGeometry(2.4, 3.6, 8), mountainMat);
+  const eastPeak = new THREE.Mesh(new THREE.ConeGeometry(2.4, 3.6, 10), mountainMat);
   eastPeak.position.set(1.85, -0.25, 0);
   root.add(eastPeak);
 
@@ -792,41 +787,36 @@ export function buildBasgiathModel() {
   centralBase.position.set(0, -1.35, 0);
   root.add(centralBase);
 
-  // The Parapet spanning the Abyssal Rift!
+  // The Parapet Bridge
   const parapetBridge = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.12, 0.18), citadelMat);
   parapetBridge.position.set(0, 0.55, 1.55);
   root.add(parapetBridge);
 
-  // Parapet Internal Stress Fractures & Ley-line (Visible in X-Ray)
   const parapetCore = new THREE.Mesh(new THREE.BoxGeometry(2.55, 0.08, 0.14), wardMat);
   parapetCore.position.set(0, 0.55, 1.55);
   root.add(parapetCore);
 
-  // Turrets flanking the Parapet
   [-1.35, 1.35].forEach((xPos) => {
-    const turret = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.28, 1.35, 8), citadelMat);
+    const turret = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.28, 1.35, 10), citadelMat);
     turret.position.set(xPos, 0.65, 1.55);
     root.add(turret);
   });
 
-  // Riders Quadrant Citadel Towers (East Peak) & Archives Pyramid (West Peak)
   for (let i = 0; i < 5; i++) {
-    const angle = (i / 5) * Math.PI * 2;
+    const ang = (i / 5) * Math.PI * 2;
     const tower = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.18, 0.22, 1.1 + (i % 2) * 0.4, 8),
+      new THREE.CylinderGeometry(0.18, 0.22, 1.1 + (i % 2) * 0.4, 10),
       citadelMat
     );
-    tower.position.set(1.55 + Math.cos(angle) * 0.55, 0.85, Math.sin(angle) * 0.55);
+    tower.position.set(1.55 + Math.cos(ang) * 0.55, 0.85, Math.sin(ang) * 0.55);
     root.add(tower);
   }
 
-  // The Archives Stepped Fortress on West Peak
   const archives = new THREE.Mesh(new THREE.ConeGeometry(0.85, 1.15, 4), citadelMat);
   archives.position.set(-1.85, 0.68, -0.55);
   archives.rotation.y = Math.PI / 4;
   root.add(archives);
 
-  // --- B. SUBTERRANEAN ARCHIVES VAULTS & SMUGGLING TUNNELS (X-RAY LAYER) ---
   for (let lvl = 0; lvl < 4; lvl++) {
     const subVault = new THREE.Mesh(
       new THREE.BoxGeometry(0.95 - lvl * 0.1, 0.14, 0.95 - lvl * 0.1),
@@ -836,21 +826,25 @@ export function buildBasgiathModel() {
     root.add(subVault);
   }
 
-  // Marked Ones' Smuggling Tunnels
-  const tunnelPts = [
-    new THREE.Vector3(-1.85, -0.55, -0.55),
-    new THREE.Vector3(-0.4, -0.65, 0.35),
-    new THREE.Vector3(0.95, -0.45, 0.75),
-    new THREE.Vector3(2.35, -0.15, 1.15)
-  ];
-  root.add(createTubeFromPoints(tunnelPts, 0.055, tunnelMat, 32, 8));
+  root.add(
+    createTube(
+      [
+        new THREE.Vector3(-1.85, -0.55, -0.55),
+        new THREE.Vector3(-0.4, -0.65, 0.35),
+        new THREE.Vector3(0.95, -0.45, 0.75),
+        new THREE.Vector3(2.35, -0.15, 1.15)
+      ],
+      0.055,
+      tunnelMat,
+      32,
+      8
+    )
+  );
 
-  // --- C. THE SUBTERRANEAN WARDSTONE CHAMBER & SEVEN BREED PILLARS ---
   const wardstoneGroup = new THREE.Group();
   wardstoneGroup.position.set(0, -1.15, 0);
   root.add(wardstoneGroup);
 
-  // Cavern Rib-Vaulting (Deep X-Ray Bedrock Structure)
   const cavernDome = new THREE.Mesh(
     new THREE.SphereGeometry(1.15, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.65),
     bedrockBoneMat
@@ -858,60 +852,63 @@ export function buildBasgiathModel() {
   cavernDome.position.y = -0.25;
   wardstoneGroup.add(cavernDome);
 
-  // The Black-Iron Runed Wardstone Cauldron
-  const wardstoneCore = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.38, 0.28, 0.52, 14),
-    wardMat
-  );
+  const wardstoneCore = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.28, 0.52, 16), wardMat);
   wardstoneGroup.add(wardstoneCore);
 
-  // 7 Dragon-Breed Ignition Pillars around the Wardstone + Ley-Line Conduits
   for (let p = 0; p < 7; p++) {
     const ang = (p / 7) * Math.PI * 2;
     const px = Math.cos(ang) * 0.78;
     const pz = Math.sin(ang) * 0.78;
-    const isSeventhBreed = p === 6;
-
     const pillar = new THREE.Mesh(
       new THREE.CylinderGeometry(0.06, 0.08, 0.65, 8),
-      isSeventhBreed ? tunnelMat : wardMat
+      p === 6 ? tunnelMat : wardMat
     );
     pillar.position.set(px, 0.05, pz);
     wardstoneGroup.add(pillar);
 
-    // Ley-line rising from the Wardstone up into the protective Geodesic Ward Dome
-    const leyPts = [
-      new THREE.Vector3(0, -1.15, 0),
-      new THREE.Vector3(px * 1.4, -0.4, pz * 1.4),
-      new THREE.Vector3(px * 2.5, 0.85, pz * 2.2),
-      new THREE.Vector3(0, 2.35, 0)
-    ];
-    root.add(createTubeFromPoints(leyPts, 0.025, wardMat, 24, 6));
+    root.add(
+      createTube(
+        [
+          new THREE.Vector3(0, -1.15, 0),
+          new THREE.Vector3(px * 1.4, -0.4, pz * 1.4),
+          new THREE.Vector3(px * 2.5, 0.85, pz * 2.2),
+          new THREE.Vector3(0, 2.35, 0)
+        ],
+        0.025,
+        wardMat,
+        24,
+        6
+      )
+    );
   }
 
-  // Translucent Geodesic Ward Dome Lattice over Basgiath
-  const wardDomeGeo = new THREE.IcosahedronGeometry(3.35, 2);
   const wardDomeWire = new THREE.Mesh(
-    wardDomeGeo,
+    new THREE.IcosahedronGeometry(3.35, 2),
     new THREE.MeshBasicMaterial({
       color: '#f4c55c',
       wireframe: true,
       transparent: true,
-      opacity: 0.14
+      opacity: 0.11
     })
   );
   wardDomeWire.position.y = 0.1;
   root.add(wardDomeWire);
 
-  // --- D. VENIN DESICCATION VEINS CREEPING OUTSIDE THE EASTERN WARD ---
   for (let v = 0; v < 4; v++) {
-    const veninPts = [
-      new THREE.Vector3(3.6, -1.45, -1.4 + v * 0.7),
-      new THREE.Vector3(2.9, -1.05 + v * 0.1, -0.9 + v * 0.45),
-      new THREE.Vector3(2.15, -0.75, -0.4 + v * 0.25),
-      new THREE.Vector3(1.45, -0.95, 0.0)
-    ];
-    root.add(createTubeFromPoints(veninPts, 0.042, veninMat, 20, 6));
+    root.add(
+      createTube(
+        [
+          new THREE.Vector3(3.6, -1.45, -1.4 + v * 0.7),
+          new THREE.Vector3(2.9, -1.05 + v * 0.1, -0.9 + v * 0.45),
+          new THREE.Vector3(2.15, -0.75, -0.4 + v * 0.25),
+          new THREE.Vector3(1.45, -0.95, 0)
+        ],
+        0.042,
+        veninMat,
+        20,
+        6
+      )
+    );
   }
 
   root.userData.updateAnimation = (t) => {

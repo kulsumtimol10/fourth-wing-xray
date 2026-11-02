@@ -1,12 +1,13 @@
 // ============================================================================
-// FOURTH WING: CODEX OCULUS — 3D Parapet & Threshing Trial Mini-Game
-// Cross the rain-slicked 18-inch Parapet over a 200-foot chasm using X-Ray
-// Vision to spot internal stone fractures while countering lethal crosswinds.
+// FOURTH WING: CODEX OCULUS — Real-Time 3D Canyon Flight & X-Ray Wyvern Strike
+// Smooth 60fps mouse/keyboard flight control. Steer Tairn through the storm,
+// expose Wyvern Rune Stones in X-Ray Vision, and click/Space to fire Lightning!
 // ============================================================================
 
 import * as THREE from 'three';
 import {
   createExteriorMaterial,
+  createBoneMaterial,
   createConduitMaterial
 } from './xrayShader.js';
 
@@ -20,52 +21,104 @@ export class ParapetMiniGame {
 
     this.isActive = false;
     this.group = new THREE.Group();
-    this.blocks = [];
-    this.currentStep = 0;
-    this.totalSteps = 14;
-    this.balance = 0.0; // -1.0 (fall left) to +1.0 (fall right)
-    this.windForce = 0.0;
-    this.windTarget = 0.0;
-    this.xrayPulseTimer = 0.0;
-    this.gameStatus = 'idle'; // 'playing' | 'won' | 'fell'
 
-    this._bindKeys();
+    // Player Dragon (Tairn) state
+    this.playerDragon = null;
+    this.leftWing = null;
+    this.rightWing = null;
+    this.playerPos = new THREE.Vector2(0, 0);     // Current X, Y
+    this.targetPos = new THREE.Vector2(0, 0);     // Mouse/Key target X, Y
+    this.keys = { left: false, right: false, up: false, down: false };
+
+    // Gameplay state
+    this.score = 0;
+    this.wyvernsKilled = 0;
+    this.targetKills = 10;
+    this.shield = 100;
+    this.gameStatus = 'idle'; // 'playing' | 'won' | 'lost'
+    this.xrayPulseTimer = 999; // Keep X-ray vision active on targets!
+
+    // Entities
+    this.wyverns = [];
+    this.bolts = [];
+    this.orbs = [];
+    this.pillars = [];
+    this.explosions = [];
+    this.canyonSegments = [];
+
+    this.spawnTimer = 0;
+    this.orbTimer = 0;
+    this.pillarTimer = 0;
+
+    this._bindEvents();
   }
 
-  _bindKeys() {
-    this.keyHandler = (e) => {
+  _bindEvents() {
+    window.addEventListener('pointermove', (e) => {
       if (!this.isActive || this.gameStatus !== 'playing') return;
+      // Map screen cursor smoothly to canyon flight bounds X: [-3.2, 3.2], Y: [-1.6, 2.0]
+      const nx = (e.clientX / window.innerWidth) * 2 - 1;
+      const ny = -(e.clientY / window.innerHeight) * 2 + 1;
+      this.targetPos.x = THREE.MathUtils.clamp(nx * 3.4, -3.2, 3.2);
+      this.targetPos.y = THREE.MathUtils.clamp(ny * 1.9, -1.4, 2.0);
+    });
+
+    window.addEventListener('pointerdown', (e) => {
+      if (!this.isActive || this.gameStatus !== 'playing') return;
+      // Ignore clicks on top/bottom UI buttons
+      if (e.target.closest('button')) return;
+      this.fireLightningBolt();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (!this.isActive) return;
       const k = e.key.toLowerCase();
-      if (k === 'a' || e.key === 'ArrowLeft') {
-        this.nudgeBalance(-0.26);
-      } else if (k === 'd' || e.key === 'ArrowRight') {
-        this.nudgeBalance(0.26);
-      } else if (k === 'w' || e.key === 'ArrowUp') {
-        this.advanceStep(false);
-      } else if (k === 'e' || e.key === 'Shift') {
-        this.advanceStep(true); // Leap over fractured stone
-      } else if (k === ' ') {
+      if (k === 'a' || e.key === 'ArrowLeft') this.keys.left = true;
+      if (k === 'd' || e.key === 'ArrowRight') this.keys.right = true;
+      if (k === 'w' || e.key === 'ArrowUp') this.keys.up = true;
+      if (k === 's' || e.key === 'ArrowDown') this.keys.down = true;
+      if (k === ' ' && this.gameStatus === 'playing') {
         e.preventDefault();
-        this.triggerXrayPulse();
+        this.fireLightningBolt();
       }
-    };
-    window.addEventListener('keydown', this.keyHandler);
+    });
+
+    window.addEventListener('keyup', (e) => {
+      const k = e.key.toLowerCase();
+      if (k === 'a' || e.key === 'ArrowLeft') this.keys.left = false;
+      if (k === 'd' || e.key === 'ArrowRight') this.keys.right = false;
+      if (k === 'w' || e.key === 'ArrowUp') this.keys.up = false;
+      if (k === 's' || e.key === 'ArrowDown') this.keys.down = false;
+    });
   }
 
   start() {
     this.isActive = true;
     this.gameStatus = 'playing';
-    this.currentStep = 0;
-    this.balance = 0.0;
-    this.windForce = 0.18;
-    this.windTarget = 0.25;
-    this.xrayPulseTimer = 3.5; // Start with an initial X-ray pulse so player sees the mechanic
+    this.score = 0;
+    this.wyvernsKilled = 0;
+    this.shield = 100;
+    this.playerPos.set(0, 0.2);
+    this.targetPos.set(0, 0.2);
+    this.wyverns = [];
+    this.bolts = [];
+    this.orbs = [];
+    this.pillars = [];
+    this.explosions = [];
+    this.canyonSegments = [];
+    this.spawnTimer = 0.5;
+    this.orbTimer = 1.8;
+    this.pillarTimer = 1.2;
 
-    this._buildParapetCourse();
+    this._buildArena();
     this.scene.add(this.group);
     this.controls.enabled = false;
-    this._updateCameraForStep();
-    this._updateHUD();
+
+    this.camera.position.set(0, 1.35, 4.8);
+    this.camera.lookAt(0, 0.3, -10);
+    this.camera.rotation.z = 0;
+
+    this._updateHUD('STEER WITH MOUSE OR WASD • CLICK OR PRESS SPACE TO FIRE LIGHTNING AT WYVERN RUNE STONES!');
   }
 
   stop() {
@@ -77,198 +130,399 @@ export class ParapetMiniGame {
     this.controls.enabled = true;
   }
 
-  _buildParapetCourse() {
+  _buildArena() {
     while (this.group.children.length > 0) {
       this.group.remove(this.group.children[0]);
     }
-    this.blocks = [];
 
-    const stoneMat = createExteriorMaterial({
-      baseColor: '#151c28',
+    // 1. Build Player Dragon (Tairn with Violet's glowing lightning bond on his back!)
+    this.playerDragon = new THREE.Group();
+    const hideMat = createExteriorMaterial({
+      baseColor: '#090d16',
       specularColor: '#38b6ff',
-      scalePattern: 0.0
+      scalePattern: 1.0
     });
-    const safeCoreMat = createConduitMaterial({
-      color: '#2ee68a',
+    const conduitMat = createConduitMaterial({
+      color: '#38b6ff',
       secondary: '#f4c55c',
-      pulseSpeed: 5.0,
-      alwaysFaintlyVisible: false
-    });
-    const crackCoreMat = createConduitMaterial({
-      color: '#ff1e42',
-      secondary: '#ff851b',
-      pulseSpeed: 12.0,
-      alwaysFaintlyVisible: false
+      pulseSpeed: 9.0,
+      alwaysFaintlyVisible: true
     });
 
-    // Generate 15 stone blocks along -Z axis
-    let prevCracked = false;
-    for (let i = 0; i <= this.totalSteps; i++) {
-      // Never put two cracked blocks in a row so leaping is always possible
-      const isCracked = i > 1 && i < this.totalSteps - 1 && !prevCracked && Math.random() < 0.38;
-      prevCracked = isCracked;
+    // Sleek dragon body & neck
+    const body = new THREE.Mesh(new THREE.ConeGeometry(0.28, 1.85, 10), hideMat);
+    body.rotation.x = -Math.PI / 2;
+    this.playerDragon.add(body);
 
-      const blockGroup = new THREE.Group();
-      blockGroup.position.set(0, -0.35, -i * 1.15);
+    const core = new THREE.Mesh(new THREE.OctahedronGeometry(0.16, 1), conduitMat);
+    core.position.set(0, 0.08, -0.1);
+    this.playerDragon.add(core);
 
-      // Exterior rain-slicked granite block
-      const extMesh = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.28, 1.05), stoneMat);
-      blockGroup.add(extMesh);
+    // Flapping Wings
+    this.leftWing = new THREE.Group();
+    this.rightWing = new THREE.Group();
+    const wingGeo = new THREE.ConeGeometry(0.45, 1.65, 4);
+    wingGeo.rotateZ(-Math.PI / 2);
+    wingGeo.scale(1.0, 0.12, 1.3);
 
-      // Internal X-Ray Core (Green/Gold = Solid Keystone, Red = Fractured Fault!)
-      const coreGeo = isCracked
-        ? new THREE.OctahedronGeometry(0.24, 1)
-        : new THREE.BoxGeometry(0.48, 0.14, 0.82);
-      const coreMesh = new THREE.Mesh(coreGeo, isCracked ? crackCoreMat : safeCoreMat);
-      blockGroup.add(coreMesh);
+    const lwMesh = new THREE.Mesh(wingGeo, hideMat);
+    lwMesh.position.set(0.78, 0, -0.1);
+    this.leftWing.add(lwMesh);
+    const lwVein = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.03, 0.05), conduitMat);
+    lwVein.position.set(0.7, 0.02, -0.25);
+    this.leftWing.add(lwVein);
 
-      this.group.add(blockGroup);
-      this.blocks.push({
-        index: i,
-        isCracked,
-        group: blockGroup,
-        extMesh,
-        coreMesh
+    const rwMesh = new THREE.Mesh(wingGeo.clone().scale(-1, 1, 1), hideMat);
+    rwMesh.position.set(-0.78, 0, -0.1);
+    this.rightWing.add(rwMesh);
+    const rwVein = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.03, 0.05), conduitMat);
+    rwVein.position.set(-0.7, 0.02, -0.25);
+    this.rightWing.add(rwVein);
+
+    this.playerDragon.add(this.leftWing);
+    this.playerDragon.add(this.rightWing);
+    this.playerDragon.position.set(0, 0.2, 1.2);
+    this.group.add(this.playerDragon);
+
+    // 2. Repeating Canyon Walls rushing past to give a thrilling sense of speed
+    const wallMat = new THREE.MeshStandardMaterial({
+      color: '#0d1320',
+      roughness: 0.85,
+      metalness: 0.2
+    });
+    for (let i = 0; i < 14; i++) {
+      const seg = new THREE.Group();
+      seg.position.z = -i * 4.0;
+
+      [-1, 1].forEach((side) => {
+        const cliff = new THREE.Mesh(new THREE.ConeGeometry(2.2, 7.5, 6), wallMat);
+        cliff.position.set(side * 6.2, 0.5, 0);
+        seg.add(cliff);
       });
+      this.group.add(seg);
+      this.canyonSegments.push(seg);
     }
+  }
 
-    // Far Citadel Tower Portal + Waiting Dragon Silhouette at the end of the Parapet
-    const towerMat = createExteriorMaterial({
-      baseColor: '#0e131d',
-      specularColor: '#f4c55c',
+  _spawnWyvern() {
+    const wyvernGroup = new THREE.Group();
+    const spawnX = (Math.random() - 0.5) * 5.6;
+    const spawnY = -0.8 + Math.random() * 2.5;
+    wyvernGroup.position.set(spawnX, spawnY, -36);
+
+    // Semi-transparent X-Ray Wyvern body + skeleton + blazing Red Rune Stone inside chest!
+    const boneMat = createBoneMaterial({ boneTint: '#d8c2c8' });
+    const runeMat = createConduitMaterial({
+      color: '#ff1e42',
+      secondary: '#ff9e44',
+      pulseSpeed: 12.0,
+      alwaysFaintlyVisible: true
+    });
+
+    const torso = new THREE.Mesh(new THREE.ConeGeometry(0.42, 1.9, 8), boneMat);
+    torso.rotation.x = Math.PI / 2;
+    wyvernGroup.add(torso);
+
+    // The Glowing Red Rune Stone Core (The Target!)
+    const runeStone = new THREE.Mesh(new THREE.OctahedronGeometry(0.28, 1), runeMat);
+    wyvernGroup.add(runeStone);
+
+    const targetRing = new THREE.Mesh(
+      new THREE.TorusGeometry(0.46, 0.025, 8, 28),
+      runeMat
+    );
+    wyvernGroup.add(targetRing);
+
+    // Wyvern Wings
+    const wWingGeo = new THREE.BoxGeometry(2.6, 0.06, 0.55);
+    const wWings = new THREE.Mesh(wWingGeo, boneMat);
+    wyvernGroup.add(wWings);
+
+    this.group.add(wyvernGroup);
+    this.wyverns.push({
+      mesh: wyvernGroup,
+      wings: wWings,
+      runeStone,
+      speed: 10.5 + Math.random() * 3.5,
+      swayOffset: Math.random() * Math.PI * 2
+    });
+  }
+
+  _spawnWardOrb() {
+    const orbMat = createConduitMaterial({
+      color: '#f4c55c',
+      secondary: '#7ce8ff',
+      pulseSpeed: 8.0,
+      alwaysFaintlyVisible: true
+    });
+    const orbMesh = new THREE.Mesh(new THREE.OctahedronGeometry(0.26, 2), orbMat);
+    orbMesh.position.set((Math.random() - 0.5) * 5.0, -0.6 + Math.random() * 2.2, -34);
+    this.group.add(orbMesh);
+    this.orbs.push({ mesh: orbMesh, speed: 11.0 });
+  }
+
+  _spawnPillar() {
+    const pillarMat = createExteriorMaterial({
+      baseColor: '#141c2c',
+      specularColor: '#ff2a4b',
       scalePattern: 0.0
     });
-    const endTower = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.6, 4.5, 10), towerMat);
-    endTower.position.set(0, 1.1, -(this.totalSteps + 1.8) * 1.15);
-    this.group.add(endTower);
-
-    const portalArch = new THREE.Mesh(
-      new THREE.TorusGeometry(0.65, 0.08, 10, 32),
-      safeCoreMat
-    );
-    portalArch.position.set(0, 0.35, -(this.totalSteps + 0.6) * 1.15);
-    this.group.add(portalArch);
+    const x = (Math.random() - 0.5) * 5.2;
+    const pillar = new THREE.Mesh(new THREE.ConeGeometry(0.58, 5.2, 7), pillarMat);
+    pillar.position.set(x, -1.1, -38);
+    this.group.add(pillar);
+    this.pillars.push({ mesh: pillar, speed: 12.0 });
   }
 
-  nudgeBalance(delta) {
+  fireLightningBolt() {
     if (this.gameStatus !== 'playing') return;
-    this.balance = THREE.MathUtils.clamp(this.balance + delta, -1.2, 1.2);
-    this.audio.playPulseChime(1.1);
-    this._updateHUD();
-  }
+    this.audio.playPulseChime(1.45);
 
-  triggerXrayPulse() {
-    if (this.gameStatus !== 'playing') return;
-    this.xrayPulseTimer = 4.0;
-    this.audio.playPulseChime(1.5);
-    this._updateHUD('X-RAY SECOND-SIGHT ACTIVE: Inspecting internal stone cores! Red = Fractured (Leap over!), Green/Gold = Solid.');
-  }
+    const boltMat = new THREE.MeshBasicMaterial({ color: '#8ce7ff' });
+    const boltGroup = new THREE.Group();
+    boltGroup.position.copy(this.playerDragon.position).add(new THREE.Vector3(0, 0.1, -0.6));
 
-  advanceStep(isLeap = false) {
-    if (this.gameStatus !== 'playing') return;
-    const stepSize = isLeap ? 2 : 1;
-    const nextIdx = Math.min(this.totalSteps, this.currentStep + stepSize);
-    const targetBlock = this.blocks[nextIdx];
+    // Jagged lightning spear
+    const spear = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2.2, 6), boltMat);
+    spear.rotation.x = Math.PI / 2;
+    boltGroup.add(spear);
 
-    // Leaping adds a balance perturbation
-    if (isLeap) {
-      this.balance += (Math.random() - 0.5) * 0.28;
+    const halo = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.025, 6, 18), boltMat);
+    boltGroup.add(halo);
+
+    // Auto-assist aim slightly toward nearest Wyvern in front of player so combat feels amazing!
+    const vel = new THREE.Vector3(0, 0, -42);
+    let nearestWyvern = null;
+    let bestDist = 2.6; // Generous lock-on cone radius
+    this.wyverns.forEach((w) => {
+      if (w.mesh.position.z < boltGroup.position.z) {
+        const dXY = Math.hypot(
+          w.mesh.position.x - boltGroup.position.x,
+          w.mesh.position.y - boltGroup.position.y
+        );
+        if (dXY < bestDist) {
+          bestDist = dXY;
+          nearestWyvern = w;
+        }
+      }
+    });
+
+    if (nearestWyvern) {
+      const dir = nearestWyvern.mesh.position.clone().sub(boltGroup.position).normalize();
+      vel.copy(dir.multiplyScalar(44));
     }
 
-    this.currentStep = nextIdx;
-    this.audio.playPulseChime(isLeap ? 1.35 : 0.95);
+    this.group.add(boltGroup);
+    this.bolts.push({ mesh: boltGroup, vel });
+  }
 
-    // Check if landed on a fractured stone!
-    if (targetBlock && targetBlock.isCracked) {
-      this.gameStatus = 'fell';
-      targetBlock.group.position.y -= 1.5;
-      targetBlock.group.rotation.z = 0.8;
-      this.audio.playThunderAndLightning();
-      this._updateHUD(
-        'CRITICAL FAILURE: You stepped onto a frost-fractured keystone! Use X-Ray Vision and LEAP (2 Stones) over red fractured cores.'
+  _spawnExplosion(pos, colorHex = '#ff2a4b') {
+    const count = 12;
+    const expGroup = new THREE.Group();
+    expGroup.position.copy(pos);
+    const mat = new THREE.MeshBasicMaterial({ color: colorHex });
+    const parts = [];
+    for (let i = 0; i < count; i++) {
+      const p = new THREE.Mesh(new THREE.OctahedronGeometry(0.09, 0), mat);
+      const v = new THREE.Vector3(
+        (Math.random() - 0.5) * 8,
+        (Math.random() - 0.5) * 8,
+        (Math.random() - 0.5) * 8
       );
-      return;
+      expGroup.add(p);
+      parts.push({ mesh: p, vel: v });
     }
-
-    if (this.currentStep >= this.totalSteps) {
-      this.gameStatus = 'won';
-      this.audio.playThunderAndLightning();
-      this._updateHUD(
-        'QUADRANT CROSSED! You survived the Parapet and anchored your Threshing bond at the Citadel!'
-      );
-      return;
-    }
-
-    // Check what the NEXT block ahead looks like
-    const upcoming = this.blocks[this.currentStep + 1];
-    const hint = upcoming?.isCracked
-      ? 'WARNING: The stone directly ahead has a FRACTURED CORE in X-Ray! Click "LEAP OVER FRACTURE"!'
-      : 'Stone ahead appears structurally sound. Keep your balance centered and step forward.';
-    this._updateHUD(hint);
-  }
-
-  _updateCameraForStep() {
-    const targetZ = -this.currentStep * 1.15;
-    this.camera.position.lerp(
-      new THREE.Vector3(this.balance * 0.45, 0.52, targetZ + 1.45),
-      0.12
-    );
-    const lookTarget = new THREE.Vector3(
-      this.balance * 0.25,
-      0.15,
-      targetZ - 2.6
-    );
-    this.camera.lookAt(lookTarget);
-    // Tilt camera horizon slightly with balance for visceral vertigo!
-    this.camera.rotation.z = -this.balance * 0.22;
+    this.group.add(expGroup);
+    this.explosions.push({ group: expGroup, parts, life: 0.45 });
   }
 
   update(dt, elapsed) {
     if (!this.isActive) return;
 
     if (this.gameStatus === 'playing') {
-      // Dynamic canyon crosswind shear
-      if (Math.random() < 0.03) {
-        this.windTarget = (Math.random() - 0.5) * 0.65;
-      }
-      this.windForce = THREE.MathUtils.lerp(this.windForce, this.windTarget, dt * 1.5);
-      this.balance += this.windForce * dt;
+      // Keyboard steering support
+      const keySpeed = 4.2 * dt;
+      if (this.keys.left) this.targetPos.x = Math.max(-3.2, this.targetPos.x - keySpeed);
+      if (this.keys.right) this.targetPos.x = Math.min(3.2, this.targetPos.x + keySpeed);
+      if (this.keys.up) this.targetPos.y = Math.min(2.0, this.targetPos.y + keySpeed);
+      if (this.keys.down) this.targetPos.y = Math.max(-1.4, this.targetPos.y - keySpeed);
 
-      if (this.xrayPulseTimer > 0) {
-        this.xrayPulseTimer = Math.max(0, this.xrayPulseTimer - dt);
+      // Smoothly move Tairn toward target position
+      const prevX = this.playerPos.x;
+      this.playerPos.lerp(this.targetPos, 0.16);
+      this.playerDragon.position.x = this.playerPos.x;
+      this.playerDragon.position.y = this.playerPos.y;
+
+      // Dynamic banking roll & wing flap
+      const roll = THREE.MathUtils.clamp((prevX - this.playerPos.x) * 3.5, -0.55, 0.55);
+      this.playerDragon.rotation.z = THREE.MathUtils.lerp(this.playerDragon.rotation.z, roll, 0.2);
+      const flap = Math.sin(elapsed * 11.0) * 0.38;
+      this.leftWing.rotation.z = flap;
+      this.rightWing.rotation.z = -flap;
+
+      // Subtle camera follow
+      this.camera.position.x = THREE.MathUtils.lerp(this.camera.position.x, this.playerPos.x * 0.35, 0.1);
+      this.camera.position.y = THREE.MathUtils.lerp(this.camera.position.y, 1.35 + this.playerPos.y * 0.25, 0.1);
+
+      // Scroll Canyon Segments
+      this.canyonSegments.forEach((seg) => {
+        seg.position.z += 16 * dt;
+        if (seg.position.z > 6) seg.position.z -= 14 * 4.0;
+      });
+
+      // Spawn timers
+      this.spawnTimer -= dt;
+      if (this.spawnTimer <= 0) {
+        this._spawnWyvern();
+        this.spawnTimer = 1.35;
       }
 
-      if (Math.abs(this.balance) >= 1.0) {
-        this.gameStatus = 'fell';
-        this.audio.playThunderAndLightning();
-        this._updateHUD(
-          'SWEPT FROM THE PARAPET! Canyon crosswinds threw your center of gravity over the edge.'
-        );
+      this.orbTimer -= dt;
+      if (this.orbTimer <= 0) {
+        this._spawnWardOrb();
+        this.orbTimer = 2.6;
+      }
+
+      this.pillarTimer -= dt;
+      if (this.pillarTimer <= 0) {
+        this._spawnPillar();
+        this.pillarTimer = 2.4;
+      }
+
+      // Update Lightning Bolts & Check Hits on Wyverns
+      for (let b = this.bolts.length - 1; b >= 0; b--) {
+        const bolt = this.bolts[b];
+        bolt.mesh.position.addScaledVector(bolt.vel, dt);
+
+        let hit = false;
+        for (let w = this.wyverns.length - 1; w >= 0; w--) {
+          const wyv = this.wyverns[w];
+          if (bolt.mesh.position.distanceTo(wyv.mesh.position) < 1.15) {
+            // Direct hit on Wyvern Rune Stone!
+            hit = true;
+            this._spawnExplosion(wyv.mesh.position, '#ff2a4b');
+            this.group.remove(wyv.mesh);
+            this.wyverns.splice(w, 1);
+
+            this.score += 250;
+            this.wyvernsKilled += 1;
+            this.audio.playThunderAndLightning();
+            this._updateHUD(`DIRECT HIT! Shattered Wyvern Rune Stone! (${this.wyvernsKilled}/${this.targetKills})`);
+
+            if (this.wyvernsKilled >= this.targetKills) {
+              this.gameStatus = 'won';
+              this._updateHUD('🏆 VICTORY! You shattered 10 Wyvern Rune Stones and defended Basgiath Skies!');
+            }
+            break;
+          }
+        }
+
+        if (hit || bolt.mesh.position.z < -42) {
+          this.group.remove(bolt.mesh);
+          this.bolts.splice(b, 1);
+        }
+      }
+
+      // Update Wyverns
+      for (let w = this.wyverns.length - 1; w >= 0; w--) {
+        const wyv = this.wyverns[w];
+        wyv.mesh.position.z += wyv.speed * dt;
+        wyv.mesh.position.x += Math.sin(elapsed * 2.5 + wyv.swayOffset) * dt * 1.1;
+        wyv.wings.rotation.z = Math.sin(elapsed * 9.0 + wyv.swayOffset) * 0.28;
+        wyv.runeStone.rotation.y += dt * 4.0;
+
+        if (wyv.mesh.position.distanceTo(this.playerDragon.position) < 0.95) {
+          this._spawnExplosion(wyv.mesh.position, '#ff2a4b');
+          this.group.remove(wyv.mesh);
+          this.wyverns.splice(w, 1);
+          this.shield = Math.max(0, this.shield - 25);
+          this.audio.playThunderAndLightning();
+          this._updateHUD('⚠ WYVERN COLLISION! Click or press SPACE to shoot them before they reach Tairn!');
+          if (this.shield <= 0) {
+            this.gameStatus = 'lost';
+            this._updateHUD('SHIELD DEPLETED! Click "↻ PLAY AGAIN" to launch back into the storm.');
+          }
+        } else if (wyv.mesh.position.z > 4.5) {
+          this.group.remove(wyv.mesh);
+          this.wyverns.splice(w, 1);
+        }
+      }
+
+      // Update Golden Ward Orbs
+      for (let o = this.orbs.length - 1; o >= 0; o--) {
+        const orb = this.orbs[o];
+        orb.mesh.position.z += orb.speed * dt;
+        orb.mesh.rotation.y += dt * 3.0;
+
+        if (orb.mesh.position.distanceTo(this.playerDragon.position) < 0.95) {
+          this._spawnExplosion(orb.mesh.position, '#f4c55c');
+          this.group.remove(orb.mesh);
+          this.orbs.splice(o, 1);
+          this.score += 100;
+          this.shield = Math.min(100, this.shield + 20);
+          this.audio.playPulseChime(1.65);
+          this._updateHUD('✦ COLLECTED GOLDEN FEATHERTAIL ORB! (+100 PTS & +20% Shield)');
+        } else if (orb.mesh.position.z > 4.5) {
+          this.group.remove(orb.mesh);
+          this.orbs.splice(o, 1);
+        }
+      }
+
+      // Update Canyon Pillars
+      for (let p = this.pillars.length - 1; p >= 0; p--) {
+        const pil = this.pillars[p];
+        pil.mesh.position.z += pil.speed * dt;
+        if (
+          Math.abs(pil.mesh.position.z - this.playerDragon.position.z) < 0.65 &&
+          Math.abs(pil.mesh.position.x - this.playerDragon.position.x) < 0.68 &&
+          this.playerDragon.position.y < 1.1
+        ) {
+          this._spawnExplosion(this.playerDragon.position, '#ff851b');
+          this.group.remove(pil.mesh);
+          this.pillars.splice(p, 1);
+          this.shield = Math.max(0, this.shield - 20);
+          this.audio.playThunderAndLightning();
+          this._updateHUD('⚠ CLIPPED A CANYON SPIRE! Steer left/right or fly higher to evade!');
+          if (this.shield <= 0) {
+            this.gameStatus = 'lost';
+            this._updateHUD('SHIELD DEPLETED! Click "↻ PLAY AGAIN" to launch back into the storm.');
+          }
+        } else if (pil.mesh.position.z > 4.5) {
+          this.group.remove(pil.mesh);
+          this.pillars.splice(p, 1);
+        }
       }
     }
 
-    this._updateCameraForStep();
+    // Animate 3D particle explosions
+    for (let e = this.explosions.length - 1; e >= 0; e--) {
+      const exp = this.explosions[e];
+      exp.life -= dt;
+      exp.parts.forEach((pt) => {
+        pt.mesh.position.addScaledVector(pt.vel, dt);
+        pt.mesh.scale.multiplyScalar(0.92);
+      });
+      if (exp.life <= 0) {
+        this.group.remove(exp.group);
+        this.explosions.splice(e, 1);
+      }
+    }
+
     this._updateHUD();
   }
 
   _updateHUD(statusMessage = null) {
-    const progressPct = Math.round((this.currentStep / this.totalSteps) * 100);
     const progEl = document.getElementById('parapet-progress-fill');
     const progText = document.getElementById('parapet-progress-text');
-    const balMarker = document.getElementById('parapet-balance-marker');
+    const shieldFill = document.getElementById('parapet-shield-fill');
     const windLabel = document.getElementById('parapet-wind-readout');
     const msgEl = document.getElementById('parapet-status-msg');
 
-    if (progEl) progEl.style.width = `${progressPct}%`;
-    if (progText) progText.textContent = `${this.currentStep} / ${this.totalSteps} Stones (${progressPct}%)`;
-    if (balMarker) {
-      const pct = THREE.MathUtils.clamp(50 + this.balance * 48, 2, 98);
-      balMarker.style.left = `${pct}%`;
-    }
-    if (windLabel) {
-      const dir = this.windForce > 0.03 ? 'EAST →' : this.windForce < -0.03 ? '← WEST' : 'CALM';
-      windLabel.textContent = `${Math.abs(Math.round(this.windForce * 85))} KT ${dir}`;
-    }
+    const killPct = Math.min(100, Math.round((this.wyvernsKilled / this.targetKills) * 100));
+    if (progEl) progEl.style.width = `${killPct}%`;
+    if (progText) progText.textContent = `${this.wyvernsKilled} / ${this.targetKills} Wyverns (${this.score} PTS)`;
+    if (shieldFill) shieldFill.style.width = `${this.shield}%`;
+    if (windLabel) windLabel.textContent = `${this.shield}% INTEGRITY`;
     if (statusMessage && msgEl) {
       msgEl.textContent = statusMessage;
     }

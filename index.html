@@ -3,144 +3,124 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FOURTH WING: CODEX OCULUS — 3D X-Ray Tomography Archive of Basgiath</title>
+  <title>FOURTH WING: CODEX OCULUS — Interactive 3D X-Ray Experience</title>
   <link rel="stylesheet" href="./styles.css" />
-
-  <!-- Local Import Map for Three.js & Postprocessing Addons (100% Self-Contained) -->
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "./vendor/package/build/three.module.js",
-        "three/addons/": "./vendor/package/examples/jsm/"
-      }
-    }
-  </script>
 </head>
 <body>
-  <!-- 3D WebGL2 Viewport -->
+  <!-- Full-Screen Unobstructed 3D WebGL2 Viewport -->
   <div id="viewport-container"></div>
 
-  <!-- Interactive Oculus X-Ray Scanner Lens Reticle -->
+  <!-- Sleek Oculus X-Ray Scanner Lens Reticle -->
   <div id="xray-reticle">
-    <div class="reticle-badge" id="reticle-status-text">LIVE OCULUS • DBL-CLICK TO LOCK</div>
+    <div class="reticle-badge" id="reticle-status-text">X-RAY LENS</div>
   </div>
 
-  <!-- 3D Projected Anatomical & Lore Hotspot Pins -->
+  <!-- Minimal Numbered 3D Hotspot Nodes -->
   <div id="hotspots-layer"></div>
 
-  <!-- TOP NAVIGATION BAR -->
+  <!-- MINIMAL FLOATING TOP BAR -->
   <header class="top-nav">
     <div class="brand-cluster">
       <div class="brand-emblem">✦</div>
       <div>
-        <div class="brand-title">FOURTH WING : CODEX OCULUS</div>
-        <div class="brand-subtitle">3D ARCANE X-RAY TOMOGRAPHY ARCHIVE • BASGIATH WAR COLLEGE</div>
+        <div class="brand-title">FOURTH WING</div>
+        <div class="brand-subtitle" id="specimen-name">Tairneanach (Tairn)</div>
       </div>
     </div>
 
-    <!-- Scan Mode Switcher -->
+    <!-- Clean 3-Mode Pill Switcher -->
     <nav class="mode-switcher" aria-label="Scan Modes">
-      <button class="mode-tab active" data-mode="dragon">01 • DRAGON ANATOMY</button>
-      <button class="mode-tab" data-mode="rider">02 • RIDER’S CONDUIT</button>
-      <button class="mode-tab" data-mode="basgiath">03 • BASGIATH &amp; WARDS</button>
+      <button class="mode-tab active" data-mode="dragon">Dragon Anatomy</button>
+      <button class="mode-tab" data-mode="rider">Rider Conduit</button>
+      <button class="mode-tab" data-mode="basgiath">Basgiath &amp; Wards</button>
     </nav>
 
-    <!-- Interactive Experiences & Utility Controls -->
+    <!-- Top Right Actions -->
     <div class="nav-actions">
-      <button id="btn-flythrough" class="action-btn">🎬 CINEMATIC FLY-THROUGH</button>
-      <button id="btn-open-quiz" class="action-btn gold">🐉 FIND YOUR DRAGON</button>
-      <button id="btn-launch-parapet" class="action-btn gold">⚔ PARAPET TRIAL</button>
-      <button id="btn-open-dedication" class="action-btn">📜 AUTHOR NOTE</button>
-      <button id="btn-audio-toggle" class="action-btn">🔊 STORM AUDIO: ON</button>
+      <button id="btn-launch-parapet" class="action-btn gold">⚡ Play 3D Flight Game</button>
+      <button id="btn-open-quiz" class="action-btn">🐉 Dragon Quiz</button>
+      <button id="btn-open-dedication" class="action-btn" title="Author & Lore Note">📜</button>
+      <button id="btn-audio-toggle" class="action-btn" title="Toggle Storm Audio">🔊</button>
     </div>
   </header>
 
-  <!-- MAIN INSPECTOR HUD (Left & Right Panels) -->
+  <!-- MAIN INSPECTOR UI: Clean Bottom Dock + Collapsible Right Drawer -->
   <main id="main-inspector-ui">
-    <!-- Left Panel: Specimen Selector, Telemetry & X-Ray Depth Controls -->
-    <aside class="left-panel">
-      <section class="hud-card">
-        <div class="section-kicker">ACTIVE TOMOGRAPHY SECTOR</div>
-        <h1 id="hud-mode-title">DRACONIC ANATOMY &amp; SIGNET CORE</h1>
-        <p id="hud-mode-subtitle">Sub-Dermal Osteology, Pyro-Glands &amp; Bond Tethers</p>
-
-        <!-- Sub-Specimen Selector Pills -->
-        <div id="specimen-tabs" class="specimen-tabs"></div>
-
-        <h2 id="specimen-name">Tairneanach (Tairn)</h2>
-        <div id="specimen-class">Black Morningstartail • Elder Combat Mount</div>
-        <p id="specimen-summary"></p>
-
-        <div id="telemetry-stats" class="telemetry-grid"></div>
-      </section>
-
-      <!-- Oculus X-Ray Scanner Calibration Controls -->
-      <section class="hud-card">
-        <div class="section-kicker">OCULUS X-RAY CALIBRATION</div>
-
-        <div class="control-row">
-          <div class="control-header">
-            <span>TOMOGRAPHY DEPTH LAYER</span>
-            <strong id="xray-depth-val">85% (DEEP SKELETAL CORE)</strong>
-          </div>
-          <input id="xray-depth-slider" type="range" min="0" max="100" value="85" />
-        </div>
-
-        <div class="control-row">
-          <div class="control-header">
-            <span>OCULUS LENS APERTURE</span>
-            <strong id="xray-radius-val">22%</strong>
-          </div>
-          <input id="xray-radius-slider" type="range" min="8" max="48" value="22" />
-        </div>
-
-        <div class="xray-buttons-row">
-          <button id="btn-full-xray" class="action-btn">◎ FULL TOMOGRAPHY: OFF</button>
-          <button id="btn-lightning-surge" class="action-btn gold">⚡ SIGNET SURGE</button>
-        </div>
-
-        <p class="hint-caption">
-          <strong>Controls:</strong> Move cursor to sweep the 3D X-Ray Lens. Drag to orbit 360°, scroll to zoom, or <strong>double-click</strong> to lock the lens in place.
-        </p>
-      </section>
-    </aside>
-
-    <!-- Right Panel: Selected 3D Hotspot Lore Codex Card -->
-    <aside class="right-panel">
+    <!-- Collapsible Slide-Over Lore Drawer (Only visible when inspecting a hotspot or toggled) -->
+    <aside id="lore-drawer" class="lore-drawer hidden">
       <section id="lore-codex-card" class="hud-card">
+        <button id="btn-close-drawer" class="drawer-close" aria-label="Close Lore Card">✕</button>
+        <div class="section-kicker" id="hud-mode-title">DRACONIC ANATOMY</div>
         <span id="codex-layer-tag" class="codex-badge">VASCULAR / ARCANE CORE</span>
-        <h2 id="codex-title">Four-Chambered Magma Heart &amp; Bond Core</h2>
-        <div id="codex-telemetry">BPM: 28 (Resting) / 140 (Combat) • Output: 4.8 GW Arcane Flux</div>
+        <h2 id="codex-title">Four-Chambered Magma Heart</h2>
+        <div id="codex-telemetry">BPM: 28 (Resting) / 140 (Combat)</div>
         <p id="codex-desc"></p>
         <div class="xray-insight-box">
-          <span class="xray-insight-label">✦ SUB-SURFACE X-RAY INSIGHT</span>
+          <span class="xray-insight-label">✦ X-RAY INSIGHT</span>
           <p id="codex-xray-insight"></p>
         </div>
+
+        <div class="drawer-divider"></div>
+        <div class="section-kicker" id="specimen-class">Black Morningstartail</div>
+        <p id="specimen-summary" class="specimen-mini-summary"></p>
+        <div id="telemetry-stats" class="telemetry-grid"></div>
       </section>
     </aside>
+
+    <!-- Sleek Bottom-Center Control Dock (Zero Side Overlap!) -->
+    <footer class="bottom-dock">
+      <!-- Specimen Pills -->
+      <div id="specimen-tabs" class="specimen-tabs"></div>
+
+      <div class="dock-divider"></div>
+
+      <!-- X-Ray Depth Slider -->
+      <div class="dock-slider-group">
+        <label for="xray-depth-slider">
+          X-RAY DEPTH <strong id="xray-depth-val">85%</strong>
+        </label>
+        <input id="xray-depth-slider" type="range" min="0" max="100" value="85" />
+      </div>
+
+      <!-- Lens Size Slider -->
+      <div class="dock-slider-group">
+        <label for="xray-radius-slider">
+          LENS SIZE <strong id="xray-radius-val">22%</strong>
+        </label>
+        <input id="xray-radius-slider" type="range" min="10" max="45" value="22" />
+      </div>
+
+      <div class="dock-divider"></div>
+
+      <!-- Quick Action Toggles -->
+      <div class="dock-actions">
+        <button id="btn-full-xray" class="action-btn">◎ Full X-Ray</button>
+        <button id="btn-flythrough" class="action-btn">🎬 Orbit</button>
+        <button id="btn-lightning-surge" class="action-btn gold" title="Trigger Storm Lightning">⚡</button>
+        <button id="btn-toggle-drawer" class="action-btn">📖 Lore Details</button>
+      </div>
+    </footer>
   </main>
 
-  <!-- PARAPET TRIAL MINI-GAME HUD -->
+  <!-- 3D CANYON FLIGHT & WYVERN STRIKE GAME HUD -->
   <section id="parapet-game-ui" class="hidden">
     <div class="parapet-top-hud">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="game-header-row">
         <div>
-          <div class="section-kicker">CONSCRIPT TRIAL • 200-FOOT CANYON DROP</div>
-          <h2 style="font-family:var(--font-serif);color:var(--gold-relic);font-size:18px;">
-            CROSSING THE PARAPET WITH SECOND-SIGHT X-RAY
-          </h2>
+          <div class="section-kicker">BASGIATH STORM GAUNTLET • REAL-TIME 3D FLIGHT</div>
+          <h2 class="game-hud-title">RIDE TAIRN &amp; SHATTER WYVERN RUNE STONES</h2>
         </div>
         <div style="display:flex;gap:8px;">
-          <button id="btn-parapet-restart" class="action-btn">↻ RESTART</button>
-          <button id="btn-parapet-exit" class="action-btn gold">✕ EXIT TO ARCHIVE</button>
+          <button id="btn-parapet-restart" class="action-btn">↻ Play Again</button>
+          <button id="btn-parapet-exit" class="action-btn gold">✕ Exit Game</button>
         </div>
       </div>
 
       <div class="parapet-meters">
         <div>
           <div class="control-header">
-            <span>SPAN PROGRESS</span>
-            <strong id="parapet-progress-text">0 / 14 Stones (0%)</strong>
+            <span>WYVERNS SHATTERED</span>
+            <strong id="parapet-progress-text">0 / 10 Wyverns (0 PTS)</strong>
           </div>
           <div class="meter-bar-bg">
             <div id="parapet-progress-fill"></div>
@@ -148,11 +128,11 @@
         </div>
         <div>
           <div class="control-header">
-            <span>CENTER OF GRAVITY vs. CANYON WIND</span>
-            <strong id="parapet-wind-readout">15 KT EAST →</strong>
+            <span>DRAGON SHIELD</span>
+            <strong id="parapet-wind-readout">100% INTEGRITY</strong>
           </div>
-          <div class="balance-track">
-            <div id="parapet-balance-marker"></div>
+          <div class="meter-bar-bg">
+            <div id="parapet-shield-fill" class="shield-bar-fill"></div>
           </div>
         </div>
       </div>
@@ -160,51 +140,47 @@
 
     <div class="parapet-bottom-hud">
       <div id="parapet-status-msg">
-        X-RAY SECOND-SIGHT ACTIVE: Green/Gold Core = Solid Stone (Step Forward). Red Core = Internal Fracture (Leap Over!).
+        STEER WITH MOUSE OR WASD • CLICK OR PRESS SPACE TO FIRE LIGHTNING AT WYVERN RUNE STONES!
       </div>
       <div class="parapet-controls-row">
-        <button id="btn-parapet-left" class="action-btn">◀ LEAN LEFT (A / ←)</button>
-        <button id="btn-parapet-step" class="action-btn gold">▲ STEP FORWARD 1 STONE (W / ↑)</button>
-        <button id="btn-parapet-leap" class="action-btn gold">⏫ LEAP OVER FRACTURE — 2 STONES (E / SHIFT)</button>
-        <button id="btn-parapet-xray" class="action-btn">👁 PULSE X-RAY VISION (SPACE)</button>
-        <button id="btn-parapet-right" class="action-btn">LEAN RIGHT (D / →) ▶</button>
+        <button id="btn-parapet-fire" class="action-btn gold">⚡ FIRE LIGHTNING BOLT (CLICK / SPACE)</button>
       </div>
     </div>
   </section>
 
-  <!-- CINEMATIC INTRO OVERLAY -->
+  <!-- CLEAN WELCOME SPLASH MODAL -->
   <div id="intro-overlay" class="modal-backdrop">
     <div class="modal-card">
-      <div class="intro-kicker">CLASSIFIED BASGIATH ARCHIVE • FOR READERS &amp; REBECCA YARROS</div>
-      <h1 class="intro-title">FOURTH WING:<br />CODEX OCULUS 3D</h1>
+      <div class="intro-kicker">INTERACTIVE 3D X-RAY EXPERIENCE • FOURTH WING</div>
+      <h1 class="intro-title">CODEX OCULUS</h1>
       <p class="intro-lead">
-        Peer beneath dragon scales, armor, and mountain stone. An interactive real-time 3D X-Ray tomography experience exploring the osteology of the Vale, the biomechanics of the Riders Quadrant, and the buried secrets of Basgiath War College.
+        Move your cursor over the 3D models to peer beneath dragon scales, rider armor, and Basgiath stone in real time. Click any glowing numbered node on the model to inspect its internal anatomy and lore.
       </p>
       <div class="intro-feature-grid">
         <div class="intro-feat">
-          <strong>01 • Draconic &amp; Wyvern Osteology</strong>
-          Compare Tairn’s 4-chambered magma heart &amp; Morningstartail bones against Andarna’s 7th-breed core and a Wyvern’s embedded dark-magic Rune Stone.
+          <strong>🐉 01 • Dragon Anatomy</strong>
+          Inspect Tairn’s magma heart, wing bones &amp; Morningstartail, Andarna’s 7th-breed core, and a Wyvern’s dark-magic Rune Stone.
         </div>
         <div class="intro-feat">
-          <strong>02 • EDS Biomechanics &amp; Relics</strong>
-          Inspect Violet Sorrengail’s hypermobile joints braced by Teine’s dragon-scale corset alongside her branching Lichtenberg lightning conduits.
+          <strong>⚡ 02 • Rider Conduit</strong>
+          Scan Violet’s EDS hypermobile joints braced by dragon-scale armor alongside her branching lightning nerves &amp; Xaden’s shadows.
         </div>
         <div class="intro-feat">
-          <strong>03 • Subterranean Basgiath Cutaway</strong>
-          Scan beneath the Parapet and Archives to reveal the 7-pillar Wardstone Chamber, smuggling tunnels, and creeping venin desiccation.
+          <strong>🏰 03 • Basgiath &amp; Wardstone</strong>
+          Cut into the mountain bedrock to reveal the subterranean Wardstone Chamber, smuggling tunnels, and venin veins.
         </div>
         <div class="intro-feat">
-          <strong>04 • Threshing Quiz &amp; Parapet Trial</strong>
-          Discover your bonded dragon in live 3D X-Ray and cross the wind-lashed Parapet using Second-Sight fracture detection.
+          <strong>🎮 04 • 3D Canyon Flight Game</strong>
+          Steer Tairn in real time with your mouse and click to shatter incoming Wyvern Rune Stones with Violet’s lightning!
         </div>
       </div>
       <button id="btn-enter-archive" class="cta-primary">
-        IGNITE OCULUS LENS &amp; ENTER THE ARCHIVE
+        ENTER THE 3D X-RAY ARCHIVE
       </button>
     </div>
   </div>
 
-  <!-- FIND YOUR DRAGON (THRESHING QUIZ) MODAL -->
+  <!-- FIND YOUR DRAGON QUIZ MODAL -->
   <div id="quiz-modal" class="modal-backdrop hidden">
     <div class="modal-card">
       <button id="btn-close-quiz" class="modal-close" aria-label="Close">✕</button>
@@ -216,33 +192,33 @@
   <div id="dedication-modal" class="modal-backdrop hidden">
     <div class="modal-card">
       <button id="btn-close-dedication" class="modal-close" aria-label="Close">✕</button>
-      <div class="intro-kicker">ARCHITECTURAL &amp; ANATOMICAL CRAFTSMANSHIP NOTE</div>
-      <h2 class="intro-title" style="font-size:24px;">BUILT FOR THE EMPYREAN COMMUNITY &amp; REBECCA YARROS</h2>
+      <div class="intro-kicker">CRAFTED FOR READERS &amp; REBECCA YARROS</div>
+      <h2 class="intro-title" style="font-size:24px;">ANATOMICAL &amp; LORE DETAILS</h2>
       <p class="intro-lead" style="font-size:13px;">
-        <em>Fourth Wing: Codex Oculus</em> was engineered from the ground up using custom GLSL dual-layer X-Ray shaders and procedural 3D osteology to visualize the hidden scientific and arcane mechanics that make the Empyrean series unforgettable:
+        Every 3D scan layer was designed to celebrate the details that make <em>Fourth Wing</em> extraordinary:
       </p>
       <div class="intro-feature-grid">
         <div class="intro-feat">
-          <strong>Authentic EDS &amp; Adaptation</strong>
-          In Rider Mode, X-ray tomography highlights Violet’s hypermobile glenohumeral, costochondral, and patellar joints paired with Mira’s woven dragon-scale corset—honoring how accommodation and intellect triumph without "erasing" chronic conditions.
+          <strong>EDS &amp; Dragon-Scale Bracing</strong>
+          In Rider Mode, Violet’s hypermobile joints are highlighted alongside Mira’s woven dragon-scale corset—celebrating authentic chronic illness representation.
         </div>
         <div class="intro-feat">
           <strong>4-Legged Dragons vs. 2-Legged Wyvern</strong>
-          In Dragon Mode, switch between Tairn, Andarna, and a Corrupted Wyvern to inspect the anatomical difference between true four-legged dragons with living hearts and two-legged wyvern powered by runed granite boulders.
+          Switch to the Wyvern specimen to see two hind legs and a carved dark-magic Rune Stone inside the ribcage instead of a living heart.
         </div>
         <div class="intro-feat">
           <strong>The 107 Rebellion Relic &amp; Second Signet</strong>
-          Scan Xaden Riorson to see how Col. Mairi’s runed river-stones wove protective harmonics into the 107 rebellion marks, plus his guarded prefrontal Intinnsic node.
+          Scan Xaden to inspect his rebellion relic fortified by Col. Mairi’s runed stones and his guarded prefrontal Intinnsic node.
         </div>
         <div class="intro-feat">
-          <strong>The Seventh Breed &amp; The Wardstone</strong>
-          Penetrate 850 feet into Basgiath’s granite bedrock to view the black-iron Wardstone cauldron, six active breed pillars, and the awaiting seventh harmonic.
+          <strong>The Seventh Breed &amp; Wardstone</strong>
+          Scan beneath Basgiath to inspect the black-iron Wardstone cauldron and its seven breed pillars.
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Standalone Zero-Server Bundle (works via direct file:// double-click AND http://localhost:8080) -->
+  <!-- Standalone Bundle -->
   <script defer src="./bundle.js"></script>
 </body>
 </html>
